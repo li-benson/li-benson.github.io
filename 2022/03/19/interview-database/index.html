@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 6.1.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="../../../../images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="../../../../images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
 
-<link rel="stylesheet" href="../../../../css/main.css">
+<link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="../../../../lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://example.com/2022/03/19/interview-database/Phantom_read.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-database/lock.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-database/ILock.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-database/next_key.png">
+<meta property="og:image" content="http://example.com/2022/03/19/interview-database/next_lock.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-database/dead_lock.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-database/undo_log.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-database/mvcc_example.png">
@@ -72,7 +72,7 @@
 <meta property="og:image" content="http://example.com/2022/03/19/interview-database/row.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-database/col.png">
 <meta property="article:published_time" content="2022-03-19T09:28:18.000Z">
-<meta property="article:modified_time" content="2022-03-19T16:09:12.976Z">
+<meta property="article:modified_time" content="2022-03-19T16:35:40.972Z">
 <meta property="article:author" content="Benson">
 <meta property="article:tag" content="Interview">
 <meta property="article:tag" content="Database">
@@ -162,27 +162,27 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="../../../../index.html" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="../../../../about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="../../../../tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="../../../../categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="../../../../archives/" rel="section"><i class="fa fa-archiveca fa-fw"></i>归档</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -241,7 +241,7 @@
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/19/interview-database/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="../../../../images/avatar.jpg">
+      <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Benson">
       <meta itemprop="description" content="学习、记录、成长">
     </span>
@@ -268,7 +268,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-20 00:09:12" itemprop="dateModified" datetime="2022-03-20T00:09:12+08:00">2022-03-20</time>
+                <time title="修改时间：2022-03-20 00:35:40" itemprop="dateModified" datetime="2022-03-20T00:35:40+08:00">2022-03-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,7 +276,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../../../categories/Interview-Knowledge/" itemprop="url" rel="index"><span itemprop="name">Interview Knowledge</span></a>
+                  <a href="/categories/Interview-Knowledge/" itemprop="url" rel="index"><span itemprop="name">Interview Knowledge</span></a>
                 </span>
             </span>
 
@@ -314,10 +314,10 @@
 
       
         <h1 id="数据库系统原理"><a href="#数据库系统原理" class="headerlink" title="数据库系统原理"></a>数据库系统原理</h1><h2 id="关系数据库"><a href="#关系数据库" class="headerlink" title="关系数据库"></a>关系数据库</h2><h3 id="关系型数据库和非关系型数据库的区别？"><a href="#关系型数据库和非关系型数据库的区别？" class="headerlink" title="关系型数据库和非关系型数据库的区别？"></a>关系型数据库和非关系型数据库的区别？</h3><ul>
-<li><p>关系型数据库<br>是指采用了关系模型来组织数据的数据库，简单来说，关系模式就是二维表格模型。关系型数据库的最大优点就是事务的一致性，这个特性，使得关系型数据库中可以适用于一切要求一致性比较高的系统中。 </p>
-</li>
-<li><p>非关系型数据库<br>指那些非关系型的、分布式的，且一般不保证ACID的数据存储系统</p>
-<h3 id="函数依赖和三范式"><a href="#函数依赖和三范式" class="headerlink" title="函数依赖和三范式"></a>函数依赖和三范式</h3></li>
+<li>关系型数据库<br>是指采用了关系模型来组织数据的数据库，简单来说，关系模式就是二维表格模型。关系型数据库的最大优点就是事务的一致性，这个特性，使得关系型数据库中可以适用于一切要求一致性比较高的系统中。 </li>
+<li>非关系型数据库<br>指那些非关系型的、分布式的，且一般不保证ACID的数据存储系统</li>
+</ul>
+<h3 id="函数依赖和三范式"><a href="#函数依赖和三范式" class="headerlink" title="函数依赖和三范式"></a>函数依赖和三范式</h3><ul>
 <li><p>函数依赖</p>
 <ul>
 <li>记 A-&gt;B 表示 A 函数决定 B，也可以说 B 函数依赖于 A。 </li>
@@ -339,16 +339,22 @@
 </ul>
 <h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="什么是事务的ACID特性"><a href="#什么是事务的ACID特性" class="headerlink" title="什么是事务的ACID特性"></a>什么是事务的ACID特性</h3><p>略</p>
 <h2 id="并发一致性问题"><a href="#并发一致性问题" class="headerlink" title="并发一致性问题"></a>并发一致性问题</h2><ul>
-<li>丢失修改 </li>
-<li>脏读 </li>
-<li>不可重复读 </li>
-<li>幻读 <ul>
+<li><p>丢失修改 </p>
+</li>
+<li><p>脏读 </p>
+</li>
+<li><p>不可重复读 </p>
+</li>
+<li><p>幻读 </p>
+<ul>
 <li><p>概念 </p>
 <p>是指在同一个事务中，前后两次查询相同范围时，得到的结果不一致，后一次查询到新插入的行。</p>
 <p><img src="/2022/03/19/interview-database/Phantom_read.png"> </p>
 <p>对于 <code>select * from t where d=5 for update;</code> 来说，锁住d&#x3D;5对应的行或者锁住扫描过程中所有的行都是没有用的, 因为插入并不影响之前行的操作，所以 InnoDB 为了解决幻读，引入了新的锁 - 间隙锁。 </p>
 <p>当再执行select * from t where d&#x3D;5 for update;时，不但会将全表的数据行锁住，还会将间隙锁住。由于间隙锁解决的是幻读插入的问题，所以间隙锁仅仅对插入操作本身互斥，不同事务之间的间隙锁并不互斥。 </p>
-<p>缺点：间隙锁的引入导致同样的语句锁住更大的范围，降低了并发度。</p>
+</li>
+<li><p>缺点</p>
+<p>间隙锁的引入导致同样的语句锁住更大的范围，降低了并发度。</p>
 </li>
 </ul>
 </li>
@@ -389,8 +395,9 @@
 <ul>
 <li>需要读写的内存值 V </li>
 <li>进行比较的值 A </li>
-<li>拟写入的新值 B<br>当且仅当 V 的值等于 A时，CAS通过原子方式用新值B来更新V的值，否则不会执行任何操作（比较和替换是一个原子操作）。一般情况下是一个自旋操作，即不断的重试。</li>
+<li>拟写入的新值 B</li>
 </ul>
+<p>当且仅当 V 的值等于 A时，CAS通过原子方式用新值B来更新V的值，否则不会执行任何操作（比较和替换是一个原子操作）。一般情况下是一个自旋操作，即不断的重试。</p>
 </li>
 </ul>
 </li>
@@ -433,7 +440,7 @@
 </li>
 <li><p>Next-Key Lock </p>
 <p>Next-Key 锁相比前两者就稍微有一些复杂，它是记录锁和记录前的间隙锁的结合。</p>
-<p><img src="/2022/03/19/interview-database/next_key.png"> </p>
+<p><img src="/2022/03/19/interview-database/next_lock.png"> </p>
 <p>当我们更新一条记录，比如 <code>SELECT * FROM users WHERE age = 30 FOR UPDATE;</code>，InnoDB 不仅会在范围 (21, 30] 上加 Next-Key 锁，还会在这条记录后面的范围 (30, 40] 加间隙锁，所以插入 (21, 40] 范围内的记录都会被锁定。</p>
 </li>
 </ul>
@@ -485,17 +492,17 @@
 <li><p>事务版本号：每次事务开启前都会从数据库获得一个自增长的事务ID </p>
 </li>
 <li><p>数据库记录隐藏的列： </p>
-<p>  DB_TRX_ID: 记录操作该数据事务的事务ID；</p>
-<p>  DB_ROLL_PTR：指向上一个版本数据在undo log 里的位置指针； </p>
+<p>  <code>DB_TRX_ID</code>: 记录操作该数据事务的事务ID；</p>
+<p>  <code>DB_ROLL_PTR</code>：指向上一个版本数据在undo log 里的位置指针； </p>
 </li>
 <li><p>undo log：当事务进行回滚需要用到 </p>
 <p>  <img src="/2022/03/19/interview-database/undo_log.png"></p>
 </li>
 <li><p>ReadView </p>
-<p>  trx_ids: 当前系统活跃(未提交)事务版本号集合。</p>
-<p>  low_limit_id: 创建当前read view 时“当前系统最大事务版本号+1”。 </p>
-<p>  up_limit_id: 创建当前read view 时“系统正处于活跃事务最小版本号” </p>
-<p>  creator_trx_id: 创建当前read view的事务版本号；</p>
+<p>  <code>trx_ids</code>: 当前系统活跃(未提交)事务版本号集合。</p>
+<p>  <code>low_limit_id</code>: 创建当前read view 时“当前系统最大事务版本号+1”。 </p>
+<p>  <code>up_limit_id</code>: 创建当前read view 时“系统正处于活跃事务最小版本号” </p>
+<p>  <code>creator_trx_id</code>: 创建当前read view的事务版本号；</p>
 </li>
 </ul>
 <p>是否从undo log版本链中读数据，依据下面的算法： </p>
@@ -634,8 +641,9 @@
 <p>inset为可以理解为数组，使用inset数据结构需要满足下述两个条件： </p>
 <ul>
 <li>元素个数不少于默认值512 </li>
-<li>元素可以用整型表示<br>查询方式一般采用二分查找法，实际查询复杂度也就在log(n)</li>
+<li>元素可以用整型表示</li>
 </ul>
+<p>查询方式一般采用二分查找法，实际查询复杂度也就在log(n) </p>
 </li>
 <li><p>hash </p>
 </li>
@@ -662,20 +670,15 @@
 <li>查找、添加、删除操作都可以在对数期望时间下完成。</li>
 </ul>
 <h2 id="Redis使用场景"><a href="#Redis使用场景" class="headerlink" title="Redis使用场景"></a>Redis使用场景</h2><ul>
-<li><p>计数器 </p>
-</li>
-<li><p>缓存 </p>
-</li>
-<li><p>查找表 </p>
-</li>
-<li><p>消息队列 </p>
-</li>
-<li><p>session缓存 </p>
-</li>
-<li><p>分布式锁实现 </p>
-</li>
-<li><p>利用Zset实现排行榜 </p>
-<h3 id="Redis和Memcached的区别"><a href="#Redis和Memcached的区别" class="headerlink" title="Redis和Memcached的区别"></a>Redis和Memcached的区别</h3></li>
+<li>计数器 </li>
+<li>缓存 </li>
+<li>查找表 </li>
+<li>消息队列 </li>
+<li>session缓存 </li>
+<li>分布式锁实现 </li>
+<li>利用Zset实现排行榜</li>
+</ul>
+<h2 id="Redis和Memcached的区别"><a href="#Redis和Memcached的区别" class="headerlink" title="Redis和Memcached的区别"></a>Redis和Memcached的区别</h2><ul>
 <li><p>数据类型 </p>
 <p>Memcached只支持字符串类型，Redis支持五种数据类型 </p>
 </li>
@@ -790,13 +793,14 @@
 <p><img src="/2022/03/19/interview-database/file_event.png"></p>
 <h3 id="时间事件"><a href="#时间事件" class="headerlink" title="时间事件"></a>时间事件</h3><p>Redis 将所有时间事件都放在一个无序链表中，通过遍历整个链表查找出已到达的时间事件，并调用相应的事件处理器 </p>
 <p><img src="/2022/03/19/interview-database/time_event.png"></p>
-<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><h3 id="目的："><a href="#目的：" class="headerlink" title="目的："></a>目的：</h3><p>为了增加系统可靠性和读写性能，可以建立Redis主从集群。Redis Replication是一种简单、易用的主从模式（master-slave）的复制机制，它能够使得slave节点成为与master节点完全相同的副本。 </p>
-<h3 id="连接过程："><a href="#连接过程：" class="headerlink" title="连接过程："></a>连接过程：</h3><ol>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>为了增加系统可靠性和读写性能，可以建立Redis主从集群。Redis Replication是一种简单、易用的主从模式（master-slave）的复制机制，它能够使得slave节点成为与master节点完全相同的副本。 </p>
+<h3 id="连接过程"><a href="#连接过程" class="headerlink" title="连接过程"></a>连接过程</h3><ol>
 <li>主服务器创建快照文件，发送给从服务器，并在发送期间使用缓冲区记录执行的写命令。快照文件发送完毕之后，开始向从服务器发送存储在缓冲区中的写命令； </li>
 <li>从服务器丢弃所有旧数据，载入主服务器发来的快照文件，之后从服务器开始接受主服务器发来的写命令； </li>
-<li>主服务器每执行一次写命令，就向从服务器发送相同的写命令。 <h2 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h2><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000022808576">https://segmentfault.com/a/1190000022808576</a> <h3 id="主从复制模式"><a href="#主从复制模式" class="headerlink" title="主从复制模式"></a>主从复制模式</h3></li>
+<li>主服务器每执行一次写命令，就向从服务器发送相同的写命令。</li>
 </ol>
-<ul>
+<h2 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h2><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000022808576">https://segmentfault.com/a/1190000022808576</a> </p>
+<h3 id="主从复制模式"><a href="#主从复制模式" class="headerlink" title="主从复制模式"></a>主从复制模式</h3><ul>
 <li><p>介绍 </p>
 <ul>
 <li>主从模式里使用一个redis实例作为主机(master)，其余多个实例作为备份机(slave)； </li>
@@ -914,9 +918,11 @@
 <ul>
 <li>没有了多线程上下文切换的性能损耗 </li>
 <li>没有了访问共享资源加锁的性能损耗 </li>
-<li>开发和调试非常友好，可维护性高 <h3 id="Redis-如何处理热点-key-访问"><a href="#Redis-如何处理热点-key-访问" class="headerlink" title="Redis 如何处理热点 key 访问"></a>Redis 如何处理热点 key 访问</h3></li>
+<li>开发和调试非常友好，可维护性高</li>
 </ul>
 </li>
+</ul>
+<h3 id="Redis-如何处理热点-key-访问"><a href="#Redis-如何处理热点-key-访问" class="headerlink" title="Redis 如何处理热点 key 访问"></a>Redis 如何处理热点 key 访问</h3><ul>
 <li><p>问题 </p>
 <p>所谓热key问题就是，突然有几十万的请求去访问redis上的某个特定key。那么，这样会造成流量过于集中，达到物理网卡上限，从而导致这台redis的服务器宕机。那接下来这个key的请求，就会直接怼到你的数据库上，导致你的服务不可用。 </p>
 </li>
@@ -930,10 +936,11 @@
 <li><p>如何解决 </p>
 <ul>
 <li>利用二级缓存<br>发现热key以后，把热key加载到系统的JVM中。针对这种热key请求，会直接从jvm中取，而不会走到redis层。 </li>
-<li>对热key进行备份<br>不要让key走到同一台redis上不就行了。我们把这个key，在多个redis上都存一份不就好了。接下来，有热key请求进来的时候，我们就在有备份的redis上随机选取一台，进行访问取值，返回数据。 <h3 id="简述-Redis-哨兵的选举过程"><a href="#简述-Redis-哨兵的选举过程" class="headerlink" title="简述 Redis 哨兵的选举过程"></a>简述 Redis 哨兵的选举过程</h3>略</li>
+<li>对热key进行备份<br>不要让key走到同一台redis上不就行了。我们把这个key，在多个redis上都存一份不就好了。接下来，有热key请求进来的时候，我们就在有备份的redis上随机选取一台，进行访问取值，返回数据。</li>
 </ul>
 </li>
 </ul>
+<h3 id="简述-Redis-哨兵的选举过程"><a href="#简述-Redis-哨兵的选举过程" class="headerlink" title="简述 Redis 哨兵的选举过程"></a>简述 Redis 哨兵的选举过程</h3><p>略  </p>
 <h1 id="Mongodb"><a href="#Mongodb" class="headerlink" title="Mongodb"></a>Mongodb</h1><h3 id="什么是MongoDB？"><a href="#什么是MongoDB？" class="headerlink" title="什么是MongoDB？"></a>什么是MongoDB？</h3><p>  MongoDB是一个分布式文件存储的数据库，提供高性能，高可用性和易扩展性。 </p>
 <p>  MongoDB 将数据存储为一个文档，数据结构由键值(key&#x3D;&gt;value)对组成。 MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。 </p>
 <p><img src="/2022/03/19/interview-database/mongodb.png"></p>
@@ -984,13 +991,17 @@
 <h3 id="列式存储的好处？"><a href="#列式存储的好处？" class="headerlink" title="列式存储的好处？"></a>列式存储的好处？</h3><ul>
 <li>针对分析类查询，通常只需要读取表的一小部分列。在列式数据库中你可以只读取你需要的数据。例如，如果只需要读取100列中的5列，这将帮助你最少减少20倍的I&#x2F;O消耗。 </li>
 <li>由于数据总是打包成批量读取的，所以压缩是非常容易的。同时数据按列分别存储这也更容易压缩。这进一步降低了I&#x2F;O的体积。 </li>
-<li>由于I&#x2F;O的降低，这将帮助更多的数据被系统缓存。 <h3 id="clickhouse的特点"><a href="#clickhouse的特点" class="headerlink" title="clickhouse的特点"></a>clickhouse的特点</h3></li>
+<li>由于I&#x2F;O的降低，这将帮助更多的数据被系统缓存。</li>
+</ul>
+<h3 id="clickhouse的特点"><a href="#clickhouse的特点" class="headerlink" title="clickhouse的特点"></a>clickhouse的特点</h3><ul>
 <li>没有完整的事务支持。 </li>
 <li>缺少高频率，低延迟的修改或删除已存在数据的能力。仅能用于批量删除或修改数据， </li>
 <li>适合在线查询：在没有对数据做任何预处理的情况下以极低的延迟处理查询并将结果加载到用户的页面中。 </li>
 <li>真正的列式数据库管理系统 </li>
 <li>拥有完善的SQl支持和函数 </li>
-<li>支持高可用 <h3 id="行式存储和列式存储的区别？"><a href="#行式存储和列式存储的区别？" class="headerlink" title="行式存储和列式存储的区别？"></a>行式存储和列式存储的区别？</h3></li>
+<li>支持高可用</li>
+</ul>
+<h3 id="行式存储和列式存储的区别？"><a href="#行式存储和列式存储的区别？" class="headerlink" title="行式存储和列式存储的区别？"></a>行式存储和列式存储的区别？</h3><ul>
 <li>行式存储（Row-based）的适用场景包括： <ul>
 <li>适合随机的增删改查操作; </li>
 <li>需要在行中选取所有属性的查询操作; </li>
@@ -1027,12 +1038,12 @@
   <div id="qr" style="display: none;">
       
       <div style="display: inline-block;">
-        <img src="../../../../images/wechatpay.jpeg" alt="Benson 微信支付">
+        <img src="/images/wechatpay.jpeg" alt="Benson 微信支付">
         <p>微信支付</p>
       </div>
       
       <div style="display: inline-block;">
-        <img src="../../../../images/alipay.jpeg" alt="Benson 支付宝">
+        <img src="/images/alipay.jpeg" alt="Benson 支付宝">
         <p>支付宝</p>
       </div>
 
@@ -1042,8 +1053,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="../../../../tags/Interview/" rel="tag"># Interview</a>
-              <a href="../../../../tags/Database/" rel="tag"># Database</a>
+              <a href="/tags/Interview/" rel="tag"># Interview</a>
+              <a href="/tags/Database/" rel="tag"># Database</a>
           </div>
 
         
@@ -1052,7 +1063,7 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="../interview-network/" rel="prev" title="interview-network">
+    <a href="/2022/03/19/interview-network/" rel="prev" title="interview-network">
       <i class="fa fa-chevron-left"></i> interview-network
     </a></div>
       <div class="post-nav-item"></div>
@@ -1115,34 +1126,34 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">数据库系统原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.1.</span> <span class="nav-text">关系数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">关系型数据库和非关系型数据库的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96%E5%92%8C%E4%B8%89%E8%8C%83%E5%BC%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">函数依赖和三范式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.2.</span> <span class="nav-text">事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1%E7%9A%84ACID%E7%89%B9%E6%80%A7"><span class="nav-number">1.2.1.</span> <span class="nav-text">什么是事务的ACID特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.</span> <span class="nav-text">并发一致性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">1.4.</span> <span class="nav-text">锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%94%81%E7%9A%84%E7%B1%BB%E5%9E%8B%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">数据库锁的类型有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%90%84%E8%87%AA%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.4.2.</span> <span class="nav-text">乐观锁和悲观锁的区别，以及各自的使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E7%B2%92%E5%BA%A6"><span class="nav-number">1.4.3.</span> <span class="nav-text">锁的粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.4.</span> <span class="nav-text">锁的算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">1.4.5.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.4.6.</span> <span class="nav-text">封锁协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">1.5.</span> <span class="nav-text">隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">1.5.1.</span> <span class="nav-text">四种隔离级别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">多版本并发控制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sql"><span class="nav-number">2.</span> <span class="nav-text">Sql</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#union%E5%92%8Cunion-all%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.0.1.</span> <span class="nav-text">union和union all的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-%E4%B8%AD-join-%E4%B8%8E-left-join-%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.0.2.</span> <span class="nav-text">MySQL 中 join 与 left join 的区别是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E4%BC%98%E5%8C%96%E7%9A%84%E6%96%B9%E6%A1%88%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%8C%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98%E5%B9%B6%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98%EF%BC%9F%EF%BC%9F"><span class="nav-number">2.0.3.</span> <span class="nav-text">SQL优化的方案有哪些，如何定位问题并解决问题？？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mysql"><span class="nav-number">3.</span> <span class="nav-text">Mysql</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.1.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%E5%92%8C%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">3.1.1.</span> <span class="nav-text">主键索引和辅助索引的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%E5%92%8C%E9%9D%9E%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">3.1.2.</span> <span class="nav-text">聚簇索引和非聚簇索引的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E7%B4%A2%E5%BC%95%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96%EF%BC%9F"><span class="nav-number">3.1.3.</span> <span class="nav-text">利用索引如何进行优化？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B-%E6%A0%91%E5%81%9A%E7%B4%A2%E5%BC%95%EF%BC%9F"><span class="nav-number">3.1.4.</span> <span class="nav-text">MySQL为什么用B+树做索引？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-number">3.2.</span> <span class="nav-text">存储引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E5%92%8CMyISAM%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.2.1.</span> <span class="nav-text">InnoDB和MyISAM的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-number">3.3.</span> <span class="nav-text">读写分离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">3.4.</span> <span class="nav-text">分库分表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">3.4.1.</span> <span class="nav-text">为什么要分库分表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E5%88%87%E5%88%86"><span class="nav-number">3.4.2.</span> <span class="nav-text">水平切分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%82%E7%9B%B4%E5%88%87%E5%88%86"><span class="nav-number">3.4.3.</span> <span class="nav-text">垂直切分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E5%8F%AF%E8%83%BD%E5%B8%A6%E6%9D%A5%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">3.4.4.</span> <span class="nav-text">分库分表可能带来的问题？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%96%B9%E6%A1%88"><span class="nav-number">3.5.</span> <span class="nav-text">高可用方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">3.6.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D%E7%9A%84%EF%BC%9F"><span class="nav-number">3.6.1.</span> <span class="nav-text">mysql如何进行故障恢复的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-undo-log-%E5%92%8C-redo-log-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">3.6.2.</span> <span class="nav-text">简述 undo log 和 redo log 的作用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis"><span class="nav-number">4.</span> <span class="nav-text">Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.1.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">4.2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E5%85%B8"><span class="nav-number">4.2.1.</span> <span class="nav-text">字典</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88zset"><span class="nav-number">4.2.2.</span> <span class="nav-text">有序集合zset</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">4.3.</span> <span class="nav-text">Redis使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E5%92%8CMemcached%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.3.1.</span> <span class="nav-text">Redis和Memcached的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="nav-number">4.4.</span> <span class="nav-text">淘汰策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">4.5.</span> <span class="nav-text">持久化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1-1"><span class="nav-number">4.6.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.7.</span> <span class="nav-text">事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.7.1.</span> <span class="nav-text">文件事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.7.2.</span> <span class="nav-text">时间事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="nav-number">4.8.</span> <span class="nav-text">主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84%EF%BC%9A"><span class="nav-number">4.8.1.</span> <span class="nav-text">目的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">4.8.2.</span> <span class="nav-text">连接过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.9.</span> <span class="nav-text">集群模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.9.1.</span> <span class="nav-text">主从复制模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sentinel%EF%BC%88%E5%93%A8%E5%85%B5%EF%BC%89%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.9.2.</span> <span class="nav-text">Sentinel（哨兵）模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cluster-%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.9.3.</span> <span class="nav-text">Cluster 模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96-1"><span class="nav-number">4.10.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Redis-%E5%9C%A8%E5%8D%95%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%83%BD%E5%A6%82%E6%AD%A4%E5%BF%AB%EF%BC%9F"><span class="nav-number">4.10.1.</span> <span class="nav-text">为什么 Redis 在单线程下能如此快？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E7%83%AD%E7%82%B9-key-%E8%AE%BF%E9%97%AE"><span class="nav-number">4.10.2.</span> <span class="nav-text">Redis 如何处理热点 key 访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-Redis-%E5%93%A8%E5%85%B5%E7%9A%84%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B"><span class="nav-number">4.10.3.</span> <span class="nav-text">简述 Redis 哨兵的选举过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mongodb"><span class="nav-number">5.</span> <span class="nav-text">Mongodb</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMongoDB%EF%BC%9F"><span class="nav-number">5.0.1.</span> <span class="nav-text">什么是MongoDB？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MongoDB%E6%9C%89%E4%BB%80%E4%B9%88%E7%89%B9%E7%82%B9%EF%BC%9F"><span class="nav-number">5.0.2.</span> <span class="nav-text">MongoDB有什么特点？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MongoDB%E6%94%AF%E6%8C%81%E5%93%AA%E4%BA%9B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="nav-number">5.0.3.</span> <span class="nav-text">MongoDB支持哪些数据类型？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E4%B8%80%E4%B8%8BNoSql%EF%BC%8C%E5%AE%83%E4%B8%8ERDBMS%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">5.0.4.</span> <span class="nav-text">解释一下NoSql，它与RDBMS的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NoSQL%E6%9C%89%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="nav-number">5.0.5.</span> <span class="nav-text">NoSQL有哪些类型？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mongodb%E7%9A%84object-id%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%EF%BC%9F"><span class="nav-number">5.0.6.</span> <span class="nav-text">Mongodb的object_id如何理解？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MongoDB%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%8F%AF%E9%9D%A0%E6%80%A7%E7%9A%84%EF%BC%9F"><span class="nav-number">5.0.7.</span> <span class="nav-text">MongoDB如何保证可靠性的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E8%AF%B4MongoDB%E7%9A%84%E5%88%86%E7%89%87%EF%BC%9F"><span class="nav-number">5.0.8.</span> <span class="nav-text">说说MongoDB的分片？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#clickhouse"><span class="nav-number">6.</span> <span class="nav-text">clickhouse</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFclickhouse%EF%BC%9F"><span class="nav-number">6.0.1.</span> <span class="nav-text">什么是clickhouse？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%A5%BD%E5%A4%84%EF%BC%9F"><span class="nav-number">6.0.2.</span> <span class="nav-text">列式存储的好处？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clickhouse%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">6.0.3.</span> <span class="nav-text">clickhouse的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">6.0.4.</span> <span class="nav-text">行式存储和列式存储的区别？</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">数据库系统原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.1.</span> <span class="nav-text">关系数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">关系型数据库和非关系型数据库的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96%E5%92%8C%E4%B8%89%E8%8C%83%E5%BC%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">函数依赖和三范式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.2.</span> <span class="nav-text">事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1%E7%9A%84ACID%E7%89%B9%E6%80%A7"><span class="nav-number">1.2.1.</span> <span class="nav-text">什么是事务的ACID特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.</span> <span class="nav-text">并发一致性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">1.4.</span> <span class="nav-text">锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%94%81%E7%9A%84%E7%B1%BB%E5%9E%8B%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">数据库锁的类型有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%90%84%E8%87%AA%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.4.2.</span> <span class="nav-text">乐观锁和悲观锁的区别，以及各自的使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E7%B2%92%E5%BA%A6"><span class="nav-number">1.4.3.</span> <span class="nav-text">锁的粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.4.</span> <span class="nav-text">锁的算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">1.4.5.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.4.6.</span> <span class="nav-text">封锁协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">1.5.</span> <span class="nav-text">隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">1.5.1.</span> <span class="nav-text">四种隔离级别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">多版本并发控制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sql"><span class="nav-number">2.</span> <span class="nav-text">Sql</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#union%E5%92%8Cunion-all%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.0.1.</span> <span class="nav-text">union和union all的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-%E4%B8%AD-join-%E4%B8%8E-left-join-%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.0.2.</span> <span class="nav-text">MySQL 中 join 与 left join 的区别是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E4%BC%98%E5%8C%96%E7%9A%84%E6%96%B9%E6%A1%88%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%8C%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98%E5%B9%B6%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98%EF%BC%9F%EF%BC%9F"><span class="nav-number">2.0.3.</span> <span class="nav-text">SQL优化的方案有哪些，如何定位问题并解决问题？？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mysql"><span class="nav-number">3.</span> <span class="nav-text">Mysql</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.1.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%E5%92%8C%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">3.1.1.</span> <span class="nav-text">主键索引和辅助索引的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%E5%92%8C%E9%9D%9E%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">3.1.2.</span> <span class="nav-text">聚簇索引和非聚簇索引的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E7%B4%A2%E5%BC%95%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96%EF%BC%9F"><span class="nav-number">3.1.3.</span> <span class="nav-text">利用索引如何进行优化？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B-%E6%A0%91%E5%81%9A%E7%B4%A2%E5%BC%95%EF%BC%9F"><span class="nav-number">3.1.4.</span> <span class="nav-text">MySQL为什么用B+树做索引？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-number">3.2.</span> <span class="nav-text">存储引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E5%92%8CMyISAM%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.2.1.</span> <span class="nav-text">InnoDB和MyISAM的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-number">3.3.</span> <span class="nav-text">读写分离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">3.4.</span> <span class="nav-text">分库分表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">3.4.1.</span> <span class="nav-text">为什么要分库分表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E5%88%87%E5%88%86"><span class="nav-number">3.4.2.</span> <span class="nav-text">水平切分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%82%E7%9B%B4%E5%88%87%E5%88%86"><span class="nav-number">3.4.3.</span> <span class="nav-text">垂直切分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E5%8F%AF%E8%83%BD%E5%B8%A6%E6%9D%A5%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">3.4.4.</span> <span class="nav-text">分库分表可能带来的问题？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%96%B9%E6%A1%88"><span class="nav-number">3.5.</span> <span class="nav-text">高可用方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">3.6.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D%E7%9A%84%EF%BC%9F"><span class="nav-number">3.6.1.</span> <span class="nav-text">mysql如何进行故障恢复的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-undo-log-%E5%92%8C-redo-log-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">3.6.2.</span> <span class="nav-text">简述 undo log 和 redo log 的作用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis"><span class="nav-number">4.</span> <span class="nav-text">Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.1.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">4.2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E5%85%B8"><span class="nav-number">4.2.1.</span> <span class="nav-text">字典</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88zset"><span class="nav-number">4.2.2.</span> <span class="nav-text">有序集合zset</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">4.3.</span> <span class="nav-text">Redis使用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E5%92%8CMemcached%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.4.</span> <span class="nav-text">Redis和Memcached的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="nav-number">4.5.</span> <span class="nav-text">淘汰策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">4.6.</span> <span class="nav-text">持久化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1-1"><span class="nav-number">4.7.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.8.</span> <span class="nav-text">事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.8.1.</span> <span class="nav-text">文件事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.8.2.</span> <span class="nav-text">时间事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="nav-number">4.9.</span> <span class="nav-text">主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84"><span class="nav-number">4.9.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B"><span class="nav-number">4.9.2.</span> <span class="nav-text">连接过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.10.</span> <span class="nav-text">集群模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.10.1.</span> <span class="nav-text">主从复制模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sentinel%EF%BC%88%E5%93%A8%E5%85%B5%EF%BC%89%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.10.2.</span> <span class="nav-text">Sentinel（哨兵）模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cluster-%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.10.3.</span> <span class="nav-text">Cluster 模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96-1"><span class="nav-number">4.11.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Redis-%E5%9C%A8%E5%8D%95%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%83%BD%E5%A6%82%E6%AD%A4%E5%BF%AB%EF%BC%9F"><span class="nav-number">4.11.1.</span> <span class="nav-text">为什么 Redis 在单线程下能如此快？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E7%83%AD%E7%82%B9-key-%E8%AE%BF%E9%97%AE"><span class="nav-number">4.11.2.</span> <span class="nav-text">Redis 如何处理热点 key 访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-Redis-%E5%93%A8%E5%85%B5%E7%9A%84%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B"><span class="nav-number">4.11.3.</span> <span class="nav-text">简述 Redis 哨兵的选举过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mongodb"><span class="nav-number">5.</span> <span class="nav-text">Mongodb</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMongoDB%EF%BC%9F"><span class="nav-number">5.0.1.</span> <span class="nav-text">什么是MongoDB？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MongoDB%E6%9C%89%E4%BB%80%E4%B9%88%E7%89%B9%E7%82%B9%EF%BC%9F"><span class="nav-number">5.0.2.</span> <span class="nav-text">MongoDB有什么特点？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MongoDB%E6%94%AF%E6%8C%81%E5%93%AA%E4%BA%9B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="nav-number">5.0.3.</span> <span class="nav-text">MongoDB支持哪些数据类型？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E4%B8%80%E4%B8%8BNoSql%EF%BC%8C%E5%AE%83%E4%B8%8ERDBMS%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">5.0.4.</span> <span class="nav-text">解释一下NoSql，它与RDBMS的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NoSQL%E6%9C%89%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="nav-number">5.0.5.</span> <span class="nav-text">NoSQL有哪些类型？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mongodb%E7%9A%84object-id%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%EF%BC%9F"><span class="nav-number">5.0.6.</span> <span class="nav-text">Mongodb的object_id如何理解？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MongoDB%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%8F%AF%E9%9D%A0%E6%80%A7%E7%9A%84%EF%BC%9F"><span class="nav-number">5.0.7.</span> <span class="nav-text">MongoDB如何保证可靠性的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E8%AF%B4MongoDB%E7%9A%84%E5%88%86%E7%89%87%EF%BC%9F"><span class="nav-number">5.0.8.</span> <span class="nav-text">说说MongoDB的分片？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#clickhouse"><span class="nav-number">6.</span> <span class="nav-text">clickhouse</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFclickhouse%EF%BC%9F"><span class="nav-number">6.0.1.</span> <span class="nav-text">什么是clickhouse？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%A5%BD%E5%A4%84%EF%BC%9F"><span class="nav-number">6.0.2.</span> <span class="nav-text">列式存储的好处？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clickhouse%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">6.0.3.</span> <span class="nav-text">clickhouse的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E5%BC%8F%E5%AD%98%E5%82%A8%E5%92%8C%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">6.0.4.</span> <span class="nav-text">行式存储和列式存储的区别？</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="Benson"
-      src="../../../../images/avatar.jpg">
+      src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">Benson</p>
   <div class="site-description" itemprop="description">学习、记录、成长</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="../../../../archives/">
+          <a href="/archives/">
         
           <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-            <a href="../../../../categories/">
+            <a href="/categories/">
           
         <span class="site-state-item-count">1</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="../../../../tags/">
+            <a href="/tags/">
           
         <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
@@ -1154,7 +1165,7 @@
         <a href="https://github.com/li-benson" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;li-benson" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="../../../../mailto:benson_li@stu.pku.edu.cn" title="E-Mail → mailto:benson_li@stu.pku.edu.cn" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:benson_li@stu.pku.edu.cn" title="E-Mail → mailto:benson_li@stu.pku.edu.cn" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
       </span>
   </div>
 
@@ -1236,33 +1247,33 @@
   </div>
 
   
-  <script size="300" alpha="0.6" zIndex="-1" src="../../../../lib/canvas-ribbon/canvas-ribbon.js"></script>
-  <script src="../../../../lib/anime.min.js"></script>
-  <script src="../../../../lib/velocity/velocity.min.js"></script>
-  <script src="../../../../lib/velocity/velocity.ui.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
 
-<script src="../js/utils.js"></script>
+<script src="/js/utils.js"></script>
 
-<script src="../js/motion.js"></script>
-
-
-<script src="../js/schemes/pisces.js"></script>
+<script src="/js/motion.js"></script>
 
 
-<script src="../js/next-boot.js"></script>
+<script src="/js/schemes/pisces.js"></script>
 
 
-  <script defer src="../../../../lib/three/three.min.js"></script>
-    <script defer src="../../../../lib/three/three-waves.min.js"></script>
+<script src="/js/next-boot.js"></script>
 
 
-  
-
-
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
 
 
   
-<script src="../js/local-search.js"></script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -1311,7 +1322,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'li-benson.github.io',
       owner       : 'li-benson',
       admin       : ['li-benson'],
-      id          : 'd41d8cd98f00b204e9800998ecf8427e',
+      id          : 'b47b06d9cd77b76cb7efcc05f788cbfc',
         language: 'zh-CN',
       distractionFreeMode: false
     });
