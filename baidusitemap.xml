@@ -1,7 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://example.com/2022/03/19/interview-database/</loc>
+    <lastmod>2022-03-19</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/19/interview-network/</loc>
+    <lastmod>2022-03-19</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/18/interview-algorithm/</loc>
+    <lastmod>2022-03-18</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/18/interview-OperatorSystem/</loc>
+    <lastmod>2022-03-18</lastmod>
+  </url>
+  <url>
     <loc>http://example.com/2022/03/17/interview-Cpp/</loc>
+    <lastmod>2022-03-18</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/18/interview-security/</loc>
+    <lastmod>2022-03-18</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/18/interview-intelligence/</loc>
     <lastmod>2022-03-18</lastmod>
   </url>
 </urlset> 

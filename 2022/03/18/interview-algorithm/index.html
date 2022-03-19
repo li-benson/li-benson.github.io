@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../../images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../../images/favicon-16x16.png">
+
+<link rel="stylesheet" href="../../../../css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="../../../../lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文为准备面试时遇到的算法知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="interview_algorithm">
+<meta property="og:url" content="http://example.com/2022/03/18/interview-algorithm/index.html">
+<meta property="og:site_name" content="Benson&#39;s Blog">
+<meta property="og:description" content="本文为准备面试时遇到的算法知识">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/03/18/interview-algorithm/LIS-example.png">
+<meta property="article:published_time" content="2022-03-18T09:35:30.000Z">
+<meta property="article:modified_time" content="2022-03-18T16:22:42.224Z">
+<meta property="article:author" content="Benson">
+<meta property="article:tag" content="Interview">
+<meta property="article:tag" content="Algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/03/18/interview-algorithm/LIS-example.png">
+
+<link rel="canonical" href="http://example.com/2022/03/18/interview-algorithm/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>interview_algorithm | Benson's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Benson's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="../../../../index.html" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="../../../../about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="../../../../tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="../../../../categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="../../../../archives/" rel="section"><i class="fa fa-archiveca fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/li-benson" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/18/interview-algorithm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="../../../../images/avatar.jpg">
+      <meta itemprop="name" content="Benson">
+      <meta itemprop="description" content="学习、记录、成长">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          interview_algorithm
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-18 17:35:30" itemprop="dateCreated datePublished" datetime="2022-03-18T17:35:30+08:00">2022-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-19 00:22:42" itemprop="dateModified" datetime="2022-03-19T00:22:42+08:00">2022-03-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/Interview-Knowledge/" itemprop="url" rel="index"><span itemprop="name">Interview Knowledge</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+            <div class="post-description">本文为准备面试时遇到的算法知识</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="随机快速排序"><a href="#随机快速排序" class="headerlink" title="随机快速排序"></a>随机快速排序</h3><p>注意，获取阀分元素的索引时，使用下面的方式可能会遇到阀分元素和其它元素一样的情况，导致错误。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">int quickSortCore(vector&lt;int&gt;&amp; nums, int value, int left, int right)&#123;</span><br><span class="line">    while(left&lt;right)&#123;</span><br><span class="line">        if(nums[left]&lt;value)&#123;</span><br><span class="line">            left++;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if(nums[right]&gt;value)&#123;</span><br><span class="line">            right--;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if(nums[left] == nums[right])&#123;</span><br><span class="line">            return left</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            swap(nums[left],nums[right]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正确的写法 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">//快速排序</span><br><span class="line">public static void QuickSort(int[] a, int left, int right) &#123;</span><br><span class="line">    if (left &lt; right) &#123;</span><br><span class="line">        int p = partition(a, left, right);</span><br><span class="line">        QuickSort(a, left, p - 1);</span><br><span class="line">        QuickSort(a, p + 1, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//快速排序数组划分</span><br><span class="line">private static int partition(int[] a, int left, int right) &#123;</span><br><span class="line">    int x = a[right];</span><br><span class="line">    int p = left - 1;</span><br><span class="line">    for (int i = left; i &lt; right; i++) &#123;</span><br><span class="line">        if (a[i] &lt;= x) &#123;</span><br><span class="line">            p++;</span><br><span class="line">            swap(a, p, i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    swap(a, p+1, right);</span><br><span class="line">    return p+1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="俄罗斯套娃信封问题"><a href="#俄罗斯套娃信封问题" class="headerlink" title="俄罗斯套娃信封问题"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/russian-doll-envelopes/">俄罗斯套娃信封问题</a></h3><p>思路：第一维升序排序，第二维求最长严格递增子序列</p>
+<h3 id="单调栈和单调队列的应用"><a href="#单调栈和单调队列的应用" class="headerlink" title="单调栈和单调队列的应用"></a>单调栈和单调队列的应用</h3><ul>
+<li><p>单调栈 </p>
+<p>以O(n)时间复杂度求出某个数的左边或右边第一个比它大或小的元素。</p>
+</li>
+<li><p>单调队列 </p>
+<p>区间最小（最大）值问题</p>
+</li>
+</ul>
+<h3 id="求滑动窗口的最大值"><a href="#求滑动窗口的最大值" class="headerlink" title="求滑动窗口的最大值"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/sliding-window-maximum/">求滑动窗口的最大值</a></h3><h3 id="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"><a href="#10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？" class="headerlink" title="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"></a>10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？</h3><p>高效指的是：最小的时间复杂度和最小的空间复杂度 </p>
+<p>首先10亿个数如果全部保存在内存中，需要的空间大小为10^9*4B ≈ 4GB，内存中是无法完全存放的，所以这些数据首先应该都在外存上，我们分批次读进内存，得到每个批次的最大值，之后再比较所有批次的最大值即可。可以将1000份，每份的大小约为4MB。 </p>
+<p>如果是TopK，则在内存中维护一个小根堆，分批次读进内存之后，依次遍历与小根堆的顶元素进行比较即可。<br>如果是TopK词频问题，有如下的思路： </p>
+<ul>
+<li>先将数据集按照Hash方法分解成多个小数据集（保证两个数据集不会出现相同的单词） </li>
+<li>然后使用Trie树或者Hash统计每个小数据集中的query词频 </li>
+<li>之后用小顶堆求出每个数据集中出频率最高的前K个数 </li>
+<li>最后在所有top K中求出最终的top K。</li>
+</ul>
+<h3 id="rand7-实现rand10"><a href="#rand7-实现rand10" class="headerlink" title="rand7()实现rand10()"></a>rand7()实现rand10()</h3><p>  使用拒绝采样。 </p>
+<p>  我们可以调用两次 Rand7()，那么可以生成 [1,49] 之间的随机整数，我们只用到其中的前 40 个用来实现 Rand10()，而拒绝剩下的 9 个数 </p>
+<h3 id="rand65535-实现30万人中抽奖1万人"><a href="#rand65535-实现30万人中抽奖1万人" class="headerlink" title="rand65535()实现30万人中抽奖1万人"></a>rand65535()实现30万人中抽奖1万人</h3><p>同上</p>
+<h3 id="10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"><a href="#10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图" class="headerlink" title="10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"></a>10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图</h3><p>  定义一个24<em>60</em>60的数组，来存放每一秒的上线人数 遍历数据，根据上线时间和下线时间，获取数组范围，并将数组中间所有元素+1 时间复杂度：O(MN) </p>
+<h3 id="给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序"><a href="#给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序" class="headerlink" title="给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序"></a>给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序</h3><p>  40亿 * 4B ≈ 16G，利用位图法。</p>
+<h3 id="海量数据面试题"><a href="#海量数据面试题" class="headerlink" title="海量数据面试题"></a>海量数据面试题</h3><p>  <a target="_blank" rel="noopener" href="https://blog.csdn.net/v_JULY_v/article/details/6279498">https://blog.csdn.net/v_JULY_v/article/details/6279498</a> </p>
+<h3 id="最长递增子序列（要求时间复杂度为O-nlgn"><a href="#最长递增子序列（要求时间复杂度为O-nlgn" class="headerlink" title="最长递增子序列（要求时间复杂度为O(nlgn)"></a>最长递增子序列（要求时间复杂度为O(nlgn)</h3><p>一个简单的贪心，如果我们要使上升子序列尽可能的长，则我们需要让序列上升得尽可能慢，因此我们希望每次在上升子序列最后加上的那个数尽可能的小。 </p>
+<p>基于上面的贪心思路，我们维护一个数组 d[i] ，表示长度为 i 的最长上升子序列的末尾元素的最小值。我们依次遍历数组 nums 中的每个元素，并更新数组 d 和 len 的值。如果 nums[i] &gt; d[len] 则更新 len&#x3D;len+1，否则在 d[1…len]中找满足 d[i - 1] &lt; nums[j] &lt; d[i] 的下标 i，并更新d[i]&#x3D;nums[j]。<br>举例说明： </p>
+<p><img src="/2022/03/18/interview-algorithm/LIS-example.png"></p>
+
+    </div>
+
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:16px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>您的捐赠是对作者的最大鼓励</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="../../../../images/wechatpay.jpeg" alt="Benson 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="../../../../images/alipay.jpeg" alt="Benson 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="../../../../tags/Interview/" rel="tag"># Interview</a>
+              <a href="../../../../tags/Algorithm/" rel="tag"># Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="../../17/interview-Cpp/" rel="prev" title="interview_c++">
+      <i class="fa fa-chevron-left"></i> interview_c++
+    </a></div>
+      <div class="post-nav-item">
+    <a href="../interview-intelligence/" rel="next" title="interview_intelligence">
+      interview_intelligence <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">随机快速排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">俄罗斯套娃信封问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E8%B0%83%E6%A0%88%E5%92%8C%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">单调栈和单调队列的应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC"><span class="nav-number">4.</span> <span class="nav-text">求滑动窗口的最大值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10%E4%BA%BF%E4%B8%AA%E6%95%B0%E4%B8%AD%E5%A6%82%E4%BD%95%E9%AB%98%E6%95%88%E5%9C%B0%E6%89%BE%E5%88%B0%E6%9C%80%E5%A4%A7%E7%9A%84%E4%B8%80%E4%B8%AA%E6%95%B0%E3%80%81%E6%9C%80%E5%A4%A7%E7%9A%84%E7%AC%ACK%E4%B8%AA%E6%95%B0%E6%88%96%E8%80%85%E9%A2%91%E7%8E%87%E6%9C%80%E5%A4%A7%E7%9A%84%E7%AC%ACk%E4%B8%AA%E6%95%B0%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rand7-%E5%AE%9E%E7%8E%B0rand10"><span class="nav-number">6.</span> <span class="nav-text">rand7()实现rand10()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rand65535-%E5%AE%9E%E7%8E%B030%E4%B8%87%E4%BA%BA%E4%B8%AD%E6%8A%BD%E5%A5%961%E4%B8%87%E4%BA%BA"><span class="nav-number">7.</span> <span class="nav-text">rand65535()实现30万人中抽奖1万人</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10%E4%BA%BF%E6%9D%A1%E6%95%B0%E6%8D%AE%E5%8C%85%E6%8B%AC-id%EF%BC%8C%E4%B8%8A%E7%BA%BF%E6%97%B6%E9%97%B4%EF%BC%8C%E4%B8%8B%E7%BA%BF%E6%97%B6%E9%97%B4%EF%BC%8C%E8%AF%B7%E7%BB%98%E5%88%B6%E6%AF%8F%E4%B8%80%E7%A7%92%E5%9C%A8%E7%BA%BF%E4%BA%BA%E6%95%B0%E7%9A%84%E6%9B%B2%E7%BA%BF%E5%9B%BE"><span class="nav-number">8.</span> <span class="nav-text">10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%99%E5%AE%9A%E4%B8%80%E4%B8%AA%E5%8C%85%E5%90%AB-40-%E4%BA%BF%E4%B8%AA%E6%97%A0%E7%AC%A6%E5%8F%B7%E6%95%B4%E6%95%B0%E7%9A%84%E5%A4%A7%E5%9E%8B%E6%96%87%E4%BB%B6%EF%BC%8C%E4%BD%BF%E7%94%A8%E6%9C%80%E5%A4%9A-1G-%E5%86%85%E5%AD%98%EF%BC%8C%E5%AF%B9%E6%AD%A4%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E5%8E%BB%E9%87%8D%E6%8E%92%E5%BA%8F"><span class="nav-number">9.</span> <span class="nav-text">给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="nav-number">10.</span> <span class="nav-text">海量数据面试题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97%EF%BC%88%E8%A6%81%E6%B1%82%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E4%B8%BAO-nlgn"><span class="nav-number">11.</span> <span class="nav-text">最长递增子序列（要求时间复杂度为O(nlgn)</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Benson"
+      src="../../../../images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Benson</p>
+  <div class="site-description" itemprop="description">学习、记录、成长</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="../../../../archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="../../../../categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="../../../../tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/li-benson" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;li-benson" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="../../../../mailto:benson_li@stu.pku.edu.cn" title="E-Mail → mailto:benson_li@stu.pku.edu.cn" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Benson</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">52k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">47 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="../../../../lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="../../../../lib/anime.min.js"></script>
+  <script src="../../../../lib/velocity/velocity.min.js"></script>
+  <script src="../../../../lib/velocity/velocity.ui.min.js"></script>
+
+<script src="../js/utils.js"></script>
+
+<script src="../js/motion.js"></script>
+
+
+<script src="../js/schemes/pisces.js"></script>
+
+
+<script src="../js/next-boot.js"></script>
+
+
+  <script defer src="../../../../lib/three/three.min.js"></script>
+    <script defer src="../../../../lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="../js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '78e128a5e6832a2a453f',
+      clientSecret: '1c1f08f5d6455a4478e97ad5b09b0513fc5e7e0e',
+      repo        : 'li-benson.github.io',
+      owner       : 'li-benson',
+      admin       : ['li-benson'],
+      id          : 'd41d8cd98f00b204e9800998ecf8427e',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
