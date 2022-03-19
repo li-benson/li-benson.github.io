@@ -288,64 +288,6 @@
       </tags>
   </entry>
   <entry>
-    <title>interview_intelligence</title>
-    <url>/2022/03/18/interview-intelligence/</url>
-    <content><![CDATA[<h3 id="不均匀的硬币产生等概率"><a href="#不均匀的硬币产生等概率" class="headerlink" title="不均匀的硬币产生等概率"></a>不均匀的硬币产生等概率</h3><p>问题描述：有一枚不均匀的硬币，已知抛出此硬币后，正面向上的概率为 p（0 &lt; p &lt; 1）。请利用这枚硬币产生出概率相等的两个事件。 </p>
-<p>扔两次，先p后q为事件1，先q后p为事件2，二者概率相同。其余情况（pp、qq）则废弃。 </p>
-<h3 id="64-匹马，8-个赛道，找出前-4-匹马最少需要比几次？"><a href="#64-匹马，8-个赛道，找出前-4-匹马最少需要比几次？" class="headerlink" title="64 匹马，8 个赛道，找出前 4 匹马最少需要比几次？"></a>64 匹马，8 个赛道，找出前 4 匹马最少需要比几次？</h3><p><img src="/2022/03/18/interview-intelligence/horse_racing.png"></p>
-<p>最少10次选出前四，最多11次选出前四。 A2、A3、A4、B2、B3、C1、C2、D1八匹马跑一次，即：在剩下需要排名的马中，除了B1外，其它8匹马跑一次（1次）。 </p>
-<p>在这次比赛中，如果B2或者C1排名第一或者第二，那从该次比赛中取出前两个，和A1,B1，一起作为前4名。否则，将A2,A3,A4,B1再比赛一次（1次），取前三名和A1一起作为前4名。 </p>
-<h3 id="有2个8斤水桶-都装满水-还有一个3斤空水桶-如何将这16斤水平均分给4个人？（分配后不能再倒回）"><a href="#有2个8斤水桶-都装满水-还有一个3斤空水桶-如何将这16斤水平均分给4个人？（分配后不能再倒回）" class="headerlink" title="有2个8斤水桶,都装满水,还有一个3斤空水桶,如何将这16斤水平均分给4个人？（分配后不能再倒回）"></a>有2个8斤水桶,都装满水,还有一个3斤空水桶,如何将这16斤水平均分给4个人？（分配后不能再倒回）</h3><p>略</p>
-<h3 id="有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？"><a href="#有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？" class="headerlink" title="有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？"></a>有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？</h3><p>然后，取4个试管，第一个试管加入编号二进制形式中第一位（指最低位）是1的溶液，第二个试管加入编号第二位是1的溶液，其他2个试管分别加入编号第3,4位为1 的溶液。然后再将试剂A加入4个试管中，看那些试管发生了反应，就可以知道有毒溶液的编号了。</p>
-<p>例如：第1、2、4号试管内发生了反应，则我们知道是第7号溶液是有毒的。原因是7的二进制编码是1011，因此7号溶液是唯一加入了1、2、4号试管，而没有加入3号试管的溶液。</p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Intelligence</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>interview_security</title>
-    <url>/2022/03/18/interview-security/</url>
-    <content><![CDATA[<h3 id="AES和DES的区别？秘钥长度"><a href="#AES和DES的区别？秘钥长度" class="headerlink" title="AES和DES的区别？秘钥长度"></a>AES和DES的区别？秘钥长度</h3><ul>
-<li><p>DES </p>
-<p>DES是对称性加密里常见的一种，是一种使用秘钥加密的块算法。秘钥长度是64位（bit）， 超过位数秘钥被忽略。对称性加密一般会按照固定长度，把待加密字符串分成块。不足一整块或者刚好最后有特殊填充字符。 </p>
-<p><img src="/2022/03/18/interview-security/des.png"></p>
-<p>特点：分组比较短、秘钥太短、密码生命周期短、运算速度较慢。 </p>
-</li>
-<li><p>AES </p>
-<p>AES的区块长度固定为128 比特，密钥长度则可以是128，192或256比特； </p>
-<p>特点：运算速度快，安全性高，资源消耗少 </p>
-</li>
-<li><p>总结：AES是高级算法，它比DES更快，更安全。</p>
-</li>
-</ul>
-<h3 id="非对称加密和对称加密的区别？"><a href="#非对称加密和对称加密的区别？" class="headerlink" title="非对称加密和对称加密的区别？"></a>非对称加密和对称加密的区别？</h3><ul>
-<li><p>对称加密</p>
-<p>  指的就是加、解密使用的同是一串密钥，所以被称做对称加密。对称加密只有一个密钥作为私钥。常见的对称加密算法：DES，AES等。 </p>
-</li>
-<li><p>非对称加密</p>
-<p>  指的是加、解密使用不同的密钥，一把作为公开的公钥，另一把作为私钥。公钥加密的信息，只有私钥才能解密。 </p>
-</li>
-<li><p>总结</p>
-<p>  非对称加密更安全，但是效率比较慢，对称加密效率高，但是不安全。一般来说可以混合使用：将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通，例如https。</p>
-</li>
-</ul>
-<h3 id="RSA的原理？"><a href="#RSA的原理？" class="headerlink" title="RSA的原理？"></a>RSA的原理？</h3><p><a href="https://cjting.me/2020/03/13/rsa/">https://cjting.me/2020/03/13/rsa/</a> </p>
-<p>密钥越长，它就越难破解。一般来说，1024位的RSA密钥基本安全，2048位的密钥极其安全。 </p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Information Security</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>interview-OperatorSystem</title>
     <url>/2022/03/18/interview-OperatorSystem/</url>
     <content><![CDATA[<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="线程间同步方式"><a href="#线程间同步方式" class="headerlink" title="线程间同步方式"></a>线程间同步方式</h3><p>  互斥量、信号量、条件变量 </p>
@@ -650,6 +592,64 @@
       </tags>
   </entry>
   <entry>
+    <title>interview_intelligence</title>
+    <url>/2022/03/18/interview-intelligence/</url>
+    <content><![CDATA[<h3 id="不均匀的硬币产生等概率"><a href="#不均匀的硬币产生等概率" class="headerlink" title="不均匀的硬币产生等概率"></a>不均匀的硬币产生等概率</h3><p>问题描述：有一枚不均匀的硬币，已知抛出此硬币后，正面向上的概率为 p（0 &lt; p &lt; 1）。请利用这枚硬币产生出概率相等的两个事件。 </p>
+<p>扔两次，先p后q为事件1，先q后p为事件2，二者概率相同。其余情况（pp、qq）则废弃。 </p>
+<h3 id="64-匹马，8-个赛道，找出前-4-匹马最少需要比几次？"><a href="#64-匹马，8-个赛道，找出前-4-匹马最少需要比几次？" class="headerlink" title="64 匹马，8 个赛道，找出前 4 匹马最少需要比几次？"></a>64 匹马，8 个赛道，找出前 4 匹马最少需要比几次？</h3><p><img src="/2022/03/18/interview-intelligence/horse_racing.png"></p>
+<p>最少10次选出前四，最多11次选出前四。 A2、A3、A4、B2、B3、C1、C2、D1八匹马跑一次，即：在剩下需要排名的马中，除了B1外，其它8匹马跑一次（1次）。 </p>
+<p>在这次比赛中，如果B2或者C1排名第一或者第二，那从该次比赛中取出前两个，和A1,B1，一起作为前4名。否则，将A2,A3,A4,B1再比赛一次（1次），取前三名和A1一起作为前4名。 </p>
+<h3 id="有2个8斤水桶-都装满水-还有一个3斤空水桶-如何将这16斤水平均分给4个人？（分配后不能再倒回）"><a href="#有2个8斤水桶-都装满水-还有一个3斤空水桶-如何将这16斤水平均分给4个人？（分配后不能再倒回）" class="headerlink" title="有2个8斤水桶,都装满水,还有一个3斤空水桶,如何将这16斤水平均分给4个人？（分配后不能再倒回）"></a>有2个8斤水桶,都装满水,还有一个3斤空水桶,如何将这16斤水平均分给4个人？（分配后不能再倒回）</h3><p>略</p>
+<h3 id="有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？"><a href="#有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？" class="headerlink" title="有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？"></a>有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？</h3><p>然后，取4个试管，第一个试管加入编号二进制形式中第一位（指最低位）是1的溶液，第二个试管加入编号第二位是1的溶液，其他2个试管分别加入编号第3,4位为1 的溶液。然后再将试剂A加入4个试管中，看那些试管发生了反应，就可以知道有毒溶液的编号了。</p>
+<p>例如：第1、2、4号试管内发生了反应，则我们知道是第7号溶液是有毒的。原因是7的二进制编码是1011，因此7号溶液是唯一加入了1、2、4号试管，而没有加入3号试管的溶液。</p>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Intelligence</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview_security</title>
+    <url>/2022/03/18/interview-security/</url>
+    <content><![CDATA[<h3 id="AES和DES的区别？秘钥长度"><a href="#AES和DES的区别？秘钥长度" class="headerlink" title="AES和DES的区别？秘钥长度"></a>AES和DES的区别？秘钥长度</h3><ul>
+<li><p>DES </p>
+<p>DES是对称性加密里常见的一种，是一种使用秘钥加密的块算法。秘钥长度是64位（bit）， 超过位数秘钥被忽略。对称性加密一般会按照固定长度，把待加密字符串分成块。不足一整块或者刚好最后有特殊填充字符。 </p>
+<p><img src="/2022/03/18/interview-security/des.png"></p>
+<p>特点：分组比较短、秘钥太短、密码生命周期短、运算速度较慢。 </p>
+</li>
+<li><p>AES </p>
+<p>AES的区块长度固定为128 比特，密钥长度则可以是128，192或256比特； </p>
+<p>特点：运算速度快，安全性高，资源消耗少 </p>
+</li>
+<li><p>总结：AES是高级算法，它比DES更快，更安全。</p>
+</li>
+</ul>
+<h3 id="非对称加密和对称加密的区别？"><a href="#非对称加密和对称加密的区别？" class="headerlink" title="非对称加密和对称加密的区别？"></a>非对称加密和对称加密的区别？</h3><ul>
+<li><p>对称加密</p>
+<p>  指的就是加、解密使用的同是一串密钥，所以被称做对称加密。对称加密只有一个密钥作为私钥。常见的对称加密算法：DES，AES等。 </p>
+</li>
+<li><p>非对称加密</p>
+<p>  指的是加、解密使用不同的密钥，一把作为公开的公钥，另一把作为私钥。公钥加密的信息，只有私钥才能解密。 </p>
+</li>
+<li><p>总结</p>
+<p>  非对称加密更安全，但是效率比较慢，对称加密效率高，但是不安全。一般来说可以混合使用：将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通，例如https。</p>
+</li>
+</ul>
+<h3 id="RSA的原理？"><a href="#RSA的原理？" class="headerlink" title="RSA的原理？"></a>RSA的原理？</h3><p><a href="https://cjting.me/2020/03/13/rsa/">https://cjting.me/2020/03/13/rsa/</a> </p>
+<p>密钥越长，它就越难破解。一般来说，1024位的RSA密钥基本安全，2048位的密钥极其安全。 </p>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Information Security</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>interview-network</title>
     <url>/2022/03/19/interview-network/</url>
     <content><![CDATA[<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"><a href="#简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？" class="headerlink" title="简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"></a>简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？</h3><ul>
@@ -756,8 +756,8 @@
 </li>
 <li><p>长连接 </p>
 <p>  HTTP 1.1支持长连接（PersistentConnection）和请求流水线（Pipelining）处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。 </p>
-<p>  <img src="http_PersistentConnection.png"> </p>
-<p>  <img src="http_pipeline.png"></p>
+<p>  <img src="/http_PersistentConnection.png"> </p>
+<p>  <img src="/http_pipeline.png"></p>
 </li>
 </ul>
 </li>
@@ -768,7 +768,7 @@
 </li>
 <li><p>多路复用 </p>
 <p>  多路复用代替了 HTTP1.x 的序列和阻塞机制，所有的相同域名请求都通过同一个 TCP 连接并发完成。同一 Tcp 中可以发送多个请求，对端可以通过帧中的标识知道属于哪个请求。通过这个技术，可以避免 HTTP 旧版本中的队头阻塞问题，极大的提高传输性能。 </p>
-<p>  <img src="http2.0.png"></p>
+<p>  <img src="/http2.0.png"></p>
 </li>
 <li><p>header压缩     </p>
 <p>  HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。 </p>
@@ -787,10 +787,10 @@
 <li>无法证明报文的完整性，所以可能遭篡改 </li>
 <li>不验证通信方的身份，因此有可能遭遇伪装</li>
 </ul>
-<p>  <img src="https.png"></p>
+<p>  <img src="/https.png"></p>
 </li>
 <li><p>https的工作流程 </p>
-<p>  <img src="https_.png"></p>
+<p>  <img src="/https_.png"></p>
 </li>
 <li><p>https的缺点 </p>
 <ul>
@@ -828,7 +828,7 @@
 <li>404（Not Found）：服务器找不到资源时，或者服务器拒绝请求又不想说明理由时 </li>
 <li>503（Service Unavailable）：服务器停机维护时，主动用503响应请求或 nginx 设置限速，超过限速，会返回503</li>
 </ul>
-<h3 id="简述-HTTP-报文头部的组成结构"><a href="#简述-HTTP-报文头部的组成结构" class="headerlink" title="简述 HTTP 报文头部的组成结构"></a>简述 HTTP 报文头部的组成结构</h3><p><img src="http_message1.png"><br><img src="http_message2.png"><br><img src="http_message3.png"></p>
+<h3 id="简述-HTTP-报文头部的组成结构"><a href="#简述-HTTP-报文头部的组成结构" class="headerlink" title="简述 HTTP 报文头部的组成结构"></a>简述 HTTP 报文头部的组成结构</h3><p><img src="/http_message1.png"><br><img src="/http_message2.png"><br><img src="/http_message3.png"></p>
 <h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><h3 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h3><ul>
 <li><p>什么是IO多路复用？ </p>
 <p>IO指的就是读入&#x2F;写出数据的过程，和等待读入&#x2F;写出数据的过程。一旦拿到数据后就变成了数据操作了，就不是IO了。 </p>

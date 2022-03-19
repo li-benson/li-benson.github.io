@@ -83,6 +83,24 @@
   </url>
   
   <url>
+    <loc>http://example.com/baidu_verify_code-pZ5VfTlLqZ.html</loc>
+    
+    <lastmod>2022-03-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/googleb9c98dea37c8c1de.html</loc>
+    
+    <lastmod>2022-03-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://example.com/tags/index.html</loc>
     
     <lastmod>2022-03-18</lastmod>
@@ -124,14 +142,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/Intelligence/</loc>
-    <lastmod>2022-03-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.com/tags/Information-Security/</loc>
+    <loc>http://example.com/tags/Algorithm/</loc>
     <lastmod>2022-03-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -145,7 +156,14 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/Algorithm/</loc>
+    <loc>http://example.com/tags/Intelligence/</loc>
+    <lastmod>2022-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/Information-Security/</loc>
     <lastmod>2022-03-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

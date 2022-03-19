@@ -32,14 +32,14 @@
 <meta property="og:image" content="http://example.com/2022/03/19/interview-network/DNS.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-network/TCP_stick.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-network/network_protocol.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-network/http_PersistentConnection.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-network/http_pipeline.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-network/http2.0.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-network/https.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-network/https_.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-network/http_message1.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-network/http_message2.png">
-<meta property="og:image" content="http://example.com/2022/03/19/interview-network/http_message3.png">
+<meta property="og:image" content="http://example.com/http_PersistentConnection.png">
+<meta property="og:image" content="http://example.com/http_pipeline.png">
+<meta property="og:image" content="http://example.com/http2.0.png">
+<meta property="og:image" content="http://example.com/https.png">
+<meta property="og:image" content="http://example.com/https_.png">
+<meta property="og:image" content="http://example.com/http_message1.png">
+<meta property="og:image" content="http://example.com/http_message2.png">
+<meta property="og:image" content="http://example.com/http_message3.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-network/BIO.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-network/NIO.png">
 <meta property="og:image" content="http://example.com/2022/03/19/interview-network/epoll.png">
@@ -384,8 +384,8 @@
 </li>
 <li><p>长连接 </p>
 <p>  HTTP 1.1支持长连接（PersistentConnection）和请求流水线（Pipelining）处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。 </p>
-<p>  <img src="http_PersistentConnection.png"> </p>
-<p>  <img src="http_pipeline.png"></p>
+<p>  <img src="/http_PersistentConnection.png"> </p>
+<p>  <img src="/http_pipeline.png"></p>
 </li>
 </ul>
 </li>
@@ -396,7 +396,7 @@
 </li>
 <li><p>多路复用 </p>
 <p>  多路复用代替了 HTTP1.x 的序列和阻塞机制，所有的相同域名请求都通过同一个 TCP 连接并发完成。同一 Tcp 中可以发送多个请求，对端可以通过帧中的标识知道属于哪个请求。通过这个技术，可以避免 HTTP 旧版本中的队头阻塞问题，极大的提高传输性能。 </p>
-<p>  <img src="http2.0.png"></p>
+<p>  <img src="/http2.0.png"></p>
 </li>
 <li><p>header压缩     </p>
 <p>  HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。 </p>
@@ -415,10 +415,10 @@
 <li>无法证明报文的完整性，所以可能遭篡改 </li>
 <li>不验证通信方的身份，因此有可能遭遇伪装</li>
 </ul>
-<p>  <img src="https.png"></p>
+<p>  <img src="/https.png"></p>
 </li>
 <li><p>https的工作流程 </p>
-<p>  <img src="https_.png"></p>
+<p>  <img src="/https_.png"></p>
 </li>
 <li><p>https的缺点 </p>
 <ul>
@@ -456,7 +456,7 @@
 <li>404（Not Found）：服务器找不到资源时，或者服务器拒绝请求又不想说明理由时 </li>
 <li>503（Service Unavailable）：服务器停机维护时，主动用503响应请求或 nginx 设置限速，超过限速，会返回503</li>
 </ul>
-<h3 id="简述-HTTP-报文头部的组成结构"><a href="#简述-HTTP-报文头部的组成结构" class="headerlink" title="简述 HTTP 报文头部的组成结构"></a>简述 HTTP 报文头部的组成结构</h3><p><img src="http_message1.png"><br><img src="http_message2.png"><br><img src="http_message3.png"></p>
+<h3 id="简述-HTTP-报文头部的组成结构"><a href="#简述-HTTP-报文头部的组成结构" class="headerlink" title="简述 HTTP 报文头部的组成结构"></a>简述 HTTP 报文头部的组成结构</h3><p><img src="/http_message1.png"><br><img src="/http_message2.png"><br><img src="/http_message3.png"></p>
 <h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><h3 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h3><ul>
 <li><p>什么是IO多路复用？ </p>
 <p>IO指的就是读入&#x2F;写出数据的过程，和等待读入&#x2F;写出数据的过程。一旦拿到数据后就变成了数据操作了，就不是IO了。 </p>
