@@ -1,6 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>git基本用法</title>
+    <url>/2022/03/25/git/</url>
+    <content><![CDATA[<h1 id="Git的常用命令"><a href="#Git的常用命令" class="headerlink" title="Git的常用命令"></a>Git的常用命令</h1><h2 id="Git跳过使用暂存区域并提交文件更改"><a href="#Git跳过使用暂存区域并提交文件更改" class="headerlink" title="Git跳过使用暂存区域并提交文件更改"></a>Git跳过使用暂存区域并提交文件更改</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git commit -am &quot;message&quot;</span><br></pre></td></tr></table></figure>
+<p>其中，-a参数可以将所有已跟踪文件中的执行修改或删除操作的文件都提交到本地仓库，即使它们没有经过git add添加到暂存区。</p>
+<p>不过需要注意的是，新加的文件（即没有被git系统管理的文件）是不能被提交到本地仓库的。建议一般不要使用-a参数，正常的提交还是使用git add先将要改动的文件添加到暂存区，再用git commit 提交到本地版本库。</p>
+<p>如果确保没有新添加的文件，可以直接通过<code>-a</code>参数，省去了<code>git add</code>的操作。</p>
+<h2 id="重写最近的提交消息"><a href="#重写最近的提交消息" class="headerlink" title="重写最近的提交消息"></a>重写最近的提交消息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git commit --amend </span><br></pre></td></tr></table></figure>
+
+<p>输入上面的命令后会弹出vim框，编辑之后保存提交。</p>
+<p>或者直接使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git commit --amend -m &quot;message&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="回退之前的提交"><a href="#回退之前的提交" class="headerlink" title="回退之前的提交"></a>回退之前的提交</h2><p>我们用Git的时候有可能commit提交代码后，发现这一次commit的内容是有错误的，那么有两种处理方法：</p>
+<ul>
+<li>修改错误内容，再次commit一次</li>
+<li>使用git reset 命令撤销这一次错误的commit</li>
+</ul>
+<p>第一种方法虽然直接，但是会多一种commit记录。</p>
+<p><code>git reset</code> 命令用于回退版本，可以指定退回某一次提交的版本。其命令语法格式如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git reset [--soft | --mixed | --hard] [HEAD]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>--soft</code> 修改版本库，保留暂存区，保留工作区</li>
+<li><code>--mixed</code> 为默认，可以不用带该参数，用于重置暂存区的文件与上一次的提交(commit)保持一致，工作区文件内容保持不变。文件会回退到未 add（未暂存）的状态。修改版本库，修改暂存区，保留工作区</li>
+<li><code>--hard</code> 参数撤销工作区中所有未提交的修改内容，将暂存区与工作区都回到上一次版本，并删除之前的所有信息提交。注意：谨慎使用 <code>–hard</code> 参数，它会删除回退点之前的所有信息。修改版本库，修改暂存区，修改工作区。</li>
+</ul>
+<p>HEAD 说明：</p>
+<ul>
+<li><p>HEAD 表示当前版本</p>
+</li>
+<li><p>HEAD^ 上一个版本</p>
+</li>
+<li><p>HEAD^^ 上上一个版本</p>
+</li>
+<li><p>以此类推</p>
+</li>
+</ul>
+<p>可以使用 ～数字表示</p>
+<ul>
+<li><p>HEAD~0 表示当前版本</p>
+</li>
+<li><p>HEAD~1 上一个版本</p>
+</li>
+<li><p>HEAD^2 上上一个版本</p>
+</li>
+<li><p>以此类推</p>
+</li>
+</ul>
+<h2 id="缓存stash的使用"><a href="#缓存stash的使用" class="headerlink" title="缓存stash的使用"></a>缓存stash的使用</h2><p>如果我们不想提交完成一半或者不完善的代码，但是却不得不去修改一个紧急Bug，那么使用<code>git stash</code>就可以将你当前未提交到本地（和服务器）的代码推入到Git的栈中。等到修完Bug，提交到服务器上后，再使用<code>git stash apply</code>将以前一半的工作应用回来。这样会避免log上会有多余不必要的记录。</p>
+<h3 id="stash当前修改"><a href="#stash当前修改" class="headerlink" title="stash当前修改"></a>stash当前修改</h3><p><code>git stash</code> 会把所有未提交的修改（包括暂存的和非暂存的）都保存起来，用于后续恢复当前工作目录。补充：stash是本地的，不会通过git push命令上传到git server上。</p>
+<h3 id="重新应用缓存的stash"><a href="#重新应用缓存的stash" class="headerlink" title="重新应用缓存的stash"></a>重新应用缓存的stash</h3><p><code>git stash pop</code> 命令恢复之前缓存的工作目录，这个指令将缓存堆栈中的第一个stash删除，并将对应修改应用到当前的工作目录下。</p>
+<p>你也可以使用<code>git stash apply</code>命令，将缓存堆栈中的stash多次应用到工作目录中，但并不删除stash拷贝。</p>
+<h3 id="查看现有stash"><a href="#查看现有stash" class="headerlink" title="查看现有stash"></a>查看现有stash</h3><p>可以使用<code>git stash list</code>命令，查看所有的stash情况。</p>
+<h3 id="移除stash"><a href="#移除stash" class="headerlink" title="移除stash"></a>移除stash</h3><p>可以使用<code>git stash drop</code>命令，后面可以跟着stash名字。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ git stash list</span><br><span class="line">stash@&#123;0&#125;: WIP on master: 049d078 added the index file</span><br><span class="line">stash@&#123;1&#125;: WIP on master: c264051 Revert &quot;added file_size&quot;</span><br><span class="line">stash@&#123;2&#125;: WIP on master: 21d80a5 added number to log</span><br><span class="line"></span><br><span class="line">$ git stash drop stash@&#123;0&#125;</span><br><span class="line">Dropped stash@&#123;0&#125; (364e91f3f268f0900bc3ee613f9f733e82aaed43)</span><br></pre></td></tr></table></figure>
+<p>或者使用<code>git stash clear</code>命令，删除所有缓存的stash。</p>
+<h3 id="从stash创建分支"><a href="#从stash创建分支" class="headerlink" title="从stash创建分支"></a>从stash创建分支</h3><p>运行<code>git stash branch</code>，这会创建一个新的分支，检出你储藏工作时的所处的提交，重新应用你的工作，如果成功，将会丢弃储藏。</p>
+<p>这是一个很棒的捷径来恢复储藏的工作然后在新的分支上继续当时的工作。</p>
+<h2 id="移除文件"><a href="#移除文件" class="headerlink" title="移除文件"></a>移除文件</h2><p><code>git rm</code> 命令用于删除文件。</p>
+<ul>
+<li>如果删除之前修改过并且已经放到暂存区域的话，则必须要用强制删除选项 <code>-f</code>。</li>
+<li>如果想把文件从暂存区域移除，但仍然希望保留在当前工作目录中，换句话说，仅是从跟踪清单中删除，使用 <code>--cached</code> 选项即可</li>
+<li>可以递归删除，即如果后面跟的是一个目录做为参数，则会递归删除整个目录中的所有子目录和文件：  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git rm –r * </span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="查看历史提交记录"><a href="#查看历史提交记录" class="headerlink" title="查看历史提交记录"></a>查看历史提交记录</h2><p><code>git log</code> 命令可用于查看历史提交记录，支持多种不同格式的查看</p>
+<ul>
+<li><p>查看最近n次的提交历史: <code>git log -n</code></p>
+</li>
+<li><p>显示每次提交所引入的差异: <code>git log -p</code></p>
+</li>
+<li><p>统计总结: <code>git log stat</code></p>
+</li>
+<li><p>显示提交说明中包含指定字符串的提交: <code>git log --grep &#123;字符串&#125;</code></p>
+</li>
+<li><p>格式化查看: <code>git log --pretty=format:&quot;%h&quot;</code></p>
+<p>  这里为常用的一些格式化占位符：</p>
+<ul>
+<li><p><code>%H</code>: commit hash</p>
+</li>
+<li><p><code>%h</code>: 缩短的commit hash</p>
+</li>
+<li><p><code>%T</code>: tree hash</p>
+</li>
+<li><p><code>%t</code>: 缩短的 tree hash</p>
+</li>
+<li><p><code>%an</code>: 作者名字</p>
+</li>
+<li><p><code>%ae</code>: 作者邮箱</p>
+</li>
+<li><p><code>%cd</code>: 提交日期 (–date&#x3D; 制定的格式)</p>
+</li>
+<li><p><code>%s</code>: commit信息标题</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>“</p>
+<h2 id="打标签"><a href="#打标签" class="headerlink" title="打标签"></a>打标签</h2><p>Git 可以给仓库历史中的某一个提交打上标签，以示重要。 比较有代表性的是人们会使用这个功能来标记发布结点（ v1.0 、 v2.0 等等）</p>
+<h3 id="列出标签"><a href="#列出标签" class="headerlink" title="列出标签"></a>列出标签</h3><p>在 Git 中列出已有的标签非常简单，只需要输入 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git tag 或者 git tag -l</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建标签"><a href="#创建标签" class="headerlink" title="创建标签"></a>创建标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git tag &#123;tagName&#125;</span><br></pre></td></tr></table></figure>
+<p>有一些选项:</p>
+<ul>
+<li><code>-a</code> 表示创建附注信息</li>
+<li><code>-m</code> 表示为附注标签指定一条信息</li>
+</ul>
+<h3 id="查看标签提交信息"><a href="#查看标签提交信息" class="headerlink" title="查看标签提交信息"></a>查看标签提交信息</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git show &#123;tagName&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除标签"><a href="#删除标签" class="headerlink" title="删除标签"></a>删除标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git tag -d &#123;tagName&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Dev Tools</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>interview_c++</title>
     <url>/2022/03/17/interview-Cpp/</url>
     <content><![CDATA[<h3 id="简述-vector-的实现原理以及扩容机制"><a href="#简述-vector-的实现原理以及扩容机制" class="headerlink" title="简述 vector 的实现原理以及扩容机制"></a>简述 vector 的实现原理以及扩容机制</h3><p>vector 是最常用的容器之一，其底层所采用的数据结构就只是一段连续的线性内存空间。</p>
@@ -744,1080 +863,6 @@
       </tags>
   </entry>
   <entry>
-    <title>interview_algorithm</title>
-    <url>/2022/03/18/interview-algorithm/</url>
-    <content><![CDATA[<h3 id="随机快速排序"><a href="#随机快速排序" class="headerlink" title="随机快速排序"></a>随机快速排序</h3><p>注意，获取阀分元素的索引时，使用下面的方式可能会遇到阀分元素和其它元素一样的情况，导致错误。 </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int quickSortCore(vector&lt;int&gt;&amp; nums, int value, int left, int right)&#123;</span><br><span class="line">    while(left&lt;right)&#123;</span><br><span class="line">        if(nums[left]&lt;value)&#123;</span><br><span class="line">            left++;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if(nums[right]&gt;value)&#123;</span><br><span class="line">            right--;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if(nums[left] == nums[right])&#123;</span><br><span class="line">            return left</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            swap(nums[left],nums[right]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>正确的写法 </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//快速排序</span><br><span class="line">public static void QuickSort(int[] a, int left, int right) &#123;</span><br><span class="line">    if (left &lt; right) &#123;</span><br><span class="line">        int p = partition(a, left, right);</span><br><span class="line">        QuickSort(a, left, p - 1);</span><br><span class="line">        QuickSort(a, p + 1, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//快速排序数组划分</span><br><span class="line">private static int partition(int[] a, int left, int right) &#123;</span><br><span class="line">    int x = a[right];</span><br><span class="line">    int p = left - 1;</span><br><span class="line">    for (int i = left; i &lt; right; i++) &#123;</span><br><span class="line">        if (a[i] &lt;= x) &#123;</span><br><span class="line">            p++;</span><br><span class="line">            swap(a, p, i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    swap(a, p+1, right);</span><br><span class="line">    return p+1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="俄罗斯套娃信封问题"><a href="#俄罗斯套娃信封问题" class="headerlink" title="俄罗斯套娃信封问题"></a><a href="https://leetcode-cn.com/problems/russian-doll-envelopes/">俄罗斯套娃信封问题</a></h3><p>思路：第一维升序排序，第二维求最长严格递增子序列</p>
-<h3 id="单调栈和单调队列的应用"><a href="#单调栈和单调队列的应用" class="headerlink" title="单调栈和单调队列的应用"></a>单调栈和单调队列的应用</h3><ul>
-<li><p>单调栈 </p>
-<p>以O(n)时间复杂度求出某个数的左边或右边第一个比它大或小的元素。</p>
-</li>
-<li><p>单调队列 </p>
-<p>区间最小（最大）值问题</p>
-</li>
-</ul>
-<h3 id="求滑动窗口的最大值"><a href="#求滑动窗口的最大值" class="headerlink" title="求滑动窗口的最大值"></a><a href="https://leetcode-cn.com/problems/sliding-window-maximum/">求滑动窗口的最大值</a></h3><h3 id="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"><a href="#10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？" class="headerlink" title="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"></a>10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？</h3><p>高效指的是：最小的时间复杂度和最小的空间复杂度 </p>
-<p>首先10亿个数如果全部保存在内存中，需要的空间大小为10^9*4B ≈ 4GB，内存中是无法完全存放的，所以这些数据首先应该都在外存上，我们分批次读进内存，得到每个批次的最大值，之后再比较所有批次的最大值即可。可以将1000份，每份的大小约为4MB。 </p>
-<p>如果是TopK，则在内存中维护一个小根堆，分批次读进内存之后，依次遍历与小根堆的顶元素进行比较即可。<br>如果是TopK词频问题，有如下的思路： </p>
-<ul>
-<li>先将数据集按照Hash方法分解成多个小数据集（保证两个数据集不会出现相同的单词） </li>
-<li>然后使用Trie树或者Hash统计每个小数据集中的query词频 </li>
-<li>之后用小顶堆求出每个数据集中出频率最高的前K个数 </li>
-<li>最后在所有top K中求出最终的top K。</li>
-</ul>
-<h3 id="rand7-实现rand10"><a href="#rand7-实现rand10" class="headerlink" title="rand7()实现rand10()"></a>rand7()实现rand10()</h3><p>  使用拒绝采样。 </p>
-<p>  我们可以调用两次 Rand7()，那么可以生成 [1,49] 之间的随机整数，我们只用到其中的前 40 个用来实现 Rand10()，而拒绝剩下的 9 个数 </p>
-<h3 id="rand65535-实现30万人中抽奖1万人"><a href="#rand65535-实现30万人中抽奖1万人" class="headerlink" title="rand65535()实现30万人中抽奖1万人"></a>rand65535()实现30万人中抽奖1万人</h3><p>同上</p>
-<h3 id="10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"><a href="#10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图" class="headerlink" title="10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"></a>10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图</h3><p>  定义一个24<em>60</em>60的数组，来存放每一秒的上线人数 遍历数据，根据上线时间和下线时间，获取数组范围，并将数组中间所有元素+1 时间复杂度：O(MN) </p>
-<h3 id="给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序"><a href="#给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序" class="headerlink" title="给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序"></a>给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序</h3><p>  40亿 * 4B ≈ 16G，利用位图法。</p>
-<h3 id="海量数据面试题"><a href="#海量数据面试题" class="headerlink" title="海量数据面试题"></a>海量数据面试题</h3><p>  <a href="https://blog.csdn.net/v_JULY_v/article/details/6279498">https://blog.csdn.net/v_JULY_v/article/details/6279498</a> </p>
-<h3 id="最长递增子序列（要求时间复杂度为O-nlgn"><a href="#最长递增子序列（要求时间复杂度为O-nlgn" class="headerlink" title="最长递增子序列（要求时间复杂度为O(nlgn)"></a>最长递增子序列（要求时间复杂度为O(nlgn)</h3><p>一个简单的贪心，如果我们要使上升子序列尽可能的长，则我们需要让序列上升得尽可能慢，因此我们希望每次在上升子序列最后加上的那个数尽可能的小。 </p>
-<p>基于上面的贪心思路，我们维护一个数组 d[i] ，表示长度为 i 的最长上升子序列的末尾元素的最小值。我们依次遍历数组 nums 中的每个元素，并更新数组 d 和 len 的值。如果 nums[i] &gt; d[len] 则更新 len&#x3D;len+1，否则在 d[1…len]中找满足 d[i - 1] &lt; nums[j] &lt; d[i] 的下标 i，并更新d[i]&#x3D;nums[j]。<br>举例说明： </p>
-<p><img src="/2022/03/18/interview-algorithm/LIS-example.png"></p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Algorithm</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>interview-database</title>
-    <url>/2022/03/19/interview-database/</url>
-    <content><![CDATA[<h1 id="数据库系统原理"><a href="#数据库系统原理" class="headerlink" title="数据库系统原理"></a>数据库系统原理</h1><h2 id="关系数据库"><a href="#关系数据库" class="headerlink" title="关系数据库"></a>关系数据库</h2><h3 id="关系型数据库和非关系型数据库的区别？"><a href="#关系型数据库和非关系型数据库的区别？" class="headerlink" title="关系型数据库和非关系型数据库的区别？"></a>关系型数据库和非关系型数据库的区别？</h3><ul>
-<li>关系型数据库<br>是指采用了关系模型来组织数据的数据库，简单来说，关系模式就是二维表格模型。关系型数据库的最大优点就是事务的一致性，这个特性，使得关系型数据库中可以适用于一切要求一致性比较高的系统中。 </li>
-<li>非关系型数据库<br>指那些非关系型的、分布式的，且一般不保证ACID的数据存储系统</li>
-</ul>
-<h3 id="函数依赖和三范式"><a href="#函数依赖和三范式" class="headerlink" title="函数依赖和三范式"></a>函数依赖和三范式</h3><ul>
-<li><p>函数依赖</p>
-<ul>
-<li>记 A-&gt;B 表示 A 函数决定 B，也可以说 B 函数依赖于 A。 </li>
-<li>对于 A-&gt;B，如果能找到 A 的真子集 A’，使得 A’-&gt; B，那么 A-&gt;B 就是部分函数依赖，否则就是完全函数依赖。 </li>
-<li>对于 A-&gt;B，B-&gt;C，则 A-&gt;C 是一个传递函数依赖</li>
-</ul>
-</li>
-<li><p>三范式</p>
-<ul>
-<li>第一范式<br>  每个属性（表的一列）都不可再分，比如某个字段是json数据，就不符合第一范式。 </li>
-<li>第二范式<br>  在1NF的基础上，非主属性必须完全依赖于候选码（在1NF基础上消除非主属性对主码的部分函数依赖）举例如下：虽然成绩完全依赖于学号和课程号，但是姓名部分函数依赖于（学号+课程号），即只需要学号即可确定姓名。</li>
-</ul>
-<p>  <img src="/2022/03/19/interview-database/2NF.png"></p>
-<ul>
-<li>第三范式<br>  在2NF基础上消除传递依赖。比如，课程号-&gt;授课老师-&gt;教师姓名，所以教师姓名传递依赖课程号。</li>
-</ul>
-<p>  <img src="/2022/03/19/interview-database/3NF.png"></p>
-</li>
-</ul>
-<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="什么是事务的ACID特性"><a href="#什么是事务的ACID特性" class="headerlink" title="什么是事务的ACID特性"></a>什么是事务的ACID特性</h3><p>略</p>
-<h2 id="并发一致性问题"><a href="#并发一致性问题" class="headerlink" title="并发一致性问题"></a>并发一致性问题</h2><ul>
-<li><p>丢失修改 </p>
-</li>
-<li><p>脏读 </p>
-</li>
-<li><p>不可重复读 </p>
-</li>
-<li><p>幻读 </p>
-<ul>
-<li><p>概念 </p>
-<p>是指在同一个事务中，前后两次查询相同范围时，得到的结果不一致，后一次查询到新插入的行。</p>
-<p><img src="/2022/03/19/interview-database/Phantom_read.png"> </p>
-<p>对于 <code>select * from t where d=5 for update;</code> 来说，锁住d&#x3D;5对应的行或者锁住扫描过程中所有的行都是没有用的, 因为插入并不影响之前行的操作，所以 InnoDB 为了解决幻读，引入了新的锁 - 间隙锁。 </p>
-<p>当再执行select * from t where d&#x3D;5 for update;时，不但会将全表的数据行锁住，还会将间隙锁住。由于间隙锁解决的是幻读插入的问题，所以间隙锁仅仅对插入操作本身互斥，不同事务之间的间隙锁并不互斥。 </p>
-</li>
-<li><p>缺点</p>
-<p>间隙锁的引入导致同样的语句锁住更大的范围，降低了并发度。</p>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><h3 id="数据库锁的类型有哪些？"><a href="#数据库锁的类型有哪些？" class="headerlink" title="数据库锁的类型有哪些？"></a>数据库锁的类型有哪些？</h3><ul>
-<li>共享锁：允许事务对一条行数据进行读取，其他事务只能加读锁，即并行读。 </li>
-<li>排他锁：允许事务对一条行数据进行删除或更新，其他事务不能加任何锁，即无法读和写.</li>
-</ul>
-<p>  共享锁之间是兼容的，而互斥锁与其他任意锁都不兼容，因为可以并行读，但是只能串行写。 </p>
-<p>  <img src="/2022/03/19/interview-database/lock.png"></p>
-<h3 id="乐观锁和悲观锁的区别，以及各自的使用场景"><a href="#乐观锁和悲观锁的区别，以及各自的使用场景" class="headerlink" title="乐观锁和悲观锁的区别，以及各自的使用场景"></a>乐观锁和悲观锁的区别，以及各自的使用场景</h3><ul>
-<li><p>悲观锁 </p>
-<p>总是假设最坏的情况，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会阻塞直到它拿到锁。 </p>
-<p>多写的情况，一般会经常产生冲突，这就会导致上层应用会不断的进行retry，这样反倒是降低了性能，所以一般多写的场景下用悲观锁就比较合适。 </p>
-</li>
-<li><p>乐观锁 </p>
-<ul>
-<li><p>理解 </p>
-<p>总是假设最好的情况，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号机制和CAS算法实现。 </p>
-</li>
-<li><p>场景 </p>
-<p>乐观锁适用于写比较少的情况下（多读场景），即冲突真的很少发生的时候，这样可以省去了锁的开销，加大了系统的整个吞吐量。 </p>
-</li>
-<li><p>乐观锁常见的两种实现方式： </p>
-<ul>
-<li><p>版本号机制 </p>
-<p>   一般是在数据表中加上一个数据版本号version字段，表示数据被修改的次数，当数据被修改时，version值会加一。当线程A要更新数据值时，在读取数据的同时也会读取version值，在提交更新时，若刚才读取到的version值为当前数据库中的version值相等时才更新，否则重试更新操作，直到更新成功。</p>
-<p>   假设数据库中账户信息表中有一个 version 字段，当前值为 1 ；而当前账户余额字段（ balance ）为 $100 。 </p>
-<ol>
-<li>操作员 A 此时将其读出（ version&#x3D;1 ），并从其账户余额中扣除 $50（ $100-$50 ）。 </li>
-<li>在操作员 A 操作的过程中，操作员B 也读入此用户信息（ version&#x3D;1 ），并从其账户余额中扣除 $20 （ $100-$20 ）。 </li>
-<li>操作员 A 完成了修改工作，将数据版本号加一（ version&#x3D;2 ），连同帐户扣除后余额（ balance&#x3D;$50 ），提交至数据库更新，此时由于提交数据版本大于数据库记录当前版本，数据被更新，数据库记录 version 更新为 2 。 </li>
-<li>操作员 B 完成了操作，也将版本号加一（ version&#x3D;2 ）试图向数据库提交数据（ balance&#x3D;$80 ），但此时比对数据库记录版本时发现，操作员 B 提交的数据版本号为 2 ，数据库记录当前版本也为 2 ，不满足 “ 提交版本必须大于记录当前版本才能执行更新 “ 的乐观锁策略，因此，操作员 B 的提交被驳回。<br>   这样，就避免了操作员 B 用基于 version&#x3D;1 的旧数据修改的结果覆盖操作员A 的操作结果的可能。</li>
-</ol>
-</li>
-<li><p>CAS </p>
-<p>compare and swap（比较与交换），是一种有名的无锁算法。无锁编程，即不使用锁的情况下实现多线程之间的变量同步，也就是在没有线程被阻塞的情况下实现变量的同步，所以也叫非阻塞同步（Non-blocking Synchronization）。CAS算法涉及到三个操作数 </p>
-<ul>
-<li>需要读写的内存值 V </li>
-<li>进行比较的值 A </li>
-<li>拟写入的新值 B</li>
-</ul>
-<p>当且仅当 V 的值等于 A时，CAS通过原子方式用新值B来更新V的值，否则不会执行任何操作（比较和替换是一个原子操作）。一般情况下是一个自旋操作，即不断的重试。</p>
-</li>
-</ul>
-</li>
-<li><p>乐观锁的缺点： </p>
-<ul>
-<li><p>ABA问题 </p>
-<p>如果一个变量V初次读取的时候是A值，并且在准备赋值的时候检查到它仍然是A值，那我们就能说明它的值没有被其他线程修改过了吗？很明显是不能的，因为在这段时间它的值可能被改为其他值，然后又改回A，那CAS操作就会误认为它从来没有被修改过。这个问题被称为CAS操作的  ABA 问题。 </p>
-</li>
-<li><p>循环时间大 </p>
-<p>自旋CAS（也就是不成功就一直循环执行直到成功）如果长时间不成功，会给CPU带来非常大的执行开销。 </p>
-</li>
-<li><p>只能保证一个共享变量的原子操作 </p>
-<p>CAS 只对单个共享变量有效，当操作涉及跨多个共享变量时 CAS 无效。</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="锁的粒度"><a href="#锁的粒度" class="headerlink" title="锁的粒度"></a>锁的粒度</h3><ul>
-<li><p>行锁：例如，共享锁和排他锁 </p>
-</li>
-<li><p>表锁：例如，意向锁 </p>
-<p>意向锁分为两种： </p>
-<ul>
-<li>意向共享锁：事务想要在获得表中某些记录的共享锁，需要在表上先加意向共享锁； </li>
-<li>意向互斥锁：事务想要在获得表中某些记录的互斥锁，需要在表上先加意向互斥锁；</li>
-</ul>
-<p>为什么需要意向锁？ </p>
-<p>如果没有意向锁，当已经有人使用行锁对表中的某一行进行修改时，如果另外一个请求要对全表进行修改，那么就需要对所有的行是否被锁定进行扫描，在这种情况下，效率是非常低的；不过，在引入意向锁之后，当有人使用行锁对表中的某一行进行修改之前，会先为表添加意向互斥锁（IX），再为行记录添加互斥锁（X），在这时如果有人尝试对全表进行修改就不需要判断表中的每一行数据是否被加锁了，只需要通过等待意向互斥锁被释放就可以了。 </p>
-<p><img src="/2022/03/19/interview-database/ILock.png"></p>
-</li>
-</ul>
-<h3 id="锁的算法"><a href="#锁的算法" class="headerlink" title="锁的算法"></a>锁的算法</h3><ul>
-<li><p>Record Lock </p>
-<p>例如：<code>SELECT * FROM users WHERE id = 1</code> 时，如果id为主键，则会锁住对应的记录，否则全变扫描时会锁住整个表。 </p>
-</li>
-<li><p>Gap Lock </p>
-<p>间隙锁是对索引记录中的一段连续区域的锁。当使用类似 <code>SELECT * FROM users WHERE id BETWEEN 10 AND 20 FOR UPDATE;</code> 的 SQL 语句时，就会阻止其他事务向表中插入 id &#x3D; 15 的记录，因为整个范围都被间隙锁锁定了。 </p>
-</li>
-<li><p>Next-Key Lock </p>
-<p>Next-Key 锁相比前两者就稍微有一些复杂，它是记录锁和记录前的间隙锁的结合。</p>
-<p><img src="/2022/03/19/interview-database/next_lock.png"> </p>
-<p>当我们更新一条记录，比如 <code>SELECT * FROM users WHERE age = 30 FOR UPDATE;</code>，InnoDB 不仅会在范围 (21, 30] 上加 Next-Key 锁，还会在这条记录后面的范围 (30, 40] 加间隙锁，所以插入 (21, 40] 范围内的记录都会被锁定。</p>
-</li>
-</ul>
-<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>  InnoDB 中实现的锁是悲观的，那么不同事务之间就可能会互相等待对方释放锁造成死锁，最终导致事务发生错误；<br>  <img src="/2022/03/19/interview-database/dead_lock.png"></p>
-<h3 id="封锁协议"><a href="#封锁协议" class="headerlink" title="封锁协议"></a>封锁协议</h3><p>  运用X锁和S锁对数据对象加锁时，还需要约定一些规则 ，例如何时申请X锁或S锁、持锁时间、何时释放 </p>
-<ul>
-<li><p>三级封锁协议</p>
-<ul>
-<li><p>一级封锁协议 </p>
-<p>事务 T 要修改数据 A 时必须加 X 锁，直到 T 结束才释放锁。 </p>
-<p>可以解决丢失修改问题，因为不能同时有两个事务对同一个数据进行修改，那么事务的修改就不会被覆盖。它不能保证可重复读和不读“脏”数据。 </p>
-</li>
-<li><p>二级封锁协议 </p>
-<p>在一级的基础上，要求读取数据 A 时必须加 S 锁，读取完马上释放 S 锁。还可以进一步防止读“脏”数据 </p>
-</li>
-<li><p>三级封锁协议 </p>
-<p>在二级的基础上，要求读取数据 A 时必须加 S 锁，直到事务结束了才能释放 S 锁。可以解决不可重复读的问题</p>
-</li>
-</ul>
-</li>
-<li><p>两段锁协议</p>
-<p>所有的事务必须分两个阶段对数据项加锁和解锁。</p>
-<p>可以证明：若并发执行的所有事务均遵守两段锁协议，则对这些事务的任何并发调度策略都是可串行化的。 </p>
-<p>可串行化：多个事务的并发执行是正确的，当且仅当其结果与某一次序串行地执行它们时的结果相同，称这种调度策略是可串行化调度。 </p>
-<p>两阶段锁的使用却引入了另一个严重的问题，死锁；不同的事务等待对方已经锁定的资源就会造成死锁</p>
-</li>
-</ul>
-<h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><h3 id="四种隔离级别"><a href="#四种隔离级别" class="headerlink" title="四种隔离级别"></a>四种隔离级别</h3><ul>
-<li><p>未提交读 </p>
-<p>  事务中的修改，即使没有提交，对其它事务也是可见的。 </p>
-</li>
-<li><p>提交读 </p>
-<p>  一个事务只能读取已经提交的事务所做的修改。换句话说，一个事务所做的修改在提交之前对其它事务是不可见的。 </p>
-</li>
-<li><p>可重复读 </p>
-<p>  保证在同一个事务中多次读取同样数据的结果是一样的。 </p>
-</li>
-<li><p>可串行化 </p>
-<p>  强制事务串行执行。</p>
-</li>
-</ul>
-<h3 id="多版本并发控制"><a href="#多版本并发控制" class="headerlink" title="多版本并发控制"></a>多版本并发控制</h3><p>常见的三种并发控制机制：分别是悲观并发控制、乐观并发控制和多版本并发控制，其中悲观并发控制其实是最常见的并发控制机制，也就是锁；而乐观并发控制其实也有另一个名字：乐观锁，乐观锁其实并不是一种真实存在的锁。 </p>
-<p>MVCC是 MySQL 的 InnoDB 存储引擎实现隔离级别的一种具体方式，用于实现提交读和可重复读这两种隔离级别。而未提交读隔离级别总是读取最新的数据行，无需使用MVCC。可串行化隔离级别需要对所有读取的行都加锁，单纯使用 MVCC 无法实现。</p>
-<p>同一行数据平时发生读写请求时，会上锁阻塞住。但mvcc用更好的方式去处理读—写请求，做到在发生读—写请求冲突时不用加锁。</p>
-<p>当前读是指读取的是最新的数据，需要加锁。 </p>
-<p>快照读是指使用 MVCC 读取历史快照中的数据，不需要加锁，提升性能。</p>
-<p>具体原理： </p>
-<ul>
-<li><p>事务版本号：每次事务开启前都会从数据库获得一个自增长的事务ID </p>
-</li>
-<li><p>数据库记录隐藏的列： </p>
-<p>  <code>DB_TRX_ID</code>: 记录操作该数据事务的事务ID；</p>
-<p>  <code>DB_ROLL_PTR</code>：指向上一个版本数据在undo log 里的位置指针； </p>
-</li>
-<li><p>undo log：当事务进行回滚需要用到 </p>
-<p>  <img src="/2022/03/19/interview-database/undo_log.png"></p>
-</li>
-<li><p>ReadView </p>
-<p>  <code>trx_ids</code>: 当前系统活跃(未提交)事务版本号集合。</p>
-<p>  <code>low_limit_id</code>: 创建当前read view 时“当前系统最大事务版本号+1”。 </p>
-<p>  <code>up_limit_id</code>: 创建当前read view 时“系统正处于活跃事务最小版本号” </p>
-<p>  <code>creator_trx_id</code>: 创建当前read view的事务版本号；</p>
-</li>
-</ul>
-<p>是否从undo log版本链中读数据，依据下面的算法： </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/** Check whether the changes by id are visible.</span><br><span class="line">@param[in]   id    transaction id to check against the view</span><br><span class="line">@param[in]  name   able name</span><br><span class="line">@return     whether the view sees the modifications of id. */</span><br><span class="line"></span><br><span class="line">bool changes_visible(</span><br><span class="line">    trx_id_t                id,</span><br><span class="line">    const table_name_t&amp;    name) const</span><br><span class="line">    MY_ATTRIBUTE((warn_unused_result))</span><br><span class="line">&#123;</span><br><span class="line">    ut_ad(id&gt;0);</span><br><span class="line">    if (id &lt; m_up_limit_id || id==m_creator_trx_id)&#123;</span><br><span class="line">        return(true);</span><br><span class="line">    &#125;</span><br><span class="line">    check_trx_id_sanity(id, name);</span><br><span class="line">    if(id&gt;=m_low_limit_id)&#123;</span><br><span class="line">        return(false); </span><br><span class="line">    &#125; else if(m_ids.empty())&#123;</span><br><span class="line">        return(true);</span><br><span class="line">    &#125;</span><br><span class="line">    const ids_t::value_type* p=m_ids.data();</span><br><span class="line">    return(!std::binary_search(p, P + m_ids.size(), id));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>一个例子： </p>
-<p><img src="/2022/03/19/interview-database/mvcc_example.png"></p>
-<p>RC(read commit) 级别下同一个事务里面的每一次查询都会获得一个新的read view副本。这样就可能造成同一个事务里前后读取数据可能不一致的问题（重复读）<br><img src="/2022/03/19/interview-database/mvcc_rc.png"></p>
-<p>RR(重复读)级别下的一个事务里只会获取一次read view副本，从而保证每次查询的数据都是一样的。<br><img src="/2022/03/19/interview-database/mvcc_rr.png"></p>
-<h1 id="Sql"><a href="#Sql" class="headerlink" title="Sql"></a>Sql</h1><h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="union和union-all的区别"><a href="#union和union-all的区别" class="headerlink" title="union和union all的区别"></a>union和union all的区别</h3><p>  首先，union和union all关键字都是将两个结果集合并为一个显示出来。但是它们的区别是：union会自动压缩多个结果集合中的重复结果，而union all则将所有的结果全部显示出来，不管是不是重复。 </p>
-<p>  union 在运行时先取出两个表的结果，再用排序空间进行排序删除重复的记录，最后返回结果集，如果表数据量大的话可能会导致用磁盘进行排序。</p>
-<p>  从效率上说，UNION ALL 要比UNION快很多，所以，如果可以确认合并的两个结果集中不包含重复的数据的话，那么就使用UNION ALL </p>
-<h3 id="MySQL-中-join-与-left-join-的区别是什么？"><a href="#MySQL-中-join-与-left-join-的区别是什么？" class="headerlink" title="MySQL 中 join 与 left join 的区别是什么？"></a>MySQL 中 join 与 left join 的区别是什么？</h3><p>  “内连接”join，其实就是“inner join”，为了简写才写成join，两个是表示一个的，内连接，表示以两个表的交集为主，查出来是两个表有交集的部分，其余没有关联就不额外显示出来。 </p>
-<p>  <img src="/2022/03/19/interview-database/join.png"></p>
-<h3 id="SQL优化的方案有哪些，如何定位问题并解决问题？？"><a href="#SQL优化的方案有哪些，如何定位问题并解决问题？？" class="headerlink" title="SQL优化的方案有哪些，如何定位问题并解决问题？？"></a>SQL优化的方案有哪些，如何定位问题并解决问题？？</h3><ul>
-<li>定位问题：使用explain </li>
-<li>优化思路 <ul>
-<li><p>尽量用union all代替union </p>
-<p>union的排序去重操作，增加大量的CPU运算，加大资源消耗及延迟。使用union all的前提是两个结果集没有重复数据。 </p>
-</li>
-<li><p>SELECT语句务必指明字段名称 </p>
-<p>SELECT* 增加很多不必要的消耗（cpu、io、内存、网络带宽）；增加了使用覆盖索引的可能性； </p>
-</li>
-<li><p>避免在where子句中对字段进行表达式操作 </p>
-<p>会导致索引失效 </p>
-</li>
-<li><p>对于联合索引来说，要遵守最左前缀法则 </p>
-<p>查询从索引的最左列开始，并且不跳过索引中的列。也就是说查询的条件当中要包含索引最左侧的列，并且不能跳过索引当中的列。 </p>
-  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create index idx_seller_name_sta_addr on tb_seller(name, status, address);</span><br><span class="line">// 测试1</span><br><span class="line">explain select * from tb_seller where status = &#x27;1&#x27; and address = &#x27;北京市&#x27; //这样走索引吗？不走，因为没从索引最左边的列开始</span><br><span class="line">// 测试2</span><br><span class="line">explain select * from tb_seller where status = &#x27;1&#x27; and address = &#x27;北京市&#x27; //这样走索引吗？不走，因为没从索引最左边的列开始</span><br><span class="line">// 测试3</span><br><span class="line">explain select * from tb_seller where status = &#x27;1&#x27; and address = &#x27;北京市&#x27; and name = &#x27;小米科技&#x27; //走索引，顺序并不影响，只看查询条件有没有包含最左列</span><br><span class="line">// 测试4</span><br><span class="line">explain select * from tb_seller where name = &#x27;小米科技&#x27; and address = &#x27;北京市&#x27; //走索引，只用到了name字段的索引，没用到address字段的索引</span><br></pre></td></tr></table></figure></li>
-<li><p>注意范围查询语句 </p>
-<p>对于联合索引来说，如果存在范围查询，比如 between,&gt;,&lt;等条件时，会造成后面的索引字段失效。 </p>
-</li>
-<li><p>关于JOIN优化 </p>
-<p>join的实现是采用Nested Loop Join算法，就是通过驱动表的结果集作为循环基础数据，然后一条一条的通过该结果集中的数据作为过滤条件到下一个表中查询数据，然后合并结果。如果有多个join，则将前面的结果集作为循环数据，再一次作为循环条件到后一个表中查询数据。 </p>
-<ul>
-<li>用小结果集驱动大结果集，将筛选结果小的表首先连接，再去连接结果集比较大的表，尽量减少join语句中的Nested Loop的循环总次数；举例：假设A表10000行，B表100行；也就是说如果用A表做驱动表会伴随着10000次随机读，而如果是B表作为驱动表，会伴随着100次随机读。 </li>
-<li>对被驱动表的join字段上建立索引；使得对内表的查询走索引提高效率。这种做法最高效的就是外表是一张小表，而内表的连接谓词刚好是内表的主键。</li>
-</ul>
-</li>
-<li><p>不建议使用%前缀模糊查询 </p>
-<p>可以建立全文索引 </p>
-</li>
-<li><p>避免在 where 子句中对字段进行 null 值判断</p>
-<p>对于 null的判断会导致引擎放弃使用索引而进行全表扫描</p>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="Mysql"><a href="#Mysql" class="headerlink" title="Mysql"></a>Mysql</h1><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="主键索引和辅助索引的区别？"><a href="#主键索引和辅助索引的区别？" class="headerlink" title="主键索引和辅助索引的区别？"></a>主键索引和辅助索引的区别？</h3><p>主键索引中存放着一条行记录的全部信息，而辅助索引中只包含索引列和一个用于查找对应行记录的『书签』，一般是主键。<br><img src="/2022/03/19/interview-database/mysql_index.png"></p>
-<h3 id="聚簇索引和非聚簇索引的区别？"><a href="#聚簇索引和非聚簇索引的区别？" class="headerlink" title="聚簇索引和非聚簇索引的区别？"></a>聚簇索引和非聚簇索引的区别？</h3><p>  聚簇索引：将数据存储与索引放到了一块，找到索引也就找到了数据，一个表只有一个聚簇索引。</p>
-<p>  非聚簇索引：将数据存储与索引分开，索引结构的叶子节点指向了数据的对应行 </p>
-<p>  innodb中，在聚簇索引之上创建的索引称之为辅助索引，辅助索引访问数据总是需要二次查找。非聚簇索引都是辅助索引，像复合索引、前缀索引、唯一索引，辅助索引叶子节点存储的不再是行的物理位置，而是主键值。 </p>
-<h3 id="利用索引如何进行优化？"><a href="#利用索引如何进行优化？" class="headerlink" title="利用索引如何进行优化？"></a>利用索引如何进行优化？</h3><ul>
-<li><p>在进行查询时，索引列不能是表达式的一部分，也不能是函数的参数，否则无法使用索引<br>  例如，SELECT actor_id FROM actor WHERE actor_id + 1 &#x3D; 5; </p>
-</li>
-<li><p>多列索引 </p>
-<p>在需要使用多个列作为条件进行查询时，使用多列索引比使用多个单列索引性能更好。</p>
-</li>
-</ul>
-<p>  例如：SELECT film_id, actor_ id FROM film_actor WHERE actor_id &#x3D; 1 AND film_id &#x3D; 1; </p>
-<ul>
-<li><p>索引列的顺序 </p>
-<p>让选择性最强的索引列放在前面。索引的选择性是指：不重复的索引值和记录总数的比值。最大值为 1，此时每个记录都有唯一的索引与其对应。选择性越高，查询效率也越高。</p>
-</li>
-<li><p>对于 BLOB、TEXT 和 VARCHAR 类型的列，必须使用前缀索引，只索引开始的部分字符。 </p>
-<p>对于前缀长度的选取需要根据索引选择性来确定。例如下面的表，使用前1-5位字符做前缀索引就会出现大量索引值重复的情况，导致查询效率低。<br><img src="/2022/03/19/interview-database/prefix_index.png"></p>
-</li>
-<li><p>覆盖索引 </p>
-<p>索引包含所有需要查询的字段。即从辅助索引中就能查到的记录，而不需要查询主键索引中的记录，避免了回表的产生减少了树的搜索次数，显著提升性能。 </p>
-</li>
-<li><p>如何优化查询的性能？ </p>
-<ul>
-<li>使用explain进行分析<br>Explain 用来分析 SELECT 查询语句，结果如下<br><img src="/2022/03/19/interview-database/explain.png"></li>
-</ul>
-</li>
-<li><p>什么是全文索引？ </p>
-<p>通过倒排的方式，得到分词到全文的一个映射关系。</p>
-</li>
-</ul>
-<h3 id="MySQL为什么用B-树做索引？"><a href="#MySQL为什么用B-树做索引？" class="headerlink" title="MySQL为什么用B+树做索引？"></a>MySQL为什么用B+树做索引？</h3><p>相比于二叉树、AVL树、红黑树来说，使用B+树有更少的查询次数，树节点出度越多，树高越矮，需要的查询次数越少，磁盘加载的次数也越少。 </p>
-<p>相比于B树来说，由于B+树叶节点保存有所有的数据，内节点保存的是索引，使得对于每个数据，查询都比较稳定。此外，B+树的数据都存储在叶子结点中，分支结点均为索引，方便扫库，只需要扫一遍叶子结点即可，但是B树因为其分支结点同样存储着数据，我们要找到具体的数据，需要进行一次中序遍历按序来扫，所以B+树更加适合在区间查询的情况。 </p>
-<h2 id="存储引擎"><a href="#存储引擎" class="headerlink" title="存储引擎"></a>存储引擎</h2><h3 id="InnoDB和MyISAM的区别"><a href="#InnoDB和MyISAM的区别" class="headerlink" title="InnoDB和MyISAM的区别"></a>InnoDB和MyISAM的区别</h3><ul>
-<li><p>事务： </p>
-<p>InnoDB是事务型存储引擎，实现了四个标准的隔离级别，默认级别是可重复读（REPEATABLE READ），在可重复读隔离级别下，通过多版本并发控制（MVCC）+ 间隙锁（Next-Key Locking）防止幻影读。<br>MyISAM不支持事务。 </p>
-</li>
-<li><p>并发： </p>
-<p>InNoDB支持行级锁和表级锁，MyISAM只支持表级锁。 </p>
-</li>
-<li><p>索引： </p>
-<p>InnoDB的索引是聚簇索引，MyISAM是非聚簇索引。</p>
-<p>InnoDB支持不支持全文索引，MyISAM支持。 </p>
-</li>
-<li><p>场景： </p>
-<p>MyISAM适合查询以及插入为主的应用，InnoDB适合频繁修改以及涉及到安全性较高的应用</p>
-</li>
-</ul>
-<h2 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h2><ul>
-<li><p>好处 </p>
-<ul>
-<li>主从服务器负责各自的读和写，极大程度缓解了锁的争用； </li>
-<li>从服务器可以使用 MyISAM，提升查询性能以及节约系统开销； </li>
-<li>增加冗余，提高可用性。</li>
-</ul>
-</li>
-<li><p>原理 </p>
-<p>MySQL主从复制涉及到三个线程，一个运行在主节点，其余两个运行在从节点： </p>
-<ul>
-<li><p>binlog 线程：负责将主服务器上的数据更改写入二进制日志（Binary log）中。 </p>
-</li>
-<li><p>I&#x2F;O 线程：负责从主服务器上读取二进制日志，并写入从服务器的中继日志（Relay log）。 </p>
-</li>
-<li><p>SQL 线程：负责读取中继日志，解析出主服务器已经执行的数据更改并在从服务器中执行。</p>
-</li>
-</ul>
-<p>  <img src="/2022/03/19/interview-database/mysql_syc.png"></p>
-</li>
-</ul>
-<h2 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h2><h3 id="为什么要分库分表"><a href="#为什么要分库分表" class="headerlink" title="为什么要分库分表"></a>为什么要分库分表</h3><p>  单库太大：数据库里面的表太多，所在服务器磁盘空间装不下，IO次数多，即IO瓶颈<br>  单表太大：一张表的字段太多，数据太多。查询起来困难，查询时扫描的行太多，SQl效率低，CPU瓶颈 </p>
-<h3 id="水平切分"><a href="#水平切分" class="headerlink" title="水平切分"></a>水平切分</h3><p>  水平分库分表能够有效的缓解单机和单库的性能瓶颈和压力，突破IO、连接数、硬件资源等的瓶颈。<br>  <img src="/2022/03/19/interview-database/horizontal_sharding.png"> </p>
-<h3 id="垂直切分"><a href="#垂直切分" class="headerlink" title="垂直切分"></a>垂直切分</h3><p>  按照一定业务逻辑进行垂直切，此时不同的数据库应该存放在不同的服务器上，此时磁盘空间、内存、TPS等等都会得到解决。<br>  <img src="/2022/03/19/interview-database/vertical_sharding.png"></p>
-<h3 id="分库分表可能带来的问题？"><a href="#分库分表可能带来的问题？" class="headerlink" title="分库分表可能带来的问题？"></a>分库分表可能带来的问题？</h3><ul>
-<li><p>事务 </p>
-<p>分库分表后，就需要支持分布式事务了。 </p>
-</li>
-<li><p>联合查询 </p>
-<p>两个相关联的表可能会分布在不同的数据库。</p>
-</li>
-</ul>
-<h2 id="高可用方案"><a href="#高可用方案" class="headerlink" title="高可用方案"></a>高可用方案</h2><p><a href="https://zhuanlan.zhihu.com/p/25960208">https://zhuanlan.zhihu.com/p/25960208</a> </p>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="mysql如何进行故障恢复的？"><a href="#mysql如何进行故障恢复的？" class="headerlink" title="mysql如何进行故障恢复的？"></a>mysql如何进行故障恢复的？</h3><h3 id="简述-undo-log-和-redo-log-的作用"><a href="#简述-undo-log-和-redo-log-的作用" class="headerlink" title="简述 undo log 和 redo log 的作用"></a>简述 undo log 和 redo log 的作用</h3><h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><ul>
-<li><p>string </p>
-</li>
-<li><p>list </p>
-</li>
-<li><p>set<br>set是一个无序的、自动去重的集合数据类型，Set底层用两种数据结构存储，一个是hashtable，一个是inset。 </p>
-<p>inset为可以理解为数组，使用inset数据结构需要满足下述两个条件： </p>
-<ul>
-<li>元素个数不少于默认值512 </li>
-<li>元素可以用整型表示</li>
-</ul>
-<p>查询方式一般采用二分查找法，实际查询复杂度也就在log(n) </p>
-</li>
-<li><p>hash </p>
-</li>
-<li><p>zset</p>
-</li>
-</ul>
-<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><h3 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h3><p><img src="/2022/03/19/interview-database/redis_dict.png"></p>
-<ul>
-<li><p>为什么要进行扩缩容？ </p>
-<p>  当哈希表中的元素太多或太少时，会进行扩容或者缩容。扩容是出于哈希表的查找效率考虑，当哈希表中的元素达到一定数量时，表中链的长度会随着哈希表元素的增长而增长，链表越长意味着查询效率也会越慢。缩容是为了节省内存空间，避免数组中太多空元素造成空间浪费。 </p>
-</li>
-<li><p>Redis如何进行扩缩容？ </p>
-<p> Redis 的字典 dict 中包含两个哈希表 dictht，这是为了方便进行 rehash 操作。在扩容时，将其中一个 dictht 上的键值对 rehash 到另一个 dictht 上面，完成之后释放空间并交换两个 dictht 的角色。 </p>
-<p> rehash 操作不是一次性完成，而是采用渐进方式，这是为了避免一次性执行过多的 rehash 操作给服务器带来过大的负担。渐进式 rehash 通过记录 dict 的 rehashidx 完成，它从 0 开始，然后每执行一次 rehash 都会递增。例如在一次rehash 中，要把 dict[0] rehash 到 dict[1]，这一次会把 dict[0] 上 table[rehashidx] 的键值对 rehash 到 dict[1]上，dict[0] 的 table[rehashidx] 指向 null，并令 rehashidx++。在 rehash 期间，每次对字典执行添加、删除、查找或者更新操作时，都会执行一次渐进式 rehash。采用渐进式 rehash 会导致字典中的数据分散在两个 dictht 上，因此对字典的查找操作也需要到对应的 dictht 去执行。</p>
-</li>
-</ul>
-<h3 id="有序集合zset"><a href="#有序集合zset" class="headerlink" title="有序集合zset"></a>有序集合zset</h3><p>  有序集合的底层实现之一是跳跃表，跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。<br><img src="/2022/03/19/interview-database/skip_list.png"></p>
-<p>与红黑树等平衡树相比，跳跃表具有以下优点： </p>
-<ul>
-<li>插入速度非常快速，因为不需要进行旋转等操作来维护平衡性； </li>
-<li>更容易实现； </li>
-<li>支持无锁操作。 </li>
-<li>范围查找时比红黑树有优势。 </li>
-<li>查找、添加、删除操作都可以在对数期望时间下完成。</li>
-</ul>
-<h2 id="Redis使用场景"><a href="#Redis使用场景" class="headerlink" title="Redis使用场景"></a>Redis使用场景</h2><ul>
-<li>计数器 </li>
-<li>缓存 </li>
-<li>查找表 </li>
-<li>消息队列 </li>
-<li>session缓存 </li>
-<li>分布式锁实现 </li>
-<li>利用Zset实现排行榜</li>
-</ul>
-<h2 id="Redis和Memcached的区别"><a href="#Redis和Memcached的区别" class="headerlink" title="Redis和Memcached的区别"></a>Redis和Memcached的区别</h2><ul>
-<li><p>数据类型 </p>
-<p>Memcached只支持字符串类型，Redis支持五种数据类型 </p>
-</li>
-<li><p>数据持久化 </p>
-<p>Redis 支持两种持久化策略：RDB 快照和 AOF 日志，而 Memcached 不支持持久化。 </p>
-</li>
-<li><p>分布式 </p>
-<p>Memcached 不支持分布式；Redis Cluster 实现了分布式的支持。 </p>
-</li>
-<li><p>内存管理机制 </p>
-<p>在 Redis 中，并不是所有数据都一直存储在内存中，可以将一些很久没用的 value 交换到磁盘，而Memcached 的数据则会一直在内存中。Memcached 将内存分割成特定长度的块来存储数据，以完全解决内存碎片的问题。</p>
-</li>
-</ul>
-<h2 id="淘汰策略"><a href="#淘汰策略" class="headerlink" title="淘汰策略"></a>淘汰策略</h2><p>可以设置内存最大使用量，当内存使用量超出时，会施行数据淘汰策略。</p>
-<p><img src="/2022/03/19/interview-database/redis_eliminating.png"></p>
-<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>Redis 是内存型数据库，为了保证数据在断电后不会丢失，需要将内存中的数据持久化到硬盘上。 </p>
-<ul>
-<li>RDB持久化 <ul>
-<li><p>触发机制： </p>
-<ul>
-<li><p>save命令：客户端向Redis发送save命令来创建一个快照文件。 </p>
-<p>  <img src="/2022/03/19/interview-database/save.png"></p>
-</li>
-<li><p>bgsave命令：客户端向Redis发送bgsave命令，Redis调用fork创建一个子进程， 然后子进程负责将快照写入硬盘，而父进程则继续处理命令请求。 </p>
-<p>  <img src="/2022/03/19/interview-database/bgsave.png"></p>
-</li>
-<li><p>自动生成：通过配置，满足任何一个条件就会创建快照文件。 </p>
-<p>  <img src="/2022/03/19/interview-database/auto.png"></p>
-</li>
-</ul>
-</li>
-<li><p>具体执行： </p>
-<ol>
-<li>redis调用系统的fork()函数创建一个子进程 </li>
-<li>子进程将数据集写入一个临时的RDB文件 </li>
-<li>当子进程完成对临时的RDB文件的写入时，redis用新的RDB文件来替换原来旧的RDB文件，并将旧的RDB文件删除</li>
-</ol>
-</li>
-<li><p>优点： </p>
-<ul>
-<li>RDB 非常适用于灾难恢复 </li>
-<li>RDB 在恢复大数据集时的速度比 AOF 的恢复速度要快。 </li>
-<li>RDB对redis对外提供读写服务的时候，影响非常小，因为redis 主进程只需要fork一个子进程出来，让子进程对磁盘io来进行rdb持久化。</li>
-</ul>
-</li>
-<li><p>缺点： </p>
-<ul>
-<li>如果redis要故障时要尽可能少的丢失数据，RDB没有AOF好，</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>AOF持久化 <ul>
-<li>实现： <ul>
-<li><p>将写命令添加到 AOF 文件（Append Only File）的末尾。 </p>
-</li>
-<li><p>使用 AOF 持久化需要设置同步选项，从而确保写命令什么时候会同步到磁盘文件上。这是因为对文件进行写入并不会马上将内容同步到磁盘上，而是先存储到缓冲区，然后由操作系统决定什么时候同步到磁盘。有以下同步选项： </p>
-<p>  <img src="/2022/03/19/interview-database/redis_sync.png"></p>
-</li>
-<li><p>always 选项会严重降低服务器的性能； </p>
-</li>
-<li><p>everysec 选项比较合适，可以保证系统崩溃时只会丢失一秒左右的数据，并且 Redis 每秒执行一次同步对服务器性能几乎没有任何影响； </p>
-</li>
-<li><p>no 选项并不能给服务器性能带来多大的提升，而且也会增加系统崩溃时数据丢失的数量。</p>
-</li>
-</ul>
-</li>
-<li>优点： <ul>
-<li>AOF可以更好的保护数据不丢失，一般AOF会以每隔1秒，通过后台的一个线程去执行一次fsync操作，如果redis进程挂掉，最多丢失1秒的数据。</li>
-</ul>
-</li>
-<li>缺点： <ul>
-<li>AOF 文件比 RDB 文件大，且恢复速度慢。 </li>
-<li>数据集大的时候，比 rdb 启动效率低。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="事务-1"><a href="#事务-1" class="headerlink" title="事务"></a>事务</h2><ul>
-<li><p>MULTI 命令用于开启一个事务，它总是返回 OK 。 </p>
-</li>
-<li><p>MULTI 执行之后， 客户端可以继续向服务器发送任意多条命令， 这些命令不会立即被执行， 而是被放到一个队列中， 当 EXEC 命令被调用时， 所有队列中的命令才会被执行。</p>
-<p>  <img src="/2022/03/19/interview-database/multi1.png"></p>
-</li>
-<li><p>另一方面， 通过调用 DISCARD ， 客户端可以清空事务队列， 并放弃执行事务。 </p>
-<p>  <img src="/2022/03/19/interview-database/multi2.png"></p>
-</li>
-<li><p>事务中的错误 </p>
-<ul>
-<li><p>事务在执行 EXEC 之前，入队的命令可能会出错。比如说，命令可能会产生语法错误。对于这种情况，服务器会对命令入队失败的情况进行记录，并在客户端调用 EXEC 命令时，拒绝执行并自动放弃这个事务。 </p>
-<p><img src="/2022/03/19/interview-database/multi3.png"></p>
-</li>
-<li><p>命令可能在 EXEC 调用之后失败。比如，事务中的命令可能处理了错误类型的键。对于这种情况，即使事务中有某个&#x2F;某些命令在执行时产生了错误， 事务中的其他命令仍然会继续执行。 </p>
-<p><img src="/2022/03/19/interview-database/multi4.png"></p>
-</li>
-</ul>
-</li>
-<li><p>带watch的事务<br>WATCH 命令用于在事务开始之前监视任意数量的键： 当调用 EXEC 命令执行事务时， 如果任意一个被监视的键已经被其他客户端修改了， 那么整个事务将被打断，不再执行， 直接返回失败。 </p>
-<p><img src="/2022/03/19/interview-database/multi5.png"></p>
-</li>
-<li><p>三个特性 </p>
-<ul>
-<li>单独的隔离操作：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。 </li>
-<li>没有隔离级别的概念：队列中的命令没有提交之前都不会实际的被执行，因为事务提交前任何指令都不会被实际执行，也就不存在”事务内的查询要看到事务里的更新，在事务外查询不能看到”这个让人万分头痛的问题 </li>
-<li>不保证原子性：Redis 同一个事务中如果有一条命令执行失败，其后的命令仍然会被执行，没有回滚</li>
-</ul>
-</li>
-</ul>
-<h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p>Redis服务器是事件驱动程序 </p>
-<h3 id="文件事件"><a href="#文件事件" class="headerlink" title="文件事件"></a>文件事件</h3><p>Redis 基于 Reactor 模式开发了自己的网络事件处理器，使用 I&#x2F;O 多路复用程序来同时监听多个套接字，并将到达的事件传送给文件事件分派器，分派器会根据套接字产生的事件类型调用相应的事件处理器。 </p>
-<p><img src="/2022/03/19/interview-database/file_event.png"></p>
-<h3 id="时间事件"><a href="#时间事件" class="headerlink" title="时间事件"></a>时间事件</h3><p>Redis 将所有时间事件都放在一个无序链表中，通过遍历整个链表查找出已到达的时间事件，并调用相应的事件处理器 </p>
-<p><img src="/2022/03/19/interview-database/time_event.png"></p>
-<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>为了增加系统可靠性和读写性能，可以建立Redis主从集群。Redis Replication是一种简单、易用的主从模式（master-slave）的复制机制，它能够使得slave节点成为与master节点完全相同的副本。 </p>
-<h3 id="连接过程"><a href="#连接过程" class="headerlink" title="连接过程"></a>连接过程</h3><ol>
-<li>主服务器创建快照文件，发送给从服务器，并在发送期间使用缓冲区记录执行的写命令。快照文件发送完毕之后，开始向从服务器发送存储在缓冲区中的写命令； </li>
-<li>从服务器丢弃所有旧数据，载入主服务器发来的快照文件，之后从服务器开始接受主服务器发来的写命令； </li>
-<li>主服务器每执行一次写命令，就向从服务器发送相同的写命令。</li>
-</ol>
-<h2 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h2><p><a href="https://segmentfault.com/a/1190000022808576">https://segmentfault.com/a/1190000022808576</a> </p>
-<h3 id="主从复制模式"><a href="#主从复制模式" class="headerlink" title="主从复制模式"></a>主从复制模式</h3><ul>
-<li><p>介绍 </p>
-<ul>
-<li>主从模式里使用一个redis实例作为主机(master)，其余多个实例作为备份机(slave)； </li>
-<li>master用来支持数据的写入和读取操作，而slave支持读取及master的数据同步； </li>
-<li>在整个架构里，master和slave实例里的数据完全一致；</li>
-</ul>
-<p>  <img src="/2022/03/19/interview-database/master_slave.png"></p>
-</li>
-<li><p>原理 </p>
-<ul>
-<li><p>全量同步 </p>
-<ul>
-<li>当从节点启动时，会向主节点发送SYNC命令； </li>
-<li>主节点接收到SYNC命令后，开始在后台执行保存快照的命令生成RDB文件，并使用缓冲区记录此后执行的所有写命令； </li>
-<li>主节点快照完成后，将快照文件和所有缓存命令发送给集群内的从节点，并在发送期间继续记录被执行的写命令； </li>
-<li>主节点快照发送完毕后开始向从节点发送缓冲区中的写命令； </li>
-<li>从节点载入快照文件后，开始接收命令请求，执行接收到的主节点缓冲区的写命令。</li>
-</ul>
-</li>
-<li><p>增量同步 </p>
-<p>  主从复制中因网络等原因造成数据丢失场景，当从节点再次连上主节点。如果条件允许，主节点会补发丢失数据给从节点。因为补发的数据远远小于全量数据，可以有效避免全量复制的过高开销。</p>
-</li>
-</ul>
-</li>
-<li><p>主节点故障处理方式 </p>
-<p>  主从模式中，每个客户端连接redis实例时都指定了ip和端口号。如果所连接的redis实例因为故障下线了，则无法通知客户端连接其他客户端地址，因此只能进行手动操作。主从模式很好地解决了数据备份的问题，但是主节点因为故障下线后，需要手动更改客户端配置重新连接，这种模式并不能保证服务的高可用。</p>
-</li>
-</ul>
-<h3 id="Sentinel（哨兵）模式"><a href="#Sentinel（哨兵）模式" class="headerlink" title="Sentinel（哨兵）模式"></a>Sentinel（哨兵）模式</h3><ul>
-<li><p>参考 </p>
-<p><a href="https://pdai.tech/md/db/nosql-redis/db-redis-x-sentinel.html">https://pdai.tech/md/db/nosql-redis/db-redis-x-sentinel.html</a> </p>
-</li>
-<li><p>介绍 </p>
-<p>和主从模式不一样的是，哨兵模式中增加了独立进程（即哨兵）来监控集群中的一举一动。客户端在连接集群时，首先连接哨兵，通过哨兵查询主节点的地址，然后再去连接主节点进行数据交互。哨兵的核心功能是主节点的自动故障转移。 </p>
-<p>如下图所示，如果master异常，则会进行master-slave切换，将最优的一个slave切换为主节点。 </p>
-<p><img src="/2022/03/19/interview-database/sentinel.png"></p>
-</li>
-<li><p>原理 </p>
-<ul>
-<li>每个哨兵每秒向集群中的master、slave以及其他哨兵发送一个PING命令； </li>
-<li>如果某个实例距离最后一次有效回复ping命令的时间超过一定值，则会被标记为主观下线； </li>
-<li>如果master被标记为主观下线，那么其他正在监视master的哨兵以每秒的频率确认其确实进入主观下线状态，且数量达到一定值时，master会被标记为下线，然后通知其他的从服务器，修改配置文件，让它们切换主机； </li>
-<li>客户端在master节点发生故障时会重向哨兵要地址，此时会获得最新的master节点地址。</li>
-</ul>
-<p>补充： </p>
-<ul>
-<li>主观下线：任何一个哨兵都是可以监控探测，并作出Redis节点下线的判断； </li>
-<li>客观下线：由哨兵集群共同决定Redis节点是否下线；</li>
-</ul>
-<p><img src="/2022/03/19/interview-database/level.png"></p>
-</li>
-<li><p>选举&#x2F;共识机制 </p>
-<p>判断完主库下线后，由哪个哨兵节点来执行主从切换呢？这里就需要哨兵集群的选举机制了。</p>
-<ul>
-<li><p>为什么必然会出现选举&#x2F;共识机制？ </p>
-<p>为了避免哨兵的单点情况发生，所以需要一个哨兵的分布式集群。作为分布式集群，必然涉及共识问题（即选举问题）；同时故障的转移和通知都只需要一个主的哨兵节点就可以了。 </p>
-</li>
-<li><p>哨兵的选举机制是什么样的？ </p>
-<p>哨兵的选举机制其实很简单，就是一个Raft选举算法： 选举的票数大于<code>num(sentinels)/2+1</code>时，将成为领导者，如果没有超过，继续选举</p>
-</li>
-</ul>
-</li>
-<li><p>缺点 </p>
-<p>哨兵模式的出现虽然解决了主从模式中master节点宕机不能自主切换（即高可用）的问题。但是，随着业务的逐渐增长，不可避免需要对当前业务进行扩容，无法可扩展。<br>常见的扩容方式有垂直和水平扩容两种方式： </p>
-<ul>
-<li>垂直扩容：通过增加master内存来增加容量； </li>
-<li>水平扩容：通过增加节点来进行扩容，即在当前基础上再增加一个master节点。</li>
-</ul>
-<p>水平扩容涉及到数据的迁移，且迁移过程中又要保证服务的可用性，哨兵模式无法满足这种情形。因此，redis cluster应运而生。</p>
-</li>
-</ul>
-<h3 id="Cluster-模式"><a href="#Cluster-模式" class="headerlink" title="Cluster 模式"></a>Cluster 模式</h3><ul>
-<li><p>介绍 </p>
-<ul>
-<li>redis cluster模式采用了无中心节点的方式来实现，每个主节点都会与其它主节点保持连接。节点间通过gossip协议交换彼此的信息，同时每个主节点又有一个或多个从节点； </li>
-<li>客户端连接集群时，直接与redis集群的每个主节点连接，根据hash算法取模将key存储在不同的哈希槽上； </li>
-<li>在集群中采用数据分片的方式，将redis集群分为16384个哈希槽。举个例子，比如当前集群有3个节点，那么这些哈希槽分别存储于三个主节点中： <ul>
-<li>Master1负责0~5460号哈希槽 </li>
-<li>Master2负责5461~10922号哈希槽 </li>
-<li>Master3负责10922~16383号哈希槽</li>
-</ul>
-</li>
-</ul>
-<p>每个节点会保存一份数据分布表，节点会将自己的slot信息发送给其他节点，节点间不停的传递数据分布表； </p>
-<p>客户端连接集群时，通过集群中某个节点地址进行连接。客户端尝试向这个节点执行命令时，比如获取某个key值，如果key所在的slot刚好在该节点上，则能够直接执行成功。如果slot不在该节点，则节点会返回MOVED错误，同时把该slot对应的节点告诉客户端，客户端可以去该节点执行命令。<br><img src="/2022/03/19/interview-database/cluster.png"></p>
-</li>
-<li><p>原理 </p>
-<p>redis cluster中主节点故障处理方式与哨兵模式较为相像，当约定时间内某节点无法与集群中的另一个节点顺利完成ping消息通信时，则将该节点标记为主观下线状态，同时将这个信息向整个集群广播。 </p>
-<p>如果一个节点收到某个节点失联的数量达到了集群的大多数时，那么将该节点标记为客观下线状态，并向集群广播下线节点的fail消息。然后立即对该故障节点进行主从切换。等到原来的主节点恢复后，会自动成为新主节点的从节点。如果主节点没有从节点，那么当它发生故障时，集群就将处于不可用状态。 </p>
-</li>
-<li><p>扩容问题 </p>
-<p>在哨兵模式中我们在扩容的时候遇到了问题，那么cluster中我们如何动态上线某个节点呢。当集群中加入某个节点时，哈希槽又是如何来进行分配的？当集群中加入新节点时，会与集群中的某个节点进行握手，该节点会把集群内的其它节点信息通过gossip协议发送给新节点，新节点与这些节点完成握手后加入到集群中。 </p>
-<p>然后集群中的节点会各取一部分哈希槽分配给新节点，如下图： </p>
-<ul>
-<li>Master1负责1365-5460 </li>
-<li>Master2负责6827-10922 </li>
-<li>Master3负责12288-16383 </li>
-<li>Master4负责0-1364,5461-6826,10923-12287</li>
-</ul>
-<p><img src="/2022/03/19/interview-database/cluster_add.png"></p>
-<p>当集群中要删除节点时，只需要将节点中的所有哈希槽移动到其它节点，然后再移除空白（不包含任何哈希槽）的节点就可以了。</p>
-</li>
-</ul>
-<h2 id="其他-1"><a href="#其他-1" class="headerlink" title="其他"></a>其他</h2><h3 id="为什么-Redis-在单线程下能如此快？"><a href="#为什么-Redis-在单线程下能如此快？" class="headerlink" title="为什么 Redis 在单线程下能如此快？"></a>为什么 Redis 在单线程下能如此快？</h3><ul>
-<li><p>纯内存操作 </p>
-<p>Redis提供了丰富的数据类型，并使用高效的操作方式进行操作，这些操作都在内存中进行，并不会大量消耗CPU资源，所以速度极快。 </p>
-</li>
-<li><p>使用IO多路复用技术 </p>
-<p>Redis可以在单线程中监听多个Socket的请求，在任意一个Socket可读&#x2F;可写时，Redis去读取客户端请求，在内存中操作对应的数据，然后再写回到Socket中。 </p>
-</li>
-<li><p>非CPU密集型任务 </p>
-<p>采用单线程的缺点很明显，无法使用多核CPU，由于Redis的大部分操作并不是CPU密集型任务，而Redis的瓶颈在于内存和网络带宽。 </p>
-</li>
-<li><p>单线程的优势 </p>
-<ul>
-<li>没有了多线程上下文切换的性能损耗 </li>
-<li>没有了访问共享资源加锁的性能损耗 </li>
-<li>开发和调试非常友好，可维护性高</li>
-</ul>
-</li>
-</ul>
-<h3 id="Redis-如何处理热点-key-访问"><a href="#Redis-如何处理热点-key-访问" class="headerlink" title="Redis 如何处理热点 key 访问"></a>Redis 如何处理热点 key 访问</h3><ul>
-<li><p>问题 </p>
-<p>所谓热key问题就是，突然有几十万的请求去访问redis上的某个特定key。那么，这样会造成流量过于集中，达到物理网卡上限，从而导致这台redis的服务器宕机。那接下来这个key的请求，就会直接怼到你的数据库上，导致你的服务不可用。 </p>
-</li>
-<li><p>发现 </p>
-<ul>
-<li>借业务经验，进行预估哪些是热key </li>
-<li>在Proxy层做收集 </li>
-<li>客户端进行统计</li>
-</ul>
-</li>
-<li><p>如何解决 </p>
-<ul>
-<li>利用二级缓存<br>发现热key以后，把热key加载到系统的JVM中。针对这种热key请求，会直接从jvm中取，而不会走到redis层。 </li>
-<li>对热key进行备份<br>不要让key走到同一台redis上不就行了。我们把这个key，在多个redis上都存一份不就好了。接下来，有热key请求进来的时候，我们就在有备份的redis上随机选取一台，进行访问取值，返回数据。</li>
-</ul>
-</li>
-</ul>
-<h3 id="简述-Redis-哨兵的选举过程"><a href="#简述-Redis-哨兵的选举过程" class="headerlink" title="简述 Redis 哨兵的选举过程"></a>简述 Redis 哨兵的选举过程</h3><p>略  </p>
-<h1 id="Mongodb"><a href="#Mongodb" class="headerlink" title="Mongodb"></a>Mongodb</h1><h2 id="什么是MongoDB？"><a href="#什么是MongoDB？" class="headerlink" title="什么是MongoDB？"></a>什么是MongoDB？</h2><p>  MongoDB是一个分布式文件存储的数据库，提供高性能，高可用性和易扩展性。 </p>
-<p>  MongoDB 将数据存储为一个文档，数据结构由键值(key&#x3D;&gt;value)对组成。 MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。 </p>
-<p><img src="/2022/03/19/interview-database/mongodb.png"></p>
-<p><img src="/2022/03/19/interview-database/mongodb_example.png"></p>
-<h2 id="MongoDB有什么特点？"><a href="#MongoDB有什么特点？" class="headerlink" title="MongoDB有什么特点？"></a>MongoDB有什么特点？</h2><ul>
-<li>MongoDB目前只支持单文档事务，MongoDB暂时不适合需要复杂事务的场景。 </li>
-<li>高性能、高可用、可扩展 </li>
-<li>丰富的查询支持<br>支持读写（CRUD）操作、比如数据聚合、文本搜索、地理空间查询等 </li>
-<li>支持动态Schemas。（动态Schema意味着单个集合中的文档可以包含不同类型的结构或形状。例如，以下两个文档都可以存储在一个集合中） <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123; message  :  Hello World &#125;</span><br><span class="line">&#123; id  : 10,  description  :  India &#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="MongoDB支持哪些数据类型？"><a href="#MongoDB支持哪些数据类型？" class="headerlink" title="MongoDB支持哪些数据类型？"></a>MongoDB支持哪些数据类型？</h2><p><img src="/2022/03/19/interview-database/mongodb_type.png"></p>
-<h2 id="解释一下NoSql，它与RDBMS的区别？"><a href="#解释一下NoSql，它与RDBMS的区别？" class="headerlink" title="解释一下NoSql，它与RDBMS的区别？"></a>解释一下NoSql，它与RDBMS的区别？</h2><ul>
-<li><p>NoSQL是非关系型数据库，NoSQL &#x3D; Not Only SQL。 </p>
-</li>
-<li><p>关系型数据库采用的结构化的数据，NoSQL采用的是键值对的方式存储数据。 </p>
-</li>
-<li><p>在处理非结构化&#x2F;半结构化的大数据时；在水平方向上进行扩展时；随时应对动态增加的数据项时可以优先考虑使用NoSQL数据库。再考虑数据库的成熟度；支持；分析和商业智能；管理及专业性等问题时，应优先考虑关系型数据库。 </p>
-<h2 id="NoSQL有哪些类型？"><a href="#NoSQL有哪些类型？" class="headerlink" title="NoSQL有哪些类型？"></a>NoSQL有哪些类型？</h2></li>
-<li><p>文档数据库 </p>
-<p>这种类型的NoSQL数据库总是基于面向文档的方法来存储数据。文档数据库的主要目标是将单个实体的所有数据存储为一个文档，并且所有文档可以存储为一个集合。一些文档数据库的例子：MongoDB。</p>
-</li>
-<li><p>键值数据库 </p>
-<p>这种类型的数据库以无模式的方式存储数据，因为键值存储是存储数据的最简单的方式。键可以是指向任何类型数据的点，比如对象、字符串或任何其他类型的数据。这些数据库的主要优点是易于实现和添加数据。例如:Redis, </p>
-</li>
-<li><p>列式数据库 </p>
-<p> 这些类型的数据库将数据存储在键空间中的列中。键空间总是在唯一的名称、值和时间戳上定义。如clickhouse。 </p>
-</li>
-<li><p>图数据库 </p>
-<p>这些类型的数据库主要是为可以很容易地表示为图形数据的数据而设计的。这意味着，数据之间存在着数量不定的数据关系，如家庭关系和社会关系等。如GraphDB。</p>
-</li>
-</ul>
-<h2 id="Mongodb的object-id如何理解？"><a href="#Mongodb的object-id如何理解？" class="headerlink" title="Mongodb的object_id如何理解？"></a>Mongodb的object_id如何理解？</h2><p>  ObjectId 类似唯一主键，可以很快的去生成和排序，包含 12 bytes，含义如下： </p>
-<p><img src="/2022/03/19/interview-database/mongodb_objectID.png"></p>
-<p>  MongoDB 中存储的文档必须有一个 _id 键。这个键的值可以是任何类型的，默认是个 ObjectId 对象。</p>
-<h2 id="MongoDB如何保证可靠性的？"><a href="#MongoDB如何保证可靠性的？" class="headerlink" title="MongoDB如何保证可靠性的？"></a>MongoDB如何保证可靠性的？</h2><p>  通过复制将数据同步在多个服务器，保证冗余容灾。 </p>
-<p>  mongodb的复制至少需要两个节点。其中一个是主节点，负责处理客户端请求，其余的都是从节点，负责复制主节点上的数据。主节点记录在其上的所有操作oplog，从节点定期轮询主节点获取这些操作，然后对自己的数据副本执行这些操作，从而保证从节点的数据与主节点一致。 </p>
-<p>  <img src="/2022/03/19/interview-database/mongodb_sync.png"></p>
-<h2 id="说说MongoDB的分片？"><a href="#说说MongoDB的分片？" class="headerlink" title="说说MongoDB的分片？"></a>说说MongoDB的分片？</h2><p>  有时，MongoDB中的数据会非常庞大，以至于对如此大的数据集进行查询会导致服务器上大量的CPU被占用。为了解决这种情况，MongoDB提出了分片的概念，基本上是将数据集拆分到多个MongoDB实例中。 </p>
-<p>  分片的组成部分包括： </p>
-<ul>
-<li>分片（Shard）–基本上说，这不过是一个保存数据子集的MongoDB实例。在生产环境中，所有分片都必须是副本集的一部分。 </li>
-<li>配置服务器–一个mongodb实例，其中包含有关集群的元数据，基本上是有关将保存分片数据的各种mongodb实例的信息。 </li>
-<li>路由器–一个mongodb实例，主要负责将客户端发送的命令重定向到正确的服务器。</li>
-</ul>
-<p>  <img src="/2022/03/19/interview-database/mongodb_shard.png"></p>
-<h1 id="clickhouse"><a href="#clickhouse" class="headerlink" title="clickhouse"></a>clickhouse</h1><h2 id="什么是clickhouse？"><a href="#什么是clickhouse？" class="headerlink" title="什么是clickhouse？"></a>什么是clickhouse？</h2><p>  ClickHouse是一个用于联机分析(OLAP)的列式数据库管理系统(DBMS)。 </p>
-<p>  在传统的行式数据库系统中，数据按如下顺序存储，处于同一行中的数据总是被物理的存储在一起。如mysql。<br><img src="/2022/03/19/interview-database/row.png"><br>  在列式数据库系统中，数据按如下的顺序存储：<br><img src="/2022/03/19/interview-database/col.png"></p>
-<h2 id="列式存储的好处？"><a href="#列式存储的好处？" class="headerlink" title="列式存储的好处？"></a>列式存储的好处？</h2><ul>
-<li>针对分析类查询，通常只需要读取表的一小部分列。在列式数据库中你可以只读取你需要的数据。例如，如果只需要读取100列中的5列，这将帮助你最少减少20倍的I&#x2F;O消耗。 </li>
-<li>由于数据总是打包成批量读取的，所以压缩是非常容易的。同时数据按列分别存储这也更容易压缩。这进一步降低了I&#x2F;O的体积。 </li>
-<li>由于I&#x2F;O的降低，这将帮助更多的数据被系统缓存。</li>
-</ul>
-<h2 id="clickhouse的特点"><a href="#clickhouse的特点" class="headerlink" title="clickhouse的特点"></a>clickhouse的特点</h2><ul>
-<li>没有完整的事务支持。 </li>
-<li>缺少高频率，低延迟的修改或删除已存在数据的能力。仅能用于批量删除或修改数据， </li>
-<li>适合在线查询：在没有对数据做任何预处理的情况下以极低的延迟处理查询并将结果加载到用户的页面中。 </li>
-<li>真正的列式数据库管理系统 </li>
-<li>拥有完善的SQl支持和函数 </li>
-<li>支持高可用</li>
-</ul>
-<h2 id="行式存储和列式存储的区别？"><a href="#行式存储和列式存储的区别？" class="headerlink" title="行式存储和列式存储的区别？"></a>行式存储和列式存储的区别？</h2><ul>
-<li>行式存储（Row-based）的适用场景包括： <ul>
-<li>适合随机的增删改查操作; </li>
-<li>需要在行中选取所有属性的查询操作; </li>
-<li>需要频繁插入或更新的操作，其操作与索引和行的大小更为相关。<br>通常行式数据库的给出的优化方案是加“索引”，给表分区等等之类的.</li>
-</ul>
-</li>
-<li>列式存储的适用场景包括： <ul>
-<li>大数据量查询 </li>
-<li>非事务</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Database</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>interview_intelligence</title>
-    <url>/2022/03/18/interview-intelligence/</url>
-    <content><![CDATA[<h3 id="不均匀的硬币产生等概率"><a href="#不均匀的硬币产生等概率" class="headerlink" title="不均匀的硬币产生等概率"></a>不均匀的硬币产生等概率</h3><p>问题描述：有一枚不均匀的硬币，已知抛出此硬币后，正面向上的概率为 p（0 &lt; p &lt; 1）。请利用这枚硬币产生出概率相等的两个事件。 </p>
-<p>扔两次，先p后q为事件1，先q后p为事件2，二者概率相同。其余情况（pp、qq）则废弃。 </p>
-<h3 id="64-匹马，8-个赛道，找出前-4-匹马最少需要比几次？"><a href="#64-匹马，8-个赛道，找出前-4-匹马最少需要比几次？" class="headerlink" title="64 匹马，8 个赛道，找出前 4 匹马最少需要比几次？"></a>64 匹马，8 个赛道，找出前 4 匹马最少需要比几次？</h3><p><img src="/2022/03/18/interview-intelligence/horse_racing.png"></p>
-<p>最少10次选出前四，最多11次选出前四。 A2、A3、A4、B2、B3、C1、C2、D1八匹马跑一次，即：在剩下需要排名的马中，除了B1外，其它8匹马跑一次（1次）。 </p>
-<p>在这次比赛中，如果B2或者C1排名第一或者第二，那从该次比赛中取出前两个，和A1,B1，一起作为前4名。否则，将A2,A3,A4,B1再比赛一次（1次），取前三名和A1一起作为前4名。 </p>
-<h3 id="有2个8斤水桶-都装满水-还有一个3斤空水桶-如何将这16斤水平均分给4个人？（分配后不能再倒回）"><a href="#有2个8斤水桶-都装满水-还有一个3斤空水桶-如何将这16斤水平均分给4个人？（分配后不能再倒回）" class="headerlink" title="有2个8斤水桶,都装满水,还有一个3斤空水桶,如何将这16斤水平均分给4个人？（分配后不能再倒回）"></a>有2个8斤水桶,都装满水,还有一个3斤空水桶,如何将这16斤水平均分给4个人？（分配后不能再倒回）</h3><p>略</p>
-<h3 id="有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？"><a href="#有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？" class="headerlink" title="有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？"></a>有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？</h3><p>然后，取4个试管，第一个试管加入编号二进制形式中第一位（指最低位）是1的溶液，第二个试管加入编号第二位是1的溶液，其他2个试管分别加入编号第3,4位为1 的溶液。然后再将试剂A加入4个试管中，看那些试管发生了反应，就可以知道有毒溶液的编号了。</p>
-<p>例如：第1、2、4号试管内发生了反应，则我们知道是第7号溶液是有毒的。原因是7的二进制编码是1011，因此7号溶液是唯一加入了1、2、4号试管，而没有加入3号试管的溶液。</p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Intelligence</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>interview_security</title>
-    <url>/2022/03/18/interview-security/</url>
-    <content><![CDATA[<h3 id="AES和DES的区别？秘钥长度"><a href="#AES和DES的区别？秘钥长度" class="headerlink" title="AES和DES的区别？秘钥长度"></a>AES和DES的区别？秘钥长度</h3><ul>
-<li><p>DES </p>
-<p>DES是对称性加密里常见的一种，是一种使用秘钥加密的块算法。秘钥长度是64位（bit）， 超过位数秘钥被忽略。对称性加密一般会按照固定长度，把待加密字符串分成块。不足一整块或者刚好最后有特殊填充字符。 </p>
-<p><img src="/2022/03/18/interview-security/des.png"></p>
-<p>特点：分组比较短、秘钥太短、密码生命周期短、运算速度较慢。 </p>
-</li>
-<li><p>AES </p>
-<p>AES的区块长度固定为128 比特，密钥长度则可以是128，192或256比特； </p>
-<p>特点：运算速度快，安全性高，资源消耗少 </p>
-</li>
-<li><p>总结：AES是高级算法，它比DES更快，更安全。</p>
-</li>
-</ul>
-<h3 id="非对称加密和对称加密的区别？"><a href="#非对称加密和对称加密的区别？" class="headerlink" title="非对称加密和对称加密的区别？"></a>非对称加密和对称加密的区别？</h3><ul>
-<li><p>对称加密</p>
-<p>  指的就是加、解密使用的同是一串密钥，所以被称做对称加密。对称加密只有一个密钥作为私钥。常见的对称加密算法：DES，AES等。 </p>
-</li>
-<li><p>非对称加密</p>
-<p>  指的是加、解密使用不同的密钥，一把作为公开的公钥，另一把作为私钥。公钥加密的信息，只有私钥才能解密。 </p>
-</li>
-<li><p>总结</p>
-<p>  非对称加密更安全，但是效率比较慢，对称加密效率高，但是不安全。一般来说可以混合使用：将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通，例如https。</p>
-</li>
-</ul>
-<h3 id="RSA的原理？"><a href="#RSA的原理？" class="headerlink" title="RSA的原理？"></a>RSA的原理？</h3><p><a href="https://cjting.me/2020/03/13/rsa/">https://cjting.me/2020/03/13/rsa/</a> </p>
-<p>密钥越长，它就越难破解。一般来说，1024位的RSA密钥基本安全，2048位的密钥极其安全。 </p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Information Security</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>interview-network</title>
-    <url>/2022/03/19/interview-network/</url>
-    <content><![CDATA[<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"><a href="#简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？" class="headerlink" title="简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"></a>简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？</h3><ul>
-<li><p>为什么需要三次握手：</p>
-<p><img src="/2022/03/19/interview-network/tcp3.png"></p>
-<p>客户端和服务端通信前要进行连接，“3次握手”的作用就是双方都能明确自己和对方的收、发能力是正常的。 </p>
-</li>
-<li><p>四次挥手的原因</p>
-<p><img src="/2022/03/19/interview-network/tcp4.png"></p>
-<p>客户端发送了FIN 连接释放报文之后，服务器收到了这个报文，就进入了CLOSE—WAIT状态。这个状态是为了让服务器端发送还未传送完毕的数据，传送完毕之后，服务器会发送FIN连接释放报文。</p>
-</li>
-<li><p>TIME_WAIT的原因</p>
-<p>客户端接收到服务器端的FIN报文后进入此状态，此时并不是直接进入CLOSED状态，还需要等待一个时间计时器设置的时间2MSL。这么做有两个理由：</p>
-<p>确保最后一个确认报文能够到达。如果B没收到A发送来的确认报文，那么就会重新发送连接释放请求报文，A等待一段时间就是为了处理这种情况的发生。</p>
-<p>等待一段时间是为了让本连接持续时间内所产生的所有报文都从网络中消失，使得下一个新的连接不会出现旧的连接请求报文。</p>
-</li>
-</ul>
-<h3 id="TCP-挥手时出现大量-CLOSE-WAIT-或-TIME-WAIT-怎么解决？"><a href="#TCP-挥手时出现大量-CLOSE-WAIT-或-TIME-WAIT-怎么解决？" class="headerlink" title="TCP 挥手时出现大量 CLOSE_WAIT 或 TIME_WAIT 怎么解决？"></a>TCP 挥手时出现大量 CLOSE_WAIT 或 TIME_WAIT 怎么解决？</h3><p>略</p>
-<h3 id="Syn-flood攻击及其防范"><a href="#Syn-flood攻击及其防范" class="headerlink" title="Syn flood攻击及其防范"></a>Syn flood攻击及其防范</h3><p>syn flood属于Dos攻击的一种。如果恶意地向某个服务器端口发送大量的SYN包，则可以使服务器打开大量的半开连接，分配TCB（Transmission Control Block）, 从而消耗大量的服务器资源，同时也使得正常的连接请求无法被响应。当开放了一个TCP端口后，该端口就处于Listening状态，不停地监视发到该端口的Syn报文，一旦接收到Client发来的Syn报文，就需要为该请求分配一个TCB，通常一个TCB至少需要280个字节，在某些操作系统中TCB甚至需要1300个字节，并返回一个SYN ACK命令，立即转为SYN-RECEIVED即半开连接状态。系统会为此耗尽资源。</p>
-<p>常见的防攻击方法有： </p>
-<p>监视系统的半开连接和不活动连接，当达到一定阈值时拆除这些连接，从而释放系统资源。这种方法对于所有的连接一视同仁，而且由于SYN Flood造成的半开连接数量很大，正常连接请求也被淹没在其中被这种方式误释放掉，因此这种方法属于入门级的SYN Flood方法。 </p>
-<h3 id="TCP-中常见的拥塞控制算法有哪些？"><a href="#TCP-中常见的拥塞控制算法有哪些？" class="headerlink" title="TCP 中常见的拥塞控制算法有哪些？"></a>TCP 中常见的拥塞控制算法有哪些？</h3><p>TCP主要通过四个算法来进行拥塞控制：慢开始、拥塞避免、快重传、快恢复。</p>
-<p><img src="/2022/03/19/interview-network/congestion_control.png"></p>
-<p>快重传算法规定，发送方只要一连收到三个重复确认就应当立即重传对方尚未收到的报文段 ，而不必继续等待设置的重传计时器到期。 </p>
-<p>与快重传配合使用的还有快恢复算法，其过程有以下两个要点：</p>
-<ol>
-<li><p>当发送方连续收到三个重复确认时，就执行“乘法减小”算法，把慢开始门限ssthresh减半。这是为了预防网络发生拥塞。请注意，接下去不执行慢开始算法。</p>
-</li>
-<li><p>由于发送方现在认为网络很可能没有发生拥塞（如果网络发生了严重的拥塞，就不会一连有好几个报文段连续到达接收方，也就不会导致接收方连续发送重复确认），因此与慢开始不同之处是现在不执行慢开始算法（即拥塞窗口cwnd现在不设置为1），而是把cwnd值设置为慢开始门限 ssthresh 减半后的数值，然后开始执行拥塞避免算法（“加法增大”），使拥塞窗口缓慢地线性增大。</p>
-</li>
-</ol>
-<h3 id="DNS解析过程，以及DNS劫持"><a href="#DNS解析过程，以及DNS劫持" class="headerlink" title="DNS解析过程，以及DNS劫持"></a>DNS解析过程，以及DNS劫持</h3><p><img src="/2022/03/19/interview-network/DNS.png"></p>
-<p>DNS劫持（DNS Hijacking）：又被称为域名劫持，DNS重定向（DNS direaction）,是一种DNS攻击方式。DNS查询没有得到正确的解析，以致引导user访问到恶意的网站，从而窃取用户隐私，或者进行某些恶意的操作。 </p>
-<p>DNS劫持现象：你入一个google.com网址，出来的是百度的页面 </p>
-<p>HTTP劫持现象：访问着github的页面，右下角出现了一个格格不入的广告弹窗 </p>
-<ol>
-<li><p>本机DNS劫持 </p>
-<p> 攻击者通过某些手段使用户的计算机感染上木马病毒，或者恶意软件之后，恶意修改本地DNS配置，比如修改本地hosts文件，缓存等 </p>
-</li>
-<li><p>路由DNS劫持 </p>
-<p> 很多用户默认路由器的默认密码，攻击者可以侵入到路由管理员账号中，修改路由器的默认配置。（路由器通常会提供 DNS 代理服务，接管整个网络的域名查询。） </p>
-</li>
-<li><p>攻击DNS服务器 </p>
-<p> 直接攻击DNS服务器，例如对DNS服务器进行DDOS攻击，可以是DNS服务器宕机，出现异常请求，还可以利用某些手段感染dns服务器的缓存，使给用户返回来的是恶意的ip地址</p>
-</li>
-</ol>
-<h3 id="TCP如何保证可靠传输？"><a href="#TCP如何保证可靠传输？" class="headerlink" title="TCP如何保证可靠传输？"></a>TCP如何保证可靠传输？</h3><ul>
-<li><p>确认应答和序列号 </p>
-<p>TCP传输时将每个字节的数据都进行了编号，这就是序列号。tcp按序号发送报文，接收端收到报文后，会给发送端一个ACK确认报文，用来表示已经成功接收到报文，报文中还带有ack，表示下一次发送端应该从哪里开始发送报文。 </p>
-</li>
-<li><p>校验和 </p>
-<p>这是一个端到端的检验和，目的是检测数据在传输过程中的任何变化。如果收到段的检验和有差错，TCP 将丢弃这个报文段 </p>
-</li>
-<li><p>超时重传 </p>
-<p>如果发送端发送的数据没有收到ACK确认，可能是：（1）发送给接收端的报文丢失了（2）接收端发送的ACK确认报文丢失了。不管是哪种原因，超过一定时间后，没有收到ACK确认，TCP启动超时重传机制，发送端重新发数据，如果接收端已经有了该数据，只是由于ACK确认丢失导致超时重传，会将刚刚发送过来的数据包丢弃。 </p>
-</li>
-<li><p>流量控制 </p>
-<p>发送端如果数据发送过快，导致接收端的缓冲区很快就满了，如果持续下去，数据溢出缓冲区，就会出现数据丢失。这时需要在发送端和接收端有一个窗口，窗口的作用为：在发送缓冲区，只有在窗口里面的数据，才能被发送，在接收缓冲区，只有在窗口里的数据才能被接收，接收端收到数据之后，会回复ack，发送端会根据ack的值来判断接收能力，从而动态调整窗口大小，实现流量控制。 </p>
-</li>
-<li><p>拥塞控制 </p>
-<p>如果网络出现拥塞，TCP会根据不同情况，采用不同的算法：慢开始，拥塞避免，快重传，快恢复来对窗口大小cwnd和慢开始门限值ssthresh进行调整，从而降低网络拥塞的可能性。</p>
-</li>
-</ul>
-<h3 id="什么是-TCP-粘包和拆包？"><a href="#什么是-TCP-粘包和拆包？" class="headerlink" title="什么是 TCP 粘包和拆包？"></a>什么是 TCP 粘包和拆包？</h3><p>  在socket通讯过程中，如果通讯的一端一次性连续发送多条数据包，tcp协议会将多个数据包打包成一个tcp报文发送出去，这就是所谓的粘包。而如果通讯的一端发送的数据包超过一次tcp报文所能传输的最大值时，就会将一个数据包拆成多个最大tcp长度的tcp报文分开传输，这就叫做拆包。 </p>
-<p>  <img src="/2022/03/19/interview-network/TCP_stick.png"></p>
-<p>  因为TCP是面向流，没有边界，而操作系统在发送TCP数据时，会通过缓冲区来进行优化，例如缓冲区为1024个字节大小。 </p>
-<p>  如果一次请求发送的数据量比较小，没达到缓冲区大小，TCP则会将多个请求合并为同一个请求进行发送，这就形成了粘包问题。 </p>
-<p>  如果一次请求发送的数据量比较大，超过了缓冲区大小，TCP就会将其拆分为多次发送，这就是拆包。</p>
-<h3 id="从系统层面上，UDP如何保证尽量可靠？"><a href="#从系统层面上，UDP如何保证尽量可靠？" class="headerlink" title="从系统层面上，UDP如何保证尽量可靠？"></a>从系统层面上，UDP如何保证尽量可靠？</h3><p>  传输层无法保证数据的可靠传输，只能通过应用层来实现了。实现的方式可以参照tcp可靠性传输的方式，只是实现不在传输层，实现转移到了应用层。 </p>
-<ul>
-<li>添加seq&#x2F;ack机制，确保数据发送到对端 </li>
-<li>添加发送和接收缓冲区，主要是用户超时重传。 </li>
-<li>添加超时重传机制。</li>
-</ul>
-<h3 id="什么是-ARP-协议？简述其使用场景？什么是RARP协议？"><a href="#什么是-ARP-协议？简述其使用场景？什么是RARP协议？" class="headerlink" title="什么是 ARP 协议？简述其使用场景？什么是RARP协议？"></a>什么是 ARP 协议？简述其使用场景？什么是RARP协议？</h3><p>  ARP实现由 IP 地址得到 MAC 地址。如果主机 A 知道主机 B 的 IP 地址，但是ARP 高速缓存中没有该 IP 地址到 MAC 地址的映射，此时主机 A 通过广播的方式发送ARP 请求分组，主机 B 收到该请求后会发送ARP 响应分组给主机 A 告知其 MAC 地址，随后主机 A 向其高速缓存中写入主机B 的IP 地址到MAC 地址的映射。 </p>
-<p>  ARP属于网络层协议 </p>
-<p>  RARP（Reverse Address Resolution Protocol）是将 ARP 反过来，从 MAC 地址定位 IP 地址的一种协议。对于使用嵌入式设备时，会遇到没有任何输入接口或无法通过 DHCP 动态获取 IP 地址的情况。在类似情况下，就可以使用 RARP。例如，打印机服务器等小型嵌入式设备接入到网络时会用到。</p>
-<p>  为此，需要架设一台 RARP 服务器，从而在这个服务器上注册设备的 MAC 地址及其 IP 地址。</p>
-<h3 id="简述在四层和七层网络协议中负载均衡的原理"><a href="#简述在四层和七层网络协议中负载均衡的原理" class="headerlink" title="简述在四层和七层网络协议中负载均衡的原理"></a>简述在四层和七层网络协议中负载均衡的原理</h3><p>  所谓四层就是基于IP+端口的负载均衡；七层就是基于URL等应用层信息的负载均衡。 </p>
-<p>  <img src="/2022/03/19/interview-network/network_protocol.png"></p>
-<ul>
-<li><p>四层负载均衡： </p>
-<p>  以常见的TCP为例，负载均衡设备在接收到第一个来自客户端的SYN 请求时，即通过上述方式选择一个最佳的服务器，并对报文中目标IP地址进行修改(改为后端服务器IP），直接转发给该服务器。TCP的连接建立，即三次握手是客户端和服务器直接建立的，负载均衡设备只是起到一个类似路由器的转发动作。 </p>
-</li>
-<li><p>七层负载均衡： </p>
-<p>  以常见的TCP为例，负载均衡设备如果要根据真正的应用层内容再选择服务器，只能先代理最终的服务器和客户端建立连接(三次握手)后，才可能接受到客户端发送的真正应用层内容的报文，然后再根据该报文中的特定字段，再加上负载均衡设备设置的服务器选择方式，决定最终选择的内部服务器。负载均衡设备在这种情况下，更类似于一个代理服务器。负载均衡和前端的客户端以及后端的服务器会分别建立TCP连接。</p>
-</li>
-</ul>
-<h2 id="Http"><a href="#Http" class="headerlink" title="Http"></a>Http</h2><h3 id="HTTP-中-GET-和-POST-区别？"><a href="#HTTP-中-GET-和-POST-区别？" class="headerlink" title="HTTP 中 GET 和 POST 区别？"></a>HTTP 中 GET 和 POST 区别？</h3><ul>
-<li>Get 是用来从服务器上获得数据，而 Post 是用来向服务器上传递数据。 </li>
-<li>Get 将表单中数据的按照 variable&#x3D;value 的形式，添加到 action 所指向的 URL 后面，并且两者使用“?”连接，而各个变量之间使用“&amp;”连接；Post 是将表单中的数据放在 form 的数据体中，按照变量和值相对应的方式，传递到 action 所指向 URL。 </li>
-<li>Get 是不安全的，因为在传输过程，数据被放在请求的 URL 中，而如今现有的很多服务器、代理服务器或者用户代理都会将请求URL记录到日志文件中，然后放在某个地方，这样就可能会有一些隐私的信息被第三方看到。另外，用户也可以在浏览器上直接看到提交的数据，一些系统内部消息将会一同显示在用户面前。Post 的所有操作对用户来说都是不可见的。 </li>
-<li>Get 传输的数据量小，这主要是因为受 URL 长度限制；而 Post 可以传输大量的数据，所以在上传文件只能使用 Post。</li>
-</ul>
-<h3 id="Cookie-和-Session-的关系和区别是什么？"><a href="#Cookie-和-Session-的关系和区别是什么？" class="headerlink" title="Cookie 和 Session 的关系和区别是什么？"></a>Cookie 和 Session 的关系和区别是什么？</h3><p>Cookie保存在客户端，Session保存在服务端，二者都是用来保存用户状态的。</p>
-<h3 id="简述-HTTP-1-0，1-1，2-0-的主要区别-？"><a href="#简述-HTTP-1-0，1-1，2-0-的主要区别-？" class="headerlink" title="简述 HTTP 1.0，1.1，2.0 的主要区别 ？"></a>简述 HTTP 1.0，1.1，2.0 的主要区别 ？</h3><ul>
-<li><p>HTTP 1.0，1.1 的主要区别 </p>
-<ul>
-<li><p>缓存处理 </p>
-<p>  HTTP1.0中主要使用header里的If-Modified-Since,Expires来作为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略如Entity tag，If-Unmodified-Since等。 </p>
-</li>
-<li><p>带宽优化及网络连接的使用 </p>
-<p>  HTTP1.0中，存在一些浪费带宽的现象，例如客户端只是需要某个对象的一部分，而服务器却将整个对象送过来了，并且不支持断点续传功能。HTTP1.1则在请求头引入了range头域，它允许只请求资源的某个部分，即返回码是206（Partial Content） </p>
-</li>
-<li><p>长连接 </p>
-<p>  HTTP 1.1支持长连接（PersistentConnection）和请求流水线（Pipelining）处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。 </p>
-<p>  <img src="/2022/03/19/interview-network/PersistentConnection.png"> </p>
-<p>  <img src="/2022/03/19/interview-network/pipeline.png"></p>
-</li>
-</ul>
-</li>
-<li><p>HTTP 1.x，2.0 的主要区别 </p>
-<ul>
-<li><p>新的二进制格式 </p>
-<p>  HTTP1.x的解析是基于文本。基于文本协议的格式解析存在天然缺陷，文本的表现形式有多样性，要做到健壮性考虑的场景必然很多，二进制则不同，只认0和1的组合。 </p>
-</li>
-<li><p>多路复用 </p>
-<p>  多路复用代替了 HTTP1.x 的序列和阻塞机制，所有的相同域名请求都通过同一个 TCP 连接并发完成。同一 Tcp 中可以发送多个请求，对端可以通过帧中的标识知道属于哪个请求。通过这个技术，可以避免 HTTP 旧版本中的队头阻塞问题，极大的提高传输性能。 </p>
-<p>  <img src="http2.png"></p>
-</li>
-<li><p>header压缩     </p>
-<p>  HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。 </p>
-</li>
-<li><p>服务端推送（server push）</p>
-<p>  例如我的网页有一个sytle.css的请求，在客户端收到sytle.css数据的同时，服务端会将sytle.js的文件推送给客户端，当客户端再次尝试获取sytle.js时就可以直接从缓存中获取到，不用再发请求了</p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="https的过程是什么样？"><a href="#https的过程是什么样？" class="headerlink" title="https的过程是什么样？"></a>https的过程是什么样？</h3><ul>
-<li><p>为什么需要https？ </p>
-<p>  传统的http协议可能有以下的问题： </p>
-<ul>
-<li>通信使用明文（不加密），内容可能被窃听 </li>
-<li>无法证明报文的完整性，所以可能遭篡改 </li>
-<li>不验证通信方的身份，因此有可能遭遇伪装</li>
-</ul>
-<p>  <img src="https1.png"></p>
-</li>
-<li><p>https的工作流程 </p>
-<p>  <img src="https2.png"></p>
-</li>
-<li><p>https的缺点 </p>
-<ul>
-<li>需要权威CA颁发的SSL证书。从证书的选择、购买到部署，传统的模式下都会比较耗时耗力。 </li>
-<li>HTTPS普遍认为性能消耗要大于HTTP，因为与纯文本通信相比，加密通信会消耗更多的CPU及内存资源。</li>
-</ul>
-</li>
-<li><p>http协议和https协议的区别 </p>
-<ul>
-<li>https协议需要到CA申请证书，一般免费证书较少，因而需要一定费用。 </li>
-<li>http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl&#x2F;tls加密传输协议。 </li>
-<li>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。 </li>
-<li>HTTPS协议比http有以下优势：数据隐私性、数据完整性、身份认证。</li>
-</ul>
-</li>
-</ul>
-<h3 id="什么是跨域，什么情况下会发生跨域请求？"><a href="#什么是跨域，什么情况下会发生跨域请求？" class="headerlink" title="什么是跨域，什么情况下会发生跨域请求？"></a>什么是跨域，什么情况下会发生跨域请求？</h3><p>  跨域”指的是不同源之间的资源访问。只要请求的 url 有以下不同，都属于“跨域”： </p>
-<ul>
-<li>协议: http, https, … </li>
-<li>域名 </li>
-<li>端口</li>
-</ul>
-<p>  这种“跨域”限制其实是 浏览器自带的安全机制，只有 在浏览器上 发生跨域请求操作时，才会自动禁止访问的错误。 </p>
-<p>  虽然浏览器出于安全考虑做了“跨域”访问的限制，但开发时不可避免会有这样不同源资源访问的需求，因此 W3C 就制定了 CORS(Cross-origin resource sharing 跨域资源共享) 的机制。CORS 是一种解决“跨域”的方案。 </p>
-<p>  然后就是后端服务器支持了，服务器需要在 Response Header 上添加 <code>Access-Control-xxx-yyy</code> 的字段，浏览器识别到了，才能放行该请求。比如，最常见的就是加 <code>Access-Control-Allow-Origin</code> 这个返回头，值设置为需要放行的域名。 </p>
-<h3 id="http常见的状态码"><a href="#http常见的状态码" class="headerlink" title="http常见的状态码"></a>http常见的状态码</h3><ul>
-<li>100（continue）：客户端在发送POST数据给服务器前，征询服务器情况，看服务器是否处理POST的数据，如果不处理，客户端则不上传POST数据，如果处理，则POST上传数据。常用于POST大数据传输。 </li>
-<li>200（OK）：成功。 </li>
-<li>206（Partial Content）：一般用来做断点续传，或者是视频文件等大文件的加载。 </li>
-<li>301（Move Permanently）：永久重定向会缓存。新域名替换旧域名，旧的域名不再使用时，用户访问旧域名时用301就重定向到新的域名 </li>
-<li>302（Found）：临时重定向不会缓存，常用 于未登陆的用户访问用户中心重定向到登录页面 </li>
-<li>304（Not Motified）：协商缓存，告诉客户端有缓存，直接使用缓存中的数据，返回页面的只有头部信息，是没有内容部分。 </li>
-<li>400（Bad Request）：参数有误，请求无法被服务器识别 </li>
-<li>403（Frobidden）：告诉客户端进制访问该站点或者资源，如在外网环境下，然后访问只有内网IP才能访问的时候则返回 </li>
-<li>404（Not Found）：服务器找不到资源时，或者服务器拒绝请求又不想说明理由时 </li>
-<li>503（Service Unavailable）：服务器停机维护时，主动用503响应请求或 nginx 设置限速，超过限速，会返回503</li>
-</ul>
-<h3 id="简述-HTTP-报文头部的组成结构"><a href="#简述-HTTP-报文头部的组成结构" class="headerlink" title="简述 HTTP 报文头部的组成结构"></a>简述 HTTP 报文头部的组成结构</h3><p><img src="http_message1.png"><br><img src="http_message2.png"><br><img src="http_message3.png"></p>
-<h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><h3 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h3><ul>
-<li><p>什么是IO多路复用？ </p>
-<p>IO指的就是读入&#x2F;写出数据的过程，和等待读入&#x2F;写出数据的过程。一旦拿到数据后就变成了数据操作了，就不是IO了。 </p>
-<p>多路是指网络连接，复用指的是同一个线程。IO 多路复用是一种同步IO模型，实现一个线程可以监视多个文件句柄；一旦某个文件句柄就绪，就能够通知应用程序进行相应的读写操作；没有文件句柄就绪就会阻塞应用程序，交出CPU。 </p>
-</li>
-<li><p>为什么需要IO多路复用？ </p>
-<p>在没有IO多路复用之前，对于网络请求，有BIO、NIO两种实现方式，但它们都有一些问题。<br>1、同步阻塞（BIO） </p>
-<ul>
-<li><p>服务端采用单线程时，当 accept 一个请求后，在 recv 或 send 调用阻塞时，将无法 accept 其他请求（必须等上一个请求处理 recv 或 send 完 ）（无法处理并发） </p>
-<p>  <img src="/2022/03/19/interview-network/BIO.png"></p>
-  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 伪代码描述</span><br><span class="line">while (true) &#123;</span><br><span class="line">        // accept阻塞</span><br><span class="line">    client_fd = accept(listen_fd);</span><br><span class="line">    fds.append(client_fd);</span><br><span class="line">    for (fd in fds) &#123;</span><br><span class="line">            // recv阻塞（会影响上面的accept）</span><br><span class="line">        if (recv(fd)) &#123;</span><br><span class="line">                // logic</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-<li><p>服务端采用多线程时，当 accept 一个请求后，开启线程进行 recv，可以完成并发处理，但随着请求数增加需要增加系统线程，大量的线程占用很大的内存空间，并且线程切换会带来很大的开销。 </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 伪代码描述</span><br><span class="line">while(true) &#123;</span><br><span class="line">    // accept阻塞</span><br><span class="line">    client_fd = accept(listen_fd)</span><br><span class="line">    // 开启线程read数据（fd增多导致线程数增多）</span><br><span class="line">    new Thread func() &#123;</span><br><span class="line">        // recv阻塞（多线程不影响上面的accept）</span><br><span class="line">        if (recv(fd)) &#123;</span><br><span class="line">            // logic</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>2、同步非阻塞（NIO） </p>
-<ul>
-<li>服务器端当 accept 一个请求后，加入 fds 集合，每次轮询一遍 fds 集合 recv (非阻塞)数据，没有数据则立即返回错误，每次轮询所有 fd （包括没有发生读写实际的 fd）会很浪费 CPU。<br><img src="/2022/03/19/interview-network/NIO.png"><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 伪代码描述</span><br><span class="line">while(true) &#123;</span><br><span class="line">    // accept非阻塞（cpu一直忙轮询）</span><br><span class="line">    client_fd = accept(listen_fd)</span><br><span class="line">    if (client_fd != null) &#123;</span><br><span class="line">        // 有人连接</span><br><span class="line">        fds.append(client_fd)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 无人连接</span><br><span class="line">    &#125;  </span><br><span class="line">    for (fd in fds) &#123;</span><br><span class="line">        // recv非阻塞</span><br><span class="line">        setNonblocking(client_fd)</span><br><span class="line">        // recv 为非阻塞命令</span><br><span class="line">        if (len = recv(fd) &amp;&amp; len &gt; 0) &#123;</span><br><span class="line">            // 有读写数据</span><br><span class="line">            // logic</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // 无读写数据</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li><p>IO多路复用如何工作？ </p>
-<ul>
-<li><p>select 函数： </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int select(</span><br><span class="line">    int max_fd, </span><br><span class="line">    fd_set *readset, </span><br><span class="line">    fd_set *writeset, </span><br><span class="line">    fd_set *exceptset, </span><br><span class="line">    struct timeval *timeout</span><br><span class="line">)    </span><br></pre></td></tr></table></figure>
-
-<p>select 函数监视的文件描述符分3类，分别是writefds、readfds、和exceptfds。调用后select函数会阻塞，直到有描述符就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。当select函数返回后，可以通过遍历fdset，来找到就绪的描述符。 </p>
-<p>缺点： </p>
-<ol>
-<li><p>单个进程所打开的FD是有限制的，通过 FD_SETSIZE 设置，默认1024 ; </p>
-</li>
-<li><p>每次调用 select，都需要把 fd 集合从用户态拷贝到内核态，这个开销在 fd 很多时会很大； </p>
-</li>
-<li><p>对 socket 扫描时是线性扫描，采用轮询的方法，效率较低（高并发）</p>
-</li>
-</ol>
-<p>例子：<a href="https://kongkongk.github.io/2020/07/02/select-function-application-example/">https://kongkongk.github.io/2020/07/02/select-function-application-example/</a> </p>
-</li>
-<li><p>poll 函数</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int poll(struct pollfd *fds, nfds_t nfds, int timeout);</span><br><span class="line">struct pollfd &#123;</span><br><span class="line">    int   fd;         /* file descriptor */</span><br><span class="line">    short events;     /* requested events */</span><br><span class="line">    short revents;    /* returned events */</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态， 但是它没有最大连接数的限制，原因是它是基于链表来存储的.<br>例子：<a href="https://www.cnblogs.com/pang1567/p/4122729.html">https://www.cnblogs.com/pang1567/p/4122729.html</a> </p>
-</li>
-<li><p>epoll 函数： </p>
-  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 创建用于epoll工作的FD</span><br><span class="line">int epoll_create(int size);</span><br><span class="line"></span><br><span class="line">// 对事件操作：增、删等</span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event); </span><br><span class="line"></span><br><span class="line">// 等待事件</span><br><span class="line">int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout); </span><br></pre></td></tr></table></figure>
-<p>  <img src="/2022/03/19/interview-network/epoll.png"></p>
-<p>  epoll 通过两个方面，很好解决了 select&#x2F;poll 的问题。 </p>
-<p>  第一点，epoll 在内核里使用红黑树来跟踪进程所有待检测的文件描述字，把需要监控的 socket 通过 <code>epoll_ctl()</code> 函数加入内核中的红黑树里，红黑树是个高效的数据结构，增删查一般时间复杂度是 O(logn)，通过对这棵黑红树进行操作，这样就不需要像 select&#x2F;poll 每次操作时都传入整个 socket 集合，只需要传入一个待检测的 socket，减少了内核和用户空间大量的数据拷贝和内存分配。 </p>
-<p>  第二点， epoll 使用事件驱动的机制，内核里维护了一个链表来记录就绪事件，当某个 socket 有事件发生时，通过回调函数内核会将其加入到这个就绪事件列表中，当用户调用 epoll_wait() 函数时，只会返回有事件发生的文件描述符的个数，不需要像 select&#x2F;poll 那样轮询扫描整个 socket 集合，大大提高了检测的效率。</p>
-<p>  epoll 支持两种事件触发模式，分别是边缘触发（edge-triggered，ET）和水平触发（level-triggered，LT）： </p>
-<ul>
-<li>使用边缘触发模式时，当被监控的 Socket 描述符上有可读事件发生时，服务器端只会从 epoll_wait 中苏醒一次，即使进程没有调用 read 函数从内核读取数据，也依然只苏醒一次，因此我们程序要保证一次性将内核缓冲区的数据读取完； </li>
-<li>使用水平触发模式时，当被监控的 Socket 上有可读事件发生时，服务器端不断地从 epoll_wait 中苏醒，直到内核缓冲区数据被 read 函数读完才结束，目的是告诉我们有数据需要读取； </li>
-<li>如何理解名字：边缘（电平发生变化：高电平到低电平,或者低电平到高电平），水平（只有高电平(1)或低电平(0)时才触发通知）</li>
-</ul>
-<p>  实例：<br>  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int main(int argc, char* argv[])&#123;</span><br><span class="line">/*</span><br><span class="line">* 在这里进行一些初始化的操作，</span><br><span class="line">* 比如初始化数据和socket等。</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">    // 内核中创建ep对象</span><br><span class="line">    epfd=epoll_create(256);</span><br><span class="line">    // 需要监听的socket放到ep中</span><br><span class="line">    epoll_ctl(epfd,EPOLL_CTL_ADD,listenfd,&amp;ev);</span><br><span class="line"></span><br><span class="line">    while(1) &#123;</span><br><span class="line">        // 阻塞获取</span><br><span class="line">        nfds = epoll_wait(epfd,events,20,0);</span><br><span class="line">        for(i=0;i&lt;nfds;++i) &#123;</span><br><span class="line">            if(events[i].data.fd==listenfd) &#123;</span><br><span class="line">                // 这里处理accept事件</span><br><span class="line">                connfd = accept(listenfd);</span><br><span class="line">                // 接收新连接写到内核对象中</span><br><span class="line">                epoll_ctl(epfd,EPOLL_CTL_ADD,connfd,&amp;ev);</span><br><span class="line">            &#125; else if (events[i].events&amp;EPOLLIN) &#123;</span><br><span class="line">                // 这里处理read事件</span><br><span class="line">                read(sockfd, BUF, MAXLINE);</span><br><span class="line">                //读完后准备写</span><br><span class="line">                epoll_ctl(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">            &#125; else if(events[i].events&amp;EPOLLOUT) &#123;</span><br><span class="line">                // 这里处理write事件</span><br><span class="line">                write(sockfd, BUF, n);</span><br><span class="line">                //写完后准备读</span><br><span class="line">                epoll_ctl(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-</li>
-</ul>
-</li>
-<li><p>select 、 poll、epoll的区别： </p>
-<p><img src="/2022/03/19/interview-network/IO.png"></p>
-<p>使用场景： </p>
-<ul>
-<li>select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制。 select 可移植性更好，几乎被所有主流平台所支持。 </li>
-<li>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。 </li>
-<li>只需要运行在 Linux 平台上，有大量的描述符需要同时轮询，并且这些连接最好是长连接。</li>
-</ul>
-</li>
-</ul>
-<h3 id="Redis为什么使用IO多路复用技术？"><a href="#Redis为什么使用IO多路复用技术？" class="headerlink" title="Redis为什么使用IO多路复用技术？"></a>Redis为什么使用IO多路复用技术？</h3><p>Redis 是跑在单线程中的，所有的操作都是按照顺序线性执行的，但是由于读写操作等待用户输入或输出都是阻塞的，所以 I&#x2F;O 操作在一般情况下往往不能直接返回，这会导致某一文件的 I&#x2F;O 阻塞导致整个进程无法对其它客户提供服务，而 I&#x2F;O 多路复用 就是为了解决这个问题而出现的。</p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Network</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>interview-SystemDesign</title>
     <url>/2022/03/20/interview-SystemDesign/</url>
     <content><![CDATA[<h2 id="系统设计基础"><a href="#系统设计基础" class="headerlink" title="系统设计基础"></a>系统设计基础</h2><h3 id="如何对系统的性能进行优化？"><a href="#如何对系统的性能进行优化？" class="headerlink" title="如何对系统的性能进行优化？"></a>如何对系统的性能进行优化？</h3><ul>
@@ -2324,6 +1369,1085 @@
       <tags>
         <tag>Interview</tag>
         <tag>System Design</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview_algorithm</title>
+    <url>/2022/03/18/interview-algorithm/</url>
+    <content><![CDATA[<h3 id="随机快速排序"><a href="#随机快速排序" class="headerlink" title="随机快速排序"></a>随机快速排序</h3><p>注意，获取阀分元素的索引时，使用下面的方式可能会遇到阀分元素和其它元素一样的情况，导致错误。 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int quickSortCore(vector&lt;int&gt;&amp; nums, int value, int left, int right)&#123;</span><br><span class="line">    while(left&lt;right)&#123;</span><br><span class="line">        if(nums[left]&lt;value)&#123;</span><br><span class="line">            left++;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if(nums[right]&gt;value)&#123;</span><br><span class="line">            right--;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if(nums[left] == nums[right])&#123;</span><br><span class="line">            return left</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            swap(nums[left],nums[right]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正确的写法 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//快速排序</span><br><span class="line">public static void QuickSort(int[] a, int left, int right) &#123;</span><br><span class="line">    if (left &lt; right) &#123;</span><br><span class="line">        int p = partition(a, left, right);</span><br><span class="line">        QuickSort(a, left, p - 1);</span><br><span class="line">        QuickSort(a, p + 1, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//快速排序数组划分</span><br><span class="line">private static int partition(int[] a, int left, int right) &#123;</span><br><span class="line">    int x = a[right];</span><br><span class="line">    int p = left - 1;</span><br><span class="line">    for (int i = left; i &lt; right; i++) &#123;</span><br><span class="line">        if (a[i] &lt;= x) &#123;</span><br><span class="line">            p++;</span><br><span class="line">            swap(a, p, i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    swap(a, p+1, right);</span><br><span class="line">    return p+1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="俄罗斯套娃信封问题"><a href="#俄罗斯套娃信封问题" class="headerlink" title="俄罗斯套娃信封问题"></a><a href="https://leetcode-cn.com/problems/russian-doll-envelopes/">俄罗斯套娃信封问题</a></h3><p>思路：第一维升序排序，第二维求最长严格递增子序列</p>
+<h3 id="单调栈和单调队列的应用"><a href="#单调栈和单调队列的应用" class="headerlink" title="单调栈和单调队列的应用"></a>单调栈和单调队列的应用</h3><ul>
+<li><p>单调栈 </p>
+<p>以O(n)时间复杂度求出某个数的左边或右边第一个比它大或小的元素。</p>
+</li>
+<li><p>单调队列 </p>
+<p>区间最小（最大）值问题</p>
+</li>
+</ul>
+<h3 id="求滑动窗口的最大值"><a href="#求滑动窗口的最大值" class="headerlink" title="求滑动窗口的最大值"></a><a href="https://leetcode-cn.com/problems/sliding-window-maximum/">求滑动窗口的最大值</a></h3><h3 id="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"><a href="#10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？" class="headerlink" title="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"></a>10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？</h3><p>高效指的是：最小的时间复杂度和最小的空间复杂度 </p>
+<p>首先10亿个数如果全部保存在内存中，需要的空间大小为10^9*4B ≈ 4GB，内存中是无法完全存放的，所以这些数据首先应该都在外存上，我们分批次读进内存，得到每个批次的最大值，之后再比较所有批次的最大值即可。可以将1000份，每份的大小约为4MB。 </p>
+<p>如果是TopK，则在内存中维护一个小根堆，分批次读进内存之后，依次遍历与小根堆的顶元素进行比较即可。<br>如果是TopK词频问题，有如下的思路： </p>
+<ul>
+<li>先将数据集按照Hash方法分解成多个小数据集（保证两个数据集不会出现相同的单词） </li>
+<li>然后使用Trie树或者Hash统计每个小数据集中的query词频 </li>
+<li>之后用小顶堆求出每个数据集中出频率最高的前K个数 </li>
+<li>最后在所有top K中求出最终的top K。</li>
+</ul>
+<h3 id="rand7-实现rand10"><a href="#rand7-实现rand10" class="headerlink" title="rand7()实现rand10()"></a>rand7()实现rand10()</h3><p>  使用拒绝采样。 </p>
+<p>  我们可以调用两次 Rand7()，那么可以生成 [1,49] 之间的随机整数，我们只用到其中的前 40 个用来实现 Rand10()，而拒绝剩下的 9 个数 </p>
+<h3 id="rand65535-实现30万人中抽奖1万人"><a href="#rand65535-实现30万人中抽奖1万人" class="headerlink" title="rand65535()实现30万人中抽奖1万人"></a>rand65535()实现30万人中抽奖1万人</h3><p>同上</p>
+<h3 id="10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"><a href="#10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图" class="headerlink" title="10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"></a>10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图</h3><p>  定义一个24<em>60</em>60的数组，来存放每一秒的上线人数 遍历数据，根据上线时间和下线时间，获取数组范围，并将数组中间所有元素+1 时间复杂度：O(MN) </p>
+<h3 id="给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序"><a href="#给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序" class="headerlink" title="给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序"></a>给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序</h3><p>  40亿 * 4B ≈ 16G，利用位图法。</p>
+<h3 id="海量数据面试题"><a href="#海量数据面试题" class="headerlink" title="海量数据面试题"></a>海量数据面试题</h3><p>  <a href="https://blog.csdn.net/v_JULY_v/article/details/6279498">https://blog.csdn.net/v_JULY_v/article/details/6279498</a> </p>
+<h3 id="最长递增子序列（要求时间复杂度为O-nlgn"><a href="#最长递增子序列（要求时间复杂度为O-nlgn" class="headerlink" title="最长递增子序列（要求时间复杂度为O(nlgn)"></a>最长递增子序列（要求时间复杂度为O(nlgn)</h3><p>一个简单的贪心，如果我们要使上升子序列尽可能的长，则我们需要让序列上升得尽可能慢，因此我们希望每次在上升子序列最后加上的那个数尽可能的小。 </p>
+<p>基于上面的贪心思路，我们维护一个数组 d[i] ，表示长度为 i 的最长上升子序列的末尾元素的最小值。我们依次遍历数组 nums 中的每个元素，并更新数组 d 和 len 的值。如果 nums[i] &gt; d[len] 则更新 len&#x3D;len+1，否则在 d[1…len]中找满足 d[i - 1] &lt; nums[j] &lt; d[i] 的下标 i，并更新d[i]&#x3D;nums[j]。<br>举例说明： </p>
+<p><img src="/2022/03/18/interview-algorithm/LIS-example.png"></p>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview_intelligence</title>
+    <url>/2022/03/18/interview-intelligence/</url>
+    <content><![CDATA[<h3 id="不均匀的硬币产生等概率"><a href="#不均匀的硬币产生等概率" class="headerlink" title="不均匀的硬币产生等概率"></a>不均匀的硬币产生等概率</h3><p>问题描述：有一枚不均匀的硬币，已知抛出此硬币后，正面向上的概率为 p（0 &lt; p &lt; 1）。请利用这枚硬币产生出概率相等的两个事件。 </p>
+<p>扔两次，先p后q为事件1，先q后p为事件2，二者概率相同。其余情况（pp、qq）则废弃。 </p>
+<h3 id="64-匹马，8-个赛道，找出前-4-匹马最少需要比几次？"><a href="#64-匹马，8-个赛道，找出前-4-匹马最少需要比几次？" class="headerlink" title="64 匹马，8 个赛道，找出前 4 匹马最少需要比几次？"></a>64 匹马，8 个赛道，找出前 4 匹马最少需要比几次？</h3><p><img src="/2022/03/18/interview-intelligence/horse_racing.png"></p>
+<p>最少10次选出前四，最多11次选出前四。 A2、A3、A4、B2、B3、C1、C2、D1八匹马跑一次，即：在剩下需要排名的马中，除了B1外，其它8匹马跑一次（1次）。 </p>
+<p>在这次比赛中，如果B2或者C1排名第一或者第二，那从该次比赛中取出前两个，和A1,B1，一起作为前4名。否则，将A2,A3,A4,B1再比赛一次（1次），取前三名和A1一起作为前4名。 </p>
+<h3 id="有2个8斤水桶-都装满水-还有一个3斤空水桶-如何将这16斤水平均分给4个人？（分配后不能再倒回）"><a href="#有2个8斤水桶-都装满水-还有一个3斤空水桶-如何将这16斤水平均分给4个人？（分配后不能再倒回）" class="headerlink" title="有2个8斤水桶,都装满水,还有一个3斤空水桶,如何将这16斤水平均分给4个人？（分配后不能再倒回）"></a>有2个8斤水桶,都装满水,还有一个3斤空水桶,如何将这16斤水平均分给4个人？（分配后不能再倒回）</h3><p>略</p>
+<h3 id="有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？"><a href="#有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？" class="headerlink" title="有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？"></a>有16种溶液，其中有且只有一种是有毒的，这种有毒的溶液与另一种试剂A混合会变色，而其他无毒溶液与A混合不会变色。已知一次实验需要1小时，由于一次混合反应需要使用1个试管，问最少使用多少个试管可以在1小时内识别出有毒溶液？</h3><p>然后，取4个试管，第一个试管加入编号二进制形式中第一位（指最低位）是1的溶液，第二个试管加入编号第二位是1的溶液，其他2个试管分别加入编号第3,4位为1 的溶液。然后再将试剂A加入4个试管中，看那些试管发生了反应，就可以知道有毒溶液的编号了。</p>
+<p>例如：第1、2、4号试管内发生了反应，则我们知道是第7号溶液是有毒的。原因是7的二进制编码是1011，因此7号溶液是唯一加入了1、2、4号试管，而没有加入3号试管的溶液。</p>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Intelligence</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview-database</title>
+    <url>/2022/03/19/interview-database/</url>
+    <content><![CDATA[<h1 id="数据库系统原理"><a href="#数据库系统原理" class="headerlink" title="数据库系统原理"></a>数据库系统原理</h1><h2 id="关系数据库"><a href="#关系数据库" class="headerlink" title="关系数据库"></a>关系数据库</h2><h3 id="关系型数据库和非关系型数据库的区别？"><a href="#关系型数据库和非关系型数据库的区别？" class="headerlink" title="关系型数据库和非关系型数据库的区别？"></a>关系型数据库和非关系型数据库的区别？</h3><ul>
+<li>关系型数据库<br>是指采用了关系模型来组织数据的数据库，简单来说，关系模式就是二维表格模型。关系型数据库的最大优点就是事务的一致性，这个特性，使得关系型数据库中可以适用于一切要求一致性比较高的系统中。 </li>
+<li>非关系型数据库<br>指那些非关系型的、分布式的，且一般不保证ACID的数据存储系统</li>
+</ul>
+<h3 id="函数依赖和三范式"><a href="#函数依赖和三范式" class="headerlink" title="函数依赖和三范式"></a>函数依赖和三范式</h3><ul>
+<li><p>函数依赖</p>
+<ul>
+<li>记 A-&gt;B 表示 A 函数决定 B，也可以说 B 函数依赖于 A。 </li>
+<li>对于 A-&gt;B，如果能找到 A 的真子集 A’，使得 A’-&gt; B，那么 A-&gt;B 就是部分函数依赖，否则就是完全函数依赖。 </li>
+<li>对于 A-&gt;B，B-&gt;C，则 A-&gt;C 是一个传递函数依赖</li>
+</ul>
+</li>
+<li><p>三范式</p>
+<ul>
+<li>第一范式<br>  每个属性（表的一列）都不可再分，比如某个字段是json数据，就不符合第一范式。 </li>
+<li>第二范式<br>  在1NF的基础上，非主属性必须完全依赖于候选码（在1NF基础上消除非主属性对主码的部分函数依赖）举例如下：虽然成绩完全依赖于学号和课程号，但是姓名部分函数依赖于（学号+课程号），即只需要学号即可确定姓名。</li>
+</ul>
+<p>  <img src="/2022/03/19/interview-database/2NF.png"></p>
+<ul>
+<li>第三范式<br>  在2NF基础上消除传递依赖。比如，课程号-&gt;授课老师-&gt;教师姓名，所以教师姓名传递依赖课程号。</li>
+</ul>
+<p>  <img src="/2022/03/19/interview-database/3NF.png"></p>
+</li>
+</ul>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="什么是事务的ACID特性"><a href="#什么是事务的ACID特性" class="headerlink" title="什么是事务的ACID特性"></a>什么是事务的ACID特性</h3><p>略</p>
+<h2 id="并发一致性问题"><a href="#并发一致性问题" class="headerlink" title="并发一致性问题"></a>并发一致性问题</h2><ul>
+<li><p>丢失修改 </p>
+</li>
+<li><p>脏读 </p>
+</li>
+<li><p>不可重复读 </p>
+</li>
+<li><p>幻读 </p>
+<ul>
+<li><p>概念 </p>
+<p>是指在同一个事务中，前后两次查询相同范围时，得到的结果不一致，后一次查询到新插入的行。</p>
+<p><img src="/2022/03/19/interview-database/Phantom_read.png"> </p>
+<p>对于 <code>select * from t where d=5 for update;</code> 来说，锁住d&#x3D;5对应的行或者锁住扫描过程中所有的行都是没有用的, 因为插入并不影响之前行的操作，所以 InnoDB 为了解决幻读，引入了新的锁 - 间隙锁。 </p>
+<p>当再执行select * from t where d&#x3D;5 for update;时，不但会将全表的数据行锁住，还会将间隙锁住。由于间隙锁解决的是幻读插入的问题，所以间隙锁仅仅对插入操作本身互斥，不同事务之间的间隙锁并不互斥。 </p>
+</li>
+<li><p>缺点</p>
+<p>间隙锁的引入导致同样的语句锁住更大的范围，降低了并发度。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><h3 id="数据库锁的类型有哪些？"><a href="#数据库锁的类型有哪些？" class="headerlink" title="数据库锁的类型有哪些？"></a>数据库锁的类型有哪些？</h3><ul>
+<li>共享锁：允许事务对一条行数据进行读取，其他事务只能加读锁，即并行读。 </li>
+<li>排他锁：允许事务对一条行数据进行删除或更新，其他事务不能加任何锁，即无法读和写.</li>
+</ul>
+<p>  共享锁之间是兼容的，而互斥锁与其他任意锁都不兼容，因为可以并行读，但是只能串行写。 </p>
+<p>  <img src="/2022/03/19/interview-database/lock.png"></p>
+<h3 id="乐观锁和悲观锁的区别，以及各自的使用场景"><a href="#乐观锁和悲观锁的区别，以及各自的使用场景" class="headerlink" title="乐观锁和悲观锁的区别，以及各自的使用场景"></a>乐观锁和悲观锁的区别，以及各自的使用场景</h3><ul>
+<li><p>悲观锁 </p>
+<p>总是假设最坏的情况，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会阻塞直到它拿到锁。 </p>
+<p>多写的情况，一般会经常产生冲突，这就会导致上层应用会不断的进行retry，这样反倒是降低了性能，所以一般多写的场景下用悲观锁就比较合适。 </p>
+</li>
+<li><p>乐观锁 </p>
+<ul>
+<li><p>理解 </p>
+<p>总是假设最好的情况，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号机制和CAS算法实现。 </p>
+</li>
+<li><p>场景 </p>
+<p>乐观锁适用于写比较少的情况下（多读场景），即冲突真的很少发生的时候，这样可以省去了锁的开销，加大了系统的整个吞吐量。 </p>
+</li>
+<li><p>乐观锁常见的两种实现方式： </p>
+<ul>
+<li><p>版本号机制 </p>
+<p>   一般是在数据表中加上一个数据版本号version字段，表示数据被修改的次数，当数据被修改时，version值会加一。当线程A要更新数据值时，在读取数据的同时也会读取version值，在提交更新时，若刚才读取到的version值为当前数据库中的version值相等时才更新，否则重试更新操作，直到更新成功。</p>
+<p>   假设数据库中账户信息表中有一个 version 字段，当前值为 1 ；而当前账户余额字段（ balance ）为 $100 。 </p>
+<ol>
+<li>操作员 A 此时将其读出（ version&#x3D;1 ），并从其账户余额中扣除 $50（ $100-$50 ）。 </li>
+<li>在操作员 A 操作的过程中，操作员B 也读入此用户信息（ version&#x3D;1 ），并从其账户余额中扣除 $20 （ $100-$20 ）。 </li>
+<li>操作员 A 完成了修改工作，将数据版本号加一（ version&#x3D;2 ），连同帐户扣除后余额（ balance&#x3D;$50 ），提交至数据库更新，此时由于提交数据版本大于数据库记录当前版本，数据被更新，数据库记录 version 更新为 2 。 </li>
+<li>操作员 B 完成了操作，也将版本号加一（ version&#x3D;2 ）试图向数据库提交数据（ balance&#x3D;$80 ），但此时比对数据库记录版本时发现，操作员 B 提交的数据版本号为 2 ，数据库记录当前版本也为 2 ，不满足 “ 提交版本必须大于记录当前版本才能执行更新 “ 的乐观锁策略，因此，操作员 B 的提交被驳回。<br>   这样，就避免了操作员 B 用基于 version&#x3D;1 的旧数据修改的结果覆盖操作员A 的操作结果的可能。</li>
+</ol>
+</li>
+<li><p>CAS </p>
+<p>compare and swap（比较与交换），是一种有名的无锁算法。无锁编程，即不使用锁的情况下实现多线程之间的变量同步，也就是在没有线程被阻塞的情况下实现变量的同步，所以也叫非阻塞同步（Non-blocking Synchronization）。CAS算法涉及到三个操作数 </p>
+<ul>
+<li>需要读写的内存值 V </li>
+<li>进行比较的值 A </li>
+<li>拟写入的新值 B</li>
+</ul>
+<p>当且仅当 V 的值等于 A时，CAS通过原子方式用新值B来更新V的值，否则不会执行任何操作（比较和替换是一个原子操作）。一般情况下是一个自旋操作，即不断的重试。</p>
+</li>
+</ul>
+</li>
+<li><p>乐观锁的缺点： </p>
+<ul>
+<li><p>ABA问题 </p>
+<p>如果一个变量V初次读取的时候是A值，并且在准备赋值的时候检查到它仍然是A值，那我们就能说明它的值没有被其他线程修改过了吗？很明显是不能的，因为在这段时间它的值可能被改为其他值，然后又改回A，那CAS操作就会误认为它从来没有被修改过。这个问题被称为CAS操作的  ABA 问题。 </p>
+</li>
+<li><p>循环时间大 </p>
+<p>自旋CAS（也就是不成功就一直循环执行直到成功）如果长时间不成功，会给CPU带来非常大的执行开销。 </p>
+</li>
+<li><p>只能保证一个共享变量的原子操作 </p>
+<p>CAS 只对单个共享变量有效，当操作涉及跨多个共享变量时 CAS 无效。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="锁的粒度"><a href="#锁的粒度" class="headerlink" title="锁的粒度"></a>锁的粒度</h3><ul>
+<li><p>行锁：例如，共享锁和排他锁 </p>
+</li>
+<li><p>表锁：例如，意向锁 </p>
+<p>意向锁分为两种： </p>
+<ul>
+<li>意向共享锁：事务想要在获得表中某些记录的共享锁，需要在表上先加意向共享锁； </li>
+<li>意向互斥锁：事务想要在获得表中某些记录的互斥锁，需要在表上先加意向互斥锁；</li>
+</ul>
+<p>为什么需要意向锁？ </p>
+<p>如果没有意向锁，当已经有人使用行锁对表中的某一行进行修改时，如果另外一个请求要对全表进行修改，那么就需要对所有的行是否被锁定进行扫描，在这种情况下，效率是非常低的；不过，在引入意向锁之后，当有人使用行锁对表中的某一行进行修改之前，会先为表添加意向互斥锁（IX），再为行记录添加互斥锁（X），在这时如果有人尝试对全表进行修改就不需要判断表中的每一行数据是否被加锁了，只需要通过等待意向互斥锁被释放就可以了。 </p>
+<p><img src="/2022/03/19/interview-database/ILock.png"></p>
+</li>
+</ul>
+<h3 id="锁的算法"><a href="#锁的算法" class="headerlink" title="锁的算法"></a>锁的算法</h3><ul>
+<li><p>Record Lock </p>
+<p>例如：<code>SELECT * FROM users WHERE id = 1</code> 时，如果id为主键，则会锁住对应的记录，否则全变扫描时会锁住整个表。 </p>
+</li>
+<li><p>Gap Lock </p>
+<p>间隙锁是对索引记录中的一段连续区域的锁。当使用类似 <code>SELECT * FROM users WHERE id BETWEEN 10 AND 20 FOR UPDATE;</code> 的 SQL 语句时，就会阻止其他事务向表中插入 id &#x3D; 15 的记录，因为整个范围都被间隙锁锁定了。 </p>
+</li>
+<li><p>Next-Key Lock </p>
+<p>Next-Key 锁相比前两者就稍微有一些复杂，它是记录锁和记录前的间隙锁的结合。</p>
+<p><img src="/2022/03/19/interview-database/next_lock.png"> </p>
+<p>当我们更新一条记录，比如 <code>SELECT * FROM users WHERE age = 30 FOR UPDATE;</code>，InnoDB 不仅会在范围 (21, 30] 上加 Next-Key 锁，还会在这条记录后面的范围 (30, 40] 加间隙锁，所以插入 (21, 40] 范围内的记录都会被锁定。</p>
+</li>
+</ul>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>  InnoDB 中实现的锁是悲观的，那么不同事务之间就可能会互相等待对方释放锁造成死锁，最终导致事务发生错误；<br>  <img src="/2022/03/19/interview-database/dead_lock.png"></p>
+<h3 id="封锁协议"><a href="#封锁协议" class="headerlink" title="封锁协议"></a>封锁协议</h3><p>  运用X锁和S锁对数据对象加锁时，还需要约定一些规则 ，例如何时申请X锁或S锁、持锁时间、何时释放 </p>
+<ul>
+<li><p>三级封锁协议</p>
+<ul>
+<li><p>一级封锁协议 </p>
+<p>事务 T 要修改数据 A 时必须加 X 锁，直到 T 结束才释放锁。 </p>
+<p>可以解决丢失修改问题，因为不能同时有两个事务对同一个数据进行修改，那么事务的修改就不会被覆盖。它不能保证可重复读和不读“脏”数据。 </p>
+</li>
+<li><p>二级封锁协议 </p>
+<p>在一级的基础上，要求读取数据 A 时必须加 S 锁，读取完马上释放 S 锁。还可以进一步防止读“脏”数据 </p>
+</li>
+<li><p>三级封锁协议 </p>
+<p>在二级的基础上，要求读取数据 A 时必须加 S 锁，直到事务结束了才能释放 S 锁。可以解决不可重复读的问题</p>
+</li>
+</ul>
+</li>
+<li><p>两段锁协议</p>
+<p>所有的事务必须分两个阶段对数据项加锁和解锁。</p>
+<p>可以证明：若并发执行的所有事务均遵守两段锁协议，则对这些事务的任何并发调度策略都是可串行化的。 </p>
+<p>可串行化：多个事务的并发执行是正确的，当且仅当其结果与某一次序串行地执行它们时的结果相同，称这种调度策略是可串行化调度。 </p>
+<p>两阶段锁的使用却引入了另一个严重的问题，死锁；不同的事务等待对方已经锁定的资源就会造成死锁</p>
+</li>
+</ul>
+<h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><h3 id="四种隔离级别"><a href="#四种隔离级别" class="headerlink" title="四种隔离级别"></a>四种隔离级别</h3><ul>
+<li><p>未提交读 </p>
+<p>  事务中的修改，即使没有提交，对其它事务也是可见的。 </p>
+</li>
+<li><p>提交读 </p>
+<p>  一个事务只能读取已经提交的事务所做的修改。换句话说，一个事务所做的修改在提交之前对其它事务是不可见的。 </p>
+</li>
+<li><p>可重复读 </p>
+<p>  保证在同一个事务中多次读取同样数据的结果是一样的。 </p>
+</li>
+<li><p>可串行化 </p>
+<p>  强制事务串行执行。</p>
+</li>
+</ul>
+<h3 id="多版本并发控制"><a href="#多版本并发控制" class="headerlink" title="多版本并发控制"></a>多版本并发控制</h3><p>常见的三种并发控制机制：分别是悲观并发控制、乐观并发控制和多版本并发控制，其中悲观并发控制其实是最常见的并发控制机制，也就是锁；而乐观并发控制其实也有另一个名字：乐观锁，乐观锁其实并不是一种真实存在的锁。 </p>
+<p>MVCC是 MySQL 的 InnoDB 存储引擎实现隔离级别的一种具体方式，用于实现提交读和可重复读这两种隔离级别。而未提交读隔离级别总是读取最新的数据行，无需使用MVCC。可串行化隔离级别需要对所有读取的行都加锁，单纯使用 MVCC 无法实现。</p>
+<p>同一行数据平时发生读写请求时，会上锁阻塞住。但mvcc用更好的方式去处理读—写请求，做到在发生读—写请求冲突时不用加锁。</p>
+<p>当前读是指读取的是最新的数据，需要加锁。 </p>
+<p>快照读是指使用 MVCC 读取历史快照中的数据，不需要加锁，提升性能。</p>
+<p>具体原理： </p>
+<ul>
+<li><p>事务版本号：每次事务开启前都会从数据库获得一个自增长的事务ID </p>
+</li>
+<li><p>数据库记录隐藏的列： </p>
+<p>  <code>DB_TRX_ID</code>: 记录操作该数据事务的事务ID；</p>
+<p>  <code>DB_ROLL_PTR</code>：指向上一个版本数据在undo log 里的位置指针； </p>
+</li>
+<li><p>undo log：当事务进行回滚需要用到 </p>
+<p>  <img src="/2022/03/19/interview-database/undo_log.png"></p>
+</li>
+<li><p>ReadView </p>
+<p>  <code>trx_ids</code>: 当前系统活跃(未提交)事务版本号集合。</p>
+<p>  <code>low_limit_id</code>: 创建当前read view 时“当前系统最大事务版本号+1”。 </p>
+<p>  <code>up_limit_id</code>: 创建当前read view 时“系统正处于活跃事务最小版本号” </p>
+<p>  <code>creator_trx_id</code>: 创建当前read view的事务版本号；</p>
+</li>
+</ul>
+<p>是否从undo log版本链中读数据，依据下面的算法： </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/** Check whether the changes by id are visible.</span><br><span class="line">@param[in]   id    transaction id to check against the view</span><br><span class="line">@param[in]  name   able name</span><br><span class="line">@return     whether the view sees the modifications of id. */</span><br><span class="line"></span><br><span class="line">bool changes_visible(</span><br><span class="line">    trx_id_t                id,</span><br><span class="line">    const table_name_t&amp;    name) const</span><br><span class="line">    MY_ATTRIBUTE((warn_unused_result))</span><br><span class="line">&#123;</span><br><span class="line">    ut_ad(id&gt;0);</span><br><span class="line">    if (id &lt; m_up_limit_id || id==m_creator_trx_id)&#123;</span><br><span class="line">        return(true);</span><br><span class="line">    &#125;</span><br><span class="line">    check_trx_id_sanity(id, name);</span><br><span class="line">    if(id&gt;=m_low_limit_id)&#123;</span><br><span class="line">        return(false); </span><br><span class="line">    &#125; else if(m_ids.empty())&#123;</span><br><span class="line">        return(true);</span><br><span class="line">    &#125;</span><br><span class="line">    const ids_t::value_type* p=m_ids.data();</span><br><span class="line">    return(!std::binary_search(p, P + m_ids.size(), id));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>一个例子： </p>
+<p><img src="/2022/03/19/interview-database/mvcc_example.png"></p>
+<p>RC(read commit) 级别下同一个事务里面的每一次查询都会获得一个新的read view副本。这样就可能造成同一个事务里前后读取数据可能不一致的问题（重复读）<br><img src="/2022/03/19/interview-database/mvcc_rc.png"></p>
+<p>RR(重复读)级别下的一个事务里只会获取一次read view副本，从而保证每次查询的数据都是一样的。<br><img src="/2022/03/19/interview-database/mvcc_rr.png"></p>
+<h1 id="Sql"><a href="#Sql" class="headerlink" title="Sql"></a>Sql</h1><h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="union和union-all的区别"><a href="#union和union-all的区别" class="headerlink" title="union和union all的区别"></a>union和union all的区别</h3><p>  首先，union和union all关键字都是将两个结果集合并为一个显示出来。但是它们的区别是：union会自动压缩多个结果集合中的重复结果，而union all则将所有的结果全部显示出来，不管是不是重复。 </p>
+<p>  union 在运行时先取出两个表的结果，再用排序空间进行排序删除重复的记录，最后返回结果集，如果表数据量大的话可能会导致用磁盘进行排序。</p>
+<p>  从效率上说，UNION ALL 要比UNION快很多，所以，如果可以确认合并的两个结果集中不包含重复的数据的话，那么就使用UNION ALL </p>
+<h3 id="MySQL-中-join-与-left-join-的区别是什么？"><a href="#MySQL-中-join-与-left-join-的区别是什么？" class="headerlink" title="MySQL 中 join 与 left join 的区别是什么？"></a>MySQL 中 join 与 left join 的区别是什么？</h3><p>  “内连接”join，其实就是“inner join”，为了简写才写成join，两个是表示一个的，内连接，表示以两个表的交集为主，查出来是两个表有交集的部分，其余没有关联就不额外显示出来。 </p>
+<p>  <img src="/2022/03/19/interview-database/join.png"></p>
+<h3 id="SQL优化的方案有哪些，如何定位问题并解决问题？？"><a href="#SQL优化的方案有哪些，如何定位问题并解决问题？？" class="headerlink" title="SQL优化的方案有哪些，如何定位问题并解决问题？？"></a>SQL优化的方案有哪些，如何定位问题并解决问题？？</h3><ul>
+<li>定位问题：使用explain </li>
+<li>优化思路 <ul>
+<li><p>尽量用union all代替union </p>
+<p>union的排序去重操作，增加大量的CPU运算，加大资源消耗及延迟。使用union all的前提是两个结果集没有重复数据。 </p>
+</li>
+<li><p>SELECT语句务必指明字段名称 </p>
+<p>SELECT* 增加很多不必要的消耗（cpu、io、内存、网络带宽）；增加了使用覆盖索引的可能性； </p>
+</li>
+<li><p>避免在where子句中对字段进行表达式操作 </p>
+<p>会导致索引失效 </p>
+</li>
+<li><p>对于联合索引来说，要遵守最左前缀法则 </p>
+<p>查询从索引的最左列开始，并且不跳过索引中的列。也就是说查询的条件当中要包含索引最左侧的列，并且不能跳过索引当中的列。 </p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create index idx_seller_name_sta_addr on tb_seller(name, status, address);</span><br><span class="line">// 测试1</span><br><span class="line">explain select * from tb_seller where status = &#x27;1&#x27; and address = &#x27;北京市&#x27; //这样走索引吗？不走，因为没从索引最左边的列开始</span><br><span class="line">// 测试2</span><br><span class="line">explain select * from tb_seller where status = &#x27;1&#x27; and address = &#x27;北京市&#x27; //这样走索引吗？不走，因为没从索引最左边的列开始</span><br><span class="line">// 测试3</span><br><span class="line">explain select * from tb_seller where status = &#x27;1&#x27; and address = &#x27;北京市&#x27; and name = &#x27;小米科技&#x27; //走索引，顺序并不影响，只看查询条件有没有包含最左列</span><br><span class="line">// 测试4</span><br><span class="line">explain select * from tb_seller where name = &#x27;小米科技&#x27; and address = &#x27;北京市&#x27; //走索引，只用到了name字段的索引，没用到address字段的索引</span><br></pre></td></tr></table></figure></li>
+<li><p>注意范围查询语句 </p>
+<p>对于联合索引来说，如果存在范围查询，比如 between,&gt;,&lt;等条件时，会造成后面的索引字段失效。 </p>
+</li>
+<li><p>关于JOIN优化 </p>
+<p>join的实现是采用Nested Loop Join算法，就是通过驱动表的结果集作为循环基础数据，然后一条一条的通过该结果集中的数据作为过滤条件到下一个表中查询数据，然后合并结果。如果有多个join，则将前面的结果集作为循环数据，再一次作为循环条件到后一个表中查询数据。 </p>
+<ul>
+<li>用小结果集驱动大结果集，将筛选结果小的表首先连接，再去连接结果集比较大的表，尽量减少join语句中的Nested Loop的循环总次数；举例：假设A表10000行，B表100行；也就是说如果用A表做驱动表会伴随着10000次随机读，而如果是B表作为驱动表，会伴随着100次随机读。 </li>
+<li>对被驱动表的join字段上建立索引；使得对内表的查询走索引提高效率。这种做法最高效的就是外表是一张小表，而内表的连接谓词刚好是内表的主键。</li>
+</ul>
+</li>
+<li><p>不建议使用%前缀模糊查询 </p>
+<p>可以建立全文索引 </p>
+</li>
+<li><p>避免在 where 子句中对字段进行 null 值判断</p>
+<p>对于 null的判断会导致引擎放弃使用索引而进行全表扫描</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="Mysql"><a href="#Mysql" class="headerlink" title="Mysql"></a>Mysql</h1><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="主键索引和辅助索引的区别？"><a href="#主键索引和辅助索引的区别？" class="headerlink" title="主键索引和辅助索引的区别？"></a>主键索引和辅助索引的区别？</h3><p>主键索引中存放着一条行记录的全部信息，而辅助索引中只包含索引列和一个用于查找对应行记录的『书签』，一般是主键。<br><img src="/2022/03/19/interview-database/mysql_index.png"></p>
+<h3 id="聚簇索引和非聚簇索引的区别？"><a href="#聚簇索引和非聚簇索引的区别？" class="headerlink" title="聚簇索引和非聚簇索引的区别？"></a>聚簇索引和非聚簇索引的区别？</h3><p>  聚簇索引：将数据存储与索引放到了一块，找到索引也就找到了数据，一个表只有一个聚簇索引。</p>
+<p>  非聚簇索引：将数据存储与索引分开，索引结构的叶子节点指向了数据的对应行 </p>
+<p>  innodb中，在聚簇索引之上创建的索引称之为辅助索引，辅助索引访问数据总是需要二次查找。非聚簇索引都是辅助索引，像复合索引、前缀索引、唯一索引，辅助索引叶子节点存储的不再是行的物理位置，而是主键值。 </p>
+<h3 id="利用索引如何进行优化？"><a href="#利用索引如何进行优化？" class="headerlink" title="利用索引如何进行优化？"></a>利用索引如何进行优化？</h3><ul>
+<li><p>在进行查询时，索引列不能是表达式的一部分，也不能是函数的参数，否则无法使用索引<br>  例如，SELECT actor_id FROM actor WHERE actor_id + 1 &#x3D; 5; </p>
+</li>
+<li><p>多列索引 </p>
+<p>在需要使用多个列作为条件进行查询时，使用多列索引比使用多个单列索引性能更好。</p>
+</li>
+</ul>
+<p>  例如：SELECT film_id, actor_ id FROM film_actor WHERE actor_id &#x3D; 1 AND film_id &#x3D; 1; </p>
+<ul>
+<li><p>索引列的顺序 </p>
+<p>让选择性最强的索引列放在前面。索引的选择性是指：不重复的索引值和记录总数的比值。最大值为 1，此时每个记录都有唯一的索引与其对应。选择性越高，查询效率也越高。</p>
+</li>
+<li><p>对于 BLOB、TEXT 和 VARCHAR 类型的列，必须使用前缀索引，只索引开始的部分字符。 </p>
+<p>对于前缀长度的选取需要根据索引选择性来确定。例如下面的表，使用前1-5位字符做前缀索引就会出现大量索引值重复的情况，导致查询效率低。<br><img src="/2022/03/19/interview-database/prefix_index.png"></p>
+</li>
+<li><p>覆盖索引 </p>
+<p>索引包含所有需要查询的字段。即从辅助索引中就能查到的记录，而不需要查询主键索引中的记录，避免了回表的产生减少了树的搜索次数，显著提升性能。 </p>
+</li>
+<li><p>如何优化查询的性能？ </p>
+<ul>
+<li>使用explain进行分析<br>Explain 用来分析 SELECT 查询语句，结果如下<br><img src="/2022/03/19/interview-database/explain.png"></li>
+</ul>
+</li>
+<li><p>什么是全文索引？ </p>
+<p>通过倒排的方式，得到分词到全文的一个映射关系。</p>
+</li>
+</ul>
+<h3 id="MySQL为什么用B-树做索引？"><a href="#MySQL为什么用B-树做索引？" class="headerlink" title="MySQL为什么用B+树做索引？"></a>MySQL为什么用B+树做索引？</h3><p>相比于二叉树、AVL树、红黑树来说，使用B+树有更少的查询次数，树节点出度越多，树高越矮，需要的查询次数越少，磁盘加载的次数也越少。 </p>
+<p>相比于B树来说，由于B+树叶节点保存有所有的数据，内节点保存的是索引，使得对于每个数据，查询都比较稳定。此外，B+树的数据都存储在叶子结点中，分支结点均为索引，方便扫库，只需要扫一遍叶子结点即可，但是B树因为其分支结点同样存储着数据，我们要找到具体的数据，需要进行一次中序遍历按序来扫，所以B+树更加适合在区间查询的情况。 </p>
+<h3 id="MySQL为什么要有最左匹配原则？"><a href="#MySQL为什么要有最左匹配原则？" class="headerlink" title="MySQL为什么要有最左匹配原则？"></a>MySQL为什么要有最左匹配原则？</h3><p>最左前缀原则指的是，如果查询的时候查询条件精确匹配索引的左边连续一列或几列，则此列就可以被索引用到。</p>
+<p>要想理解联合索引的最左匹配原则，先来理解下索引的底层原理。索引的底层是一颗B+树，那么联合索引的底层也就是一颗B+树，只不过联合索引的B+树节点中存储的是键值。由于构建一棵B+树只能根据一个值来确定索引关系，所以数据库依赖联合索引最左的字段来构建。</p>
+<p>举例：创建一个（a,b）的联合索引，那么它的索引树就是下图的样子。</p>
+<p><img src="/2022/03/19/interview-database/leftIndex.png"></p>
+<p>可以看到a的值是有顺序的，1，1，2，2，3，3，而b的值是没有顺序的1，2，1，4，1，2。但是我们又可发现a在等值的情况下，b值又是按顺序排列的，但是这种顺序是相对的。这是因为MySQL创建联合索引的规则是首先会对联合索引的最左边第一个字段排序，在第一个字段的排序基础上，然后在对第二个字段进行排序。所以b&#x3D;2这种查询条件没有办法利用索引。</p>
+<h2 id="存储引擎"><a href="#存储引擎" class="headerlink" title="存储引擎"></a>存储引擎</h2><h3 id="InnoDB和MyISAM的区别"><a href="#InnoDB和MyISAM的区别" class="headerlink" title="InnoDB和MyISAM的区别"></a>InnoDB和MyISAM的区别</h3><ul>
+<li><p>事务： </p>
+<p>InnoDB是事务型存储引擎，实现了四个标准的隔离级别，默认级别是可重复读（REPEATABLE READ），在可重复读隔离级别下，通过多版本并发控制（MVCC）+ 间隙锁（Next-Key Locking）防止幻影读。<br>MyISAM不支持事务。 </p>
+</li>
+<li><p>并发： </p>
+<p>InNoDB支持行级锁和表级锁，MyISAM只支持表级锁。 </p>
+</li>
+<li><p>索引： </p>
+<p>InnoDB的索引是聚簇索引，MyISAM是非聚簇索引。</p>
+<p>InnoDB支持不支持全文索引，MyISAM支持。 </p>
+</li>
+<li><p>场景： </p>
+<p>MyISAM适合查询以及插入为主的应用，InnoDB适合频繁修改以及涉及到安全性较高的应用</p>
+</li>
+</ul>
+<h2 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h2><ul>
+<li><p>好处 </p>
+<ul>
+<li>主从服务器负责各自的读和写，极大程度缓解了锁的争用； </li>
+<li>从服务器可以使用 MyISAM，提升查询性能以及节约系统开销； </li>
+<li>增加冗余，提高可用性。</li>
+</ul>
+</li>
+<li><p>原理 </p>
+<p>MySQL主从复制涉及到三个线程，一个运行在主节点，其余两个运行在从节点： </p>
+<ul>
+<li><p>binlog 线程：负责将主服务器上的数据更改写入二进制日志（Binary log）中。 </p>
+</li>
+<li><p>I&#x2F;O 线程：负责从主服务器上读取二进制日志，并写入从服务器的中继日志（Relay log）。 </p>
+</li>
+<li><p>SQL 线程：负责读取中继日志，解析出主服务器已经执行的数据更改并在从服务器中执行。</p>
+</li>
+</ul>
+<p>  <img src="/2022/03/19/interview-database/mysql_syc.png"></p>
+</li>
+</ul>
+<h2 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h2><h3 id="为什么要分库分表"><a href="#为什么要分库分表" class="headerlink" title="为什么要分库分表"></a>为什么要分库分表</h3><p>  单库太大：数据库里面的表太多，所在服务器磁盘空间装不下，IO次数多，即IO瓶颈<br>  单表太大：一张表的字段太多，数据太多。查询起来困难，查询时扫描的行太多，SQl效率低，CPU瓶颈 </p>
+<h3 id="水平切分"><a href="#水平切分" class="headerlink" title="水平切分"></a>水平切分</h3><p>  水平分库分表能够有效的缓解单机和单库的性能瓶颈和压力，突破IO、连接数、硬件资源等的瓶颈。<br>  <img src="/2022/03/19/interview-database/horizontal_sharding.png"> </p>
+<h3 id="垂直切分"><a href="#垂直切分" class="headerlink" title="垂直切分"></a>垂直切分</h3><p>  按照一定业务逻辑进行垂直切，此时不同的数据库应该存放在不同的服务器上，此时磁盘空间、内存、TPS等等都会得到解决。<br>  <img src="/2022/03/19/interview-database/vertical_sharding.png"></p>
+<h3 id="分库分表可能带来的问题？"><a href="#分库分表可能带来的问题？" class="headerlink" title="分库分表可能带来的问题？"></a>分库分表可能带来的问题？</h3><ul>
+<li><p>事务 </p>
+<p>分库分表后，就需要支持分布式事务了。 </p>
+</li>
+<li><p>联合查询 </p>
+<p>两个相关联的表可能会分布在不同的数据库。</p>
+</li>
+</ul>
+<h2 id="高可用方案"><a href="#高可用方案" class="headerlink" title="高可用方案"></a>高可用方案</h2><p><a href="https://zhuanlan.zhihu.com/p/25960208">https://zhuanlan.zhihu.com/p/25960208</a> </p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="mysql如何进行故障恢复的？"><a href="#mysql如何进行故障恢复的？" class="headerlink" title="mysql如何进行故障恢复的？"></a>mysql如何进行故障恢复的？</h3><h3 id="简述-undo-log-和-redo-log-的作用"><a href="#简述-undo-log-和-redo-log-的作用" class="headerlink" title="简述 undo log 和 redo log 的作用"></a>简述 undo log 和 redo log 的作用</h3><h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><ul>
+<li><p>string </p>
+</li>
+<li><p>list </p>
+</li>
+<li><p>set<br>set是一个无序的、自动去重的集合数据类型，Set底层用两种数据结构存储，一个是hashtable，一个是inset。 </p>
+<p>inset为可以理解为数组，使用inset数据结构需要满足下述两个条件： </p>
+<ul>
+<li>元素个数不少于默认值512 </li>
+<li>元素可以用整型表示</li>
+</ul>
+<p>查询方式一般采用二分查找法，实际查询复杂度也就在log(n) </p>
+</li>
+<li><p>hash </p>
+</li>
+<li><p>zset</p>
+</li>
+</ul>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><h3 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h3><p><img src="/2022/03/19/interview-database/redis_dict.png"></p>
+<ul>
+<li><p>为什么要进行扩缩容？ </p>
+<p>  当哈希表中的元素太多或太少时，会进行扩容或者缩容。扩容是出于哈希表的查找效率考虑，当哈希表中的元素达到一定数量时，表中链的长度会随着哈希表元素的增长而增长，链表越长意味着查询效率也会越慢。缩容是为了节省内存空间，避免数组中太多空元素造成空间浪费。 </p>
+</li>
+<li><p>Redis如何进行扩缩容？ </p>
+<p> Redis 的字典 dict 中包含两个哈希表 dictht，这是为了方便进行 rehash 操作。在扩容时，将其中一个 dictht 上的键值对 rehash 到另一个 dictht 上面，完成之后释放空间并交换两个 dictht 的角色。 </p>
+<p> rehash 操作不是一次性完成，而是采用渐进方式，这是为了避免一次性执行过多的 rehash 操作给服务器带来过大的负担。渐进式 rehash 通过记录 dict 的 rehashidx 完成，它从 0 开始，然后每执行一次 rehash 都会递增。例如在一次rehash 中，要把 dict[0] rehash 到 dict[1]，这一次会把 dict[0] 上 table[rehashidx] 的键值对 rehash 到 dict[1]上，dict[0] 的 table[rehashidx] 指向 null，并令 rehashidx++。在 rehash 期间，每次对字典执行添加、删除、查找或者更新操作时，都会执行一次渐进式 rehash。采用渐进式 rehash 会导致字典中的数据分散在两个 dictht 上，因此对字典的查找操作也需要到对应的 dictht 去执行。</p>
+</li>
+</ul>
+<h3 id="有序集合zset"><a href="#有序集合zset" class="headerlink" title="有序集合zset"></a>有序集合zset</h3><p>  有序集合的底层实现之一是跳跃表，跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。<br><img src="/2022/03/19/interview-database/skip_list.png"></p>
+<p>与红黑树等平衡树相比，跳跃表具有以下优点： </p>
+<ul>
+<li>插入速度非常快速，因为不需要进行旋转等操作来维护平衡性； </li>
+<li>更容易实现； </li>
+<li>支持无锁操作。 </li>
+<li>范围查找时比红黑树有优势。 </li>
+<li>查找、添加、删除操作都可以在对数期望时间下完成。</li>
+</ul>
+<h2 id="Redis使用场景"><a href="#Redis使用场景" class="headerlink" title="Redis使用场景"></a>Redis使用场景</h2><ul>
+<li>计数器 </li>
+<li>缓存 </li>
+<li>查找表 </li>
+<li>消息队列 </li>
+<li>session缓存 </li>
+<li>分布式锁实现 </li>
+<li>利用Zset实现排行榜</li>
+</ul>
+<h2 id="Redis和Memcached的区别"><a href="#Redis和Memcached的区别" class="headerlink" title="Redis和Memcached的区别"></a>Redis和Memcached的区别</h2><ul>
+<li><p>数据类型 </p>
+<p>Memcached只支持字符串类型，Redis支持五种数据类型 </p>
+</li>
+<li><p>数据持久化 </p>
+<p>Redis 支持两种持久化策略：RDB 快照和 AOF 日志，而 Memcached 不支持持久化。 </p>
+</li>
+<li><p>分布式 </p>
+<p>Memcached 不支持分布式；Redis Cluster 实现了分布式的支持。 </p>
+</li>
+<li><p>内存管理机制 </p>
+<p>在 Redis 中，并不是所有数据都一直存储在内存中，可以将一些很久没用的 value 交换到磁盘，而Memcached 的数据则会一直在内存中。Memcached 将内存分割成特定长度的块来存储数据，以完全解决内存碎片的问题。</p>
+</li>
+</ul>
+<h2 id="淘汰策略"><a href="#淘汰策略" class="headerlink" title="淘汰策略"></a>淘汰策略</h2><p>可以设置内存最大使用量，当内存使用量超出时，会施行数据淘汰策略。</p>
+<p><img src="/2022/03/19/interview-database/redis_eliminating.png"></p>
+<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>Redis 是内存型数据库，为了保证数据在断电后不会丢失，需要将内存中的数据持久化到硬盘上。 </p>
+<ul>
+<li>RDB持久化 <ul>
+<li><p>触发机制： </p>
+<ul>
+<li><p>save命令：客户端向Redis发送save命令来创建一个快照文件。 </p>
+<p>  <img src="/2022/03/19/interview-database/save.png"></p>
+</li>
+<li><p>bgsave命令：客户端向Redis发送bgsave命令，Redis调用fork创建一个子进程， 然后子进程负责将快照写入硬盘，而父进程则继续处理命令请求。 </p>
+<p>  <img src="/2022/03/19/interview-database/bgsave.png"></p>
+</li>
+<li><p>自动生成：通过配置，满足任何一个条件就会创建快照文件。 </p>
+<p>  <img src="/2022/03/19/interview-database/auto.png"></p>
+</li>
+</ul>
+</li>
+<li><p>具体执行： </p>
+<ol>
+<li>redis调用系统的fork()函数创建一个子进程 </li>
+<li>子进程将数据集写入一个临时的RDB文件 </li>
+<li>当子进程完成对临时的RDB文件的写入时，redis用新的RDB文件来替换原来旧的RDB文件，并将旧的RDB文件删除</li>
+</ol>
+</li>
+<li><p>优点： </p>
+<ul>
+<li>RDB 非常适用于灾难恢复 </li>
+<li>RDB 在恢复大数据集时的速度比 AOF 的恢复速度要快。 </li>
+<li>RDB对redis对外提供读写服务的时候，影响非常小，因为redis 主进程只需要fork一个子进程出来，让子进程对磁盘io来进行rdb持久化。</li>
+</ul>
+</li>
+<li><p>缺点： </p>
+<ul>
+<li>如果redis要故障时要尽可能少的丢失数据，RDB没有AOF好，</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>AOF持久化 <ul>
+<li>实现： <ul>
+<li><p>将写命令添加到 AOF 文件（Append Only File）的末尾。 </p>
+</li>
+<li><p>使用 AOF 持久化需要设置同步选项，从而确保写命令什么时候会同步到磁盘文件上。这是因为对文件进行写入并不会马上将内容同步到磁盘上，而是先存储到缓冲区，然后由操作系统决定什么时候同步到磁盘。有以下同步选项： </p>
+<p>  <img src="/2022/03/19/interview-database/redis_sync.png"></p>
+</li>
+<li><p>always 选项会严重降低服务器的性能； </p>
+</li>
+<li><p>everysec 选项比较合适，可以保证系统崩溃时只会丢失一秒左右的数据，并且 Redis 每秒执行一次同步对服务器性能几乎没有任何影响； </p>
+</li>
+<li><p>no 选项并不能给服务器性能带来多大的提升，而且也会增加系统崩溃时数据丢失的数量。</p>
+</li>
+</ul>
+</li>
+<li>优点： <ul>
+<li>AOF可以更好的保护数据不丢失，一般AOF会以每隔1秒，通过后台的一个线程去执行一次fsync操作，如果redis进程挂掉，最多丢失1秒的数据。</li>
+</ul>
+</li>
+<li>缺点： <ul>
+<li>AOF 文件比 RDB 文件大，且恢复速度慢。 </li>
+<li>数据集大的时候，比 rdb 启动效率低。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="事务-1"><a href="#事务-1" class="headerlink" title="事务"></a>事务</h2><ul>
+<li><p>MULTI 命令用于开启一个事务，它总是返回 OK 。 </p>
+</li>
+<li><p>MULTI 执行之后， 客户端可以继续向服务器发送任意多条命令， 这些命令不会立即被执行， 而是被放到一个队列中， 当 EXEC 命令被调用时， 所有队列中的命令才会被执行。</p>
+<p>  <img src="/2022/03/19/interview-database/multi1.png"></p>
+</li>
+<li><p>另一方面， 通过调用 DISCARD ， 客户端可以清空事务队列， 并放弃执行事务。 </p>
+<p>  <img src="/2022/03/19/interview-database/multi2.png"></p>
+</li>
+<li><p>事务中的错误 </p>
+<ul>
+<li><p>事务在执行 EXEC 之前，入队的命令可能会出错。比如说，命令可能会产生语法错误。对于这种情况，服务器会对命令入队失败的情况进行记录，并在客户端调用 EXEC 命令时，拒绝执行并自动放弃这个事务。 </p>
+<p><img src="/2022/03/19/interview-database/multi3.png"></p>
+</li>
+<li><p>命令可能在 EXEC 调用之后失败。比如，事务中的命令可能处理了错误类型的键。对于这种情况，即使事务中有某个&#x2F;某些命令在执行时产生了错误， 事务中的其他命令仍然会继续执行。 </p>
+<p><img src="/2022/03/19/interview-database/multi4.png"></p>
+</li>
+</ul>
+</li>
+<li><p>带watch的事务<br>WATCH 命令用于在事务开始之前监视任意数量的键： 当调用 EXEC 命令执行事务时， 如果任意一个被监视的键已经被其他客户端修改了， 那么整个事务将被打断，不再执行， 直接返回失败。 </p>
+<p><img src="/2022/03/19/interview-database/multi5.png"></p>
+</li>
+<li><p>三个特性 </p>
+<ul>
+<li>单独的隔离操作：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。 </li>
+<li>没有隔离级别的概念：队列中的命令没有提交之前都不会实际的被执行，因为事务提交前任何指令都不会被实际执行，也就不存在”事务内的查询要看到事务里的更新，在事务外查询不能看到”这个让人万分头痛的问题 </li>
+<li>不保证原子性：Redis 同一个事务中如果有一条命令执行失败，其后的命令仍然会被执行，没有回滚</li>
+</ul>
+</li>
+</ul>
+<h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p>Redis服务器是事件驱动程序 </p>
+<h3 id="文件事件"><a href="#文件事件" class="headerlink" title="文件事件"></a>文件事件</h3><p>Redis 基于 Reactor 模式开发了自己的网络事件处理器，使用 I&#x2F;O 多路复用程序来同时监听多个套接字，并将到达的事件传送给文件事件分派器，分派器会根据套接字产生的事件类型调用相应的事件处理器。 </p>
+<p><img src="/2022/03/19/interview-database/file_event.png"></p>
+<h3 id="时间事件"><a href="#时间事件" class="headerlink" title="时间事件"></a>时间事件</h3><p>Redis 将所有时间事件都放在一个无序链表中，通过遍历整个链表查找出已到达的时间事件，并调用相应的事件处理器 </p>
+<p><img src="/2022/03/19/interview-database/time_event.png"></p>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>为了增加系统可靠性和读写性能，可以建立Redis主从集群。Redis Replication是一种简单、易用的主从模式（master-slave）的复制机制，它能够使得slave节点成为与master节点完全相同的副本。 </p>
+<h3 id="连接过程"><a href="#连接过程" class="headerlink" title="连接过程"></a>连接过程</h3><ol>
+<li>主服务器创建快照文件，发送给从服务器，并在发送期间使用缓冲区记录执行的写命令。快照文件发送完毕之后，开始向从服务器发送存储在缓冲区中的写命令； </li>
+<li>从服务器丢弃所有旧数据，载入主服务器发来的快照文件，之后从服务器开始接受主服务器发来的写命令； </li>
+<li>主服务器每执行一次写命令，就向从服务器发送相同的写命令。</li>
+</ol>
+<h2 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h2><p><a href="https://segmentfault.com/a/1190000022808576">https://segmentfault.com/a/1190000022808576</a> </p>
+<h3 id="主从复制模式"><a href="#主从复制模式" class="headerlink" title="主从复制模式"></a>主从复制模式</h3><ul>
+<li><p>介绍 </p>
+<ul>
+<li>主从模式里使用一个redis实例作为主机(master)，其余多个实例作为备份机(slave)； </li>
+<li>master用来支持数据的写入和读取操作，而slave支持读取及master的数据同步； </li>
+<li>在整个架构里，master和slave实例里的数据完全一致；</li>
+</ul>
+<p>  <img src="/2022/03/19/interview-database/master_slave.png"></p>
+</li>
+<li><p>原理 </p>
+<ul>
+<li><p>全量同步 </p>
+<ul>
+<li>当从节点启动时，会向主节点发送SYNC命令； </li>
+<li>主节点接收到SYNC命令后，开始在后台执行保存快照的命令生成RDB文件，并使用缓冲区记录此后执行的所有写命令； </li>
+<li>主节点快照完成后，将快照文件和所有缓存命令发送给集群内的从节点，并在发送期间继续记录被执行的写命令； </li>
+<li>主节点快照发送完毕后开始向从节点发送缓冲区中的写命令； </li>
+<li>从节点载入快照文件后，开始接收命令请求，执行接收到的主节点缓冲区的写命令。</li>
+</ul>
+</li>
+<li><p>增量同步 </p>
+<p>  主从复制中因网络等原因造成数据丢失场景，当从节点再次连上主节点。如果条件允许，主节点会补发丢失数据给从节点。因为补发的数据远远小于全量数据，可以有效避免全量复制的过高开销。</p>
+</li>
+</ul>
+</li>
+<li><p>主节点故障处理方式 </p>
+<p>  主从模式中，每个客户端连接redis实例时都指定了ip和端口号。如果所连接的redis实例因为故障下线了，则无法通知客户端连接其他客户端地址，因此只能进行手动操作。主从模式很好地解决了数据备份的问题，但是主节点因为故障下线后，需要手动更改客户端配置重新连接，这种模式并不能保证服务的高可用。</p>
+</li>
+</ul>
+<h3 id="Sentinel（哨兵）模式"><a href="#Sentinel（哨兵）模式" class="headerlink" title="Sentinel（哨兵）模式"></a>Sentinel（哨兵）模式</h3><ul>
+<li><p>参考 </p>
+<p><a href="https://pdai.tech/md/db/nosql-redis/db-redis-x-sentinel.html">https://pdai.tech/md/db/nosql-redis/db-redis-x-sentinel.html</a> </p>
+</li>
+<li><p>介绍 </p>
+<p>和主从模式不一样的是，哨兵模式中增加了独立进程（即哨兵）来监控集群中的一举一动。客户端在连接集群时，首先连接哨兵，通过哨兵查询主节点的地址，然后再去连接主节点进行数据交互。哨兵的核心功能是主节点的自动故障转移。 </p>
+<p>如下图所示，如果master异常，则会进行master-slave切换，将最优的一个slave切换为主节点。 </p>
+<p><img src="/2022/03/19/interview-database/sentinel.png"></p>
+</li>
+<li><p>原理 </p>
+<ul>
+<li>每个哨兵每秒向集群中的master、slave以及其他哨兵发送一个PING命令； </li>
+<li>如果某个实例距离最后一次有效回复ping命令的时间超过一定值，则会被标记为主观下线； </li>
+<li>如果master被标记为主观下线，那么其他正在监视master的哨兵以每秒的频率确认其确实进入主观下线状态，且数量达到一定值时，master会被标记为下线，然后通知其他的从服务器，修改配置文件，让它们切换主机； </li>
+<li>客户端在master节点发生故障时会重向哨兵要地址，此时会获得最新的master节点地址。</li>
+</ul>
+<p>补充： </p>
+<ul>
+<li>主观下线：任何一个哨兵都是可以监控探测，并作出Redis节点下线的判断； </li>
+<li>客观下线：由哨兵集群共同决定Redis节点是否下线；</li>
+</ul>
+<p><img src="/2022/03/19/interview-database/level.png"></p>
+</li>
+<li><p>选举&#x2F;共识机制 </p>
+<p>判断完主库下线后，由哪个哨兵节点来执行主从切换呢？这里就需要哨兵集群的选举机制了。</p>
+<ul>
+<li><p>为什么必然会出现选举&#x2F;共识机制？ </p>
+<p>为了避免哨兵的单点情况发生，所以需要一个哨兵的分布式集群。作为分布式集群，必然涉及共识问题（即选举问题）；同时故障的转移和通知都只需要一个主的哨兵节点就可以了。 </p>
+</li>
+<li><p>哨兵的选举机制是什么样的？ </p>
+<p>哨兵的选举机制其实很简单，就是一个Raft选举算法： 选举的票数大于<code>num(sentinels)/2+1</code>时，将成为领导者，如果没有超过，继续选举</p>
+</li>
+</ul>
+</li>
+<li><p>缺点 </p>
+<p>哨兵模式的出现虽然解决了主从模式中master节点宕机不能自主切换（即高可用）的问题。但是，随着业务的逐渐增长，不可避免需要对当前业务进行扩容，无法可扩展。<br>常见的扩容方式有垂直和水平扩容两种方式： </p>
+<ul>
+<li>垂直扩容：通过增加master内存来增加容量； </li>
+<li>水平扩容：通过增加节点来进行扩容，即在当前基础上再增加一个master节点。</li>
+</ul>
+<p>水平扩容涉及到数据的迁移，且迁移过程中又要保证服务的可用性，哨兵模式无法满足这种情形。因此，redis cluster应运而生。</p>
+</li>
+</ul>
+<h3 id="Cluster-模式"><a href="#Cluster-模式" class="headerlink" title="Cluster 模式"></a>Cluster 模式</h3><ul>
+<li><p>介绍 </p>
+<ul>
+<li>redis cluster模式采用了无中心节点的方式来实现，每个主节点都会与其它主节点保持连接。节点间通过gossip协议交换彼此的信息，同时每个主节点又有一个或多个从节点； </li>
+<li>客户端连接集群时，直接与redis集群的每个主节点连接，根据hash算法取模将key存储在不同的哈希槽上； </li>
+<li>在集群中采用数据分片的方式，将redis集群分为16384个哈希槽。举个例子，比如当前集群有3个节点，那么这些哈希槽分别存储于三个主节点中： <ul>
+<li>Master1负责0~5460号哈希槽 </li>
+<li>Master2负责5461~10922号哈希槽 </li>
+<li>Master3负责10922~16383号哈希槽</li>
+</ul>
+</li>
+</ul>
+<p>每个节点会保存一份数据分布表，节点会将自己的slot信息发送给其他节点，节点间不停的传递数据分布表； </p>
+<p>客户端连接集群时，通过集群中某个节点地址进行连接。客户端尝试向这个节点执行命令时，比如获取某个key值，如果key所在的slot刚好在该节点上，则能够直接执行成功。如果slot不在该节点，则节点会返回MOVED错误，同时把该slot对应的节点告诉客户端，客户端可以去该节点执行命令。<br><img src="/2022/03/19/interview-database/cluster.png"></p>
+</li>
+<li><p>原理 </p>
+<p>redis cluster中主节点故障处理方式与哨兵模式较为相像，当约定时间内某节点无法与集群中的另一个节点顺利完成ping消息通信时，则将该节点标记为主观下线状态，同时将这个信息向整个集群广播。 </p>
+<p>如果一个节点收到某个节点失联的数量达到了集群的大多数时，那么将该节点标记为客观下线状态，并向集群广播下线节点的fail消息。然后立即对该故障节点进行主从切换。等到原来的主节点恢复后，会自动成为新主节点的从节点。如果主节点没有从节点，那么当它发生故障时，集群就将处于不可用状态。 </p>
+</li>
+<li><p>扩容问题 </p>
+<p>在哨兵模式中我们在扩容的时候遇到了问题，那么cluster中我们如何动态上线某个节点呢。当集群中加入某个节点时，哈希槽又是如何来进行分配的？当集群中加入新节点时，会与集群中的某个节点进行握手，该节点会把集群内的其它节点信息通过gossip协议发送给新节点，新节点与这些节点完成握手后加入到集群中。 </p>
+<p>然后集群中的节点会各取一部分哈希槽分配给新节点，如下图： </p>
+<ul>
+<li>Master1负责1365-5460 </li>
+<li>Master2负责6827-10922 </li>
+<li>Master3负责12288-16383 </li>
+<li>Master4负责0-1364,5461-6826,10923-12287</li>
+</ul>
+<p><img src="/2022/03/19/interview-database/cluster_add.png"></p>
+<p>当集群中要删除节点时，只需要将节点中的所有哈希槽移动到其它节点，然后再移除空白（不包含任何哈希槽）的节点就可以了。</p>
+</li>
+</ul>
+<h2 id="其他-1"><a href="#其他-1" class="headerlink" title="其他"></a>其他</h2><h3 id="为什么-Redis-在单线程下能如此快？"><a href="#为什么-Redis-在单线程下能如此快？" class="headerlink" title="为什么 Redis 在单线程下能如此快？"></a>为什么 Redis 在单线程下能如此快？</h3><ul>
+<li><p>纯内存操作 </p>
+<p>Redis提供了丰富的数据类型，并使用高效的操作方式进行操作，这些操作都在内存中进行，并不会大量消耗CPU资源，所以速度极快。 </p>
+</li>
+<li><p>使用IO多路复用技术 </p>
+<p>Redis可以在单线程中监听多个Socket的请求，在任意一个Socket可读&#x2F;可写时，Redis去读取客户端请求，在内存中操作对应的数据，然后再写回到Socket中。 </p>
+</li>
+<li><p>非CPU密集型任务 </p>
+<p>采用单线程的缺点很明显，无法使用多核CPU，由于Redis的大部分操作并不是CPU密集型任务，而Redis的瓶颈在于内存和网络带宽。 </p>
+</li>
+<li><p>单线程的优势 </p>
+<ul>
+<li>没有了多线程上下文切换的性能损耗 </li>
+<li>没有了访问共享资源加锁的性能损耗 </li>
+<li>开发和调试非常友好，可维护性高</li>
+</ul>
+</li>
+</ul>
+<h3 id="Redis-如何处理热点-key-访问"><a href="#Redis-如何处理热点-key-访问" class="headerlink" title="Redis 如何处理热点 key 访问"></a>Redis 如何处理热点 key 访问</h3><ul>
+<li><p>问题 </p>
+<p>所谓热key问题就是，突然有几十万的请求去访问redis上的某个特定key。那么，这样会造成流量过于集中，达到物理网卡上限，从而导致这台redis的服务器宕机。那接下来这个key的请求，就会直接怼到你的数据库上，导致你的服务不可用。 </p>
+</li>
+<li><p>发现 </p>
+<ul>
+<li>借业务经验，进行预估哪些是热key </li>
+<li>在Proxy层做收集 </li>
+<li>客户端进行统计</li>
+</ul>
+</li>
+<li><p>如何解决 </p>
+<ul>
+<li>利用二级缓存<br>发现热key以后，把热key加载到系统的JVM中。针对这种热key请求，会直接从jvm中取，而不会走到redis层。 </li>
+<li>对热key进行备份<br>不要让key走到同一台redis上不就行了。我们把这个key，在多个redis上都存一份不就好了。接下来，有热key请求进来的时候，我们就在有备份的redis上随机选取一台，进行访问取值，返回数据。</li>
+</ul>
+</li>
+</ul>
+<h3 id="简述-Redis-哨兵的选举过程"><a href="#简述-Redis-哨兵的选举过程" class="headerlink" title="简述 Redis 哨兵的选举过程"></a>简述 Redis 哨兵的选举过程</h3><p>略  </p>
+<h1 id="Mongodb"><a href="#Mongodb" class="headerlink" title="Mongodb"></a>Mongodb</h1><h2 id="什么是MongoDB？"><a href="#什么是MongoDB？" class="headerlink" title="什么是MongoDB？"></a>什么是MongoDB？</h2><p>  MongoDB是一个分布式文件存储的数据库，提供高性能，高可用性和易扩展性。 </p>
+<p>  MongoDB 将数据存储为一个文档，数据结构由键值(key&#x3D;&gt;value)对组成。 MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。 </p>
+<p><img src="/2022/03/19/interview-database/mongodb.png"></p>
+<p><img src="/2022/03/19/interview-database/mongodb_example.png"></p>
+<h2 id="MongoDB有什么特点？"><a href="#MongoDB有什么特点？" class="headerlink" title="MongoDB有什么特点？"></a>MongoDB有什么特点？</h2><ul>
+<li>MongoDB目前只支持单文档事务，MongoDB暂时不适合需要复杂事务的场景。 </li>
+<li>高性能、高可用、可扩展 </li>
+<li>丰富的查询支持<br>支持读写（CRUD）操作、比如数据聚合、文本搜索、地理空间查询等 </li>
+<li>支持动态Schemas。（动态Schema意味着单个集合中的文档可以包含不同类型的结构或形状。例如，以下两个文档都可以存储在一个集合中） <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123; message  :  Hello World &#125;</span><br><span class="line">&#123; id  : 10,  description  :  India &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="MongoDB支持哪些数据类型？"><a href="#MongoDB支持哪些数据类型？" class="headerlink" title="MongoDB支持哪些数据类型？"></a>MongoDB支持哪些数据类型？</h2><p><img src="/2022/03/19/interview-database/mongodb_type.png"></p>
+<h2 id="解释一下NoSql，它与RDBMS的区别？"><a href="#解释一下NoSql，它与RDBMS的区别？" class="headerlink" title="解释一下NoSql，它与RDBMS的区别？"></a>解释一下NoSql，它与RDBMS的区别？</h2><ul>
+<li><p>NoSQL是非关系型数据库，NoSQL &#x3D; Not Only SQL。 </p>
+</li>
+<li><p>关系型数据库采用的结构化的数据，NoSQL采用的是键值对的方式存储数据。 </p>
+</li>
+<li><p>在处理非结构化&#x2F;半结构化的大数据时；在水平方向上进行扩展时；随时应对动态增加的数据项时可以优先考虑使用NoSQL数据库。再考虑数据库的成熟度；支持；分析和商业智能；管理及专业性等问题时，应优先考虑关系型数据库。 </p>
+<h2 id="NoSQL有哪些类型？"><a href="#NoSQL有哪些类型？" class="headerlink" title="NoSQL有哪些类型？"></a>NoSQL有哪些类型？</h2></li>
+<li><p>文档数据库 </p>
+<p>这种类型的NoSQL数据库总是基于面向文档的方法来存储数据。文档数据库的主要目标是将单个实体的所有数据存储为一个文档，并且所有文档可以存储为一个集合。一些文档数据库的例子：MongoDB。</p>
+</li>
+<li><p>键值数据库 </p>
+<p>这种类型的数据库以无模式的方式存储数据，因为键值存储是存储数据的最简单的方式。键可以是指向任何类型数据的点，比如对象、字符串或任何其他类型的数据。这些数据库的主要优点是易于实现和添加数据。例如:Redis, </p>
+</li>
+<li><p>列式数据库 </p>
+<p> 这些类型的数据库将数据存储在键空间中的列中。键空间总是在唯一的名称、值和时间戳上定义。如clickhouse。 </p>
+</li>
+<li><p>图数据库 </p>
+<p>这些类型的数据库主要是为可以很容易地表示为图形数据的数据而设计的。这意味着，数据之间存在着数量不定的数据关系，如家庭关系和社会关系等。如GraphDB。</p>
+</li>
+</ul>
+<h2 id="Mongodb的object-id如何理解？"><a href="#Mongodb的object-id如何理解？" class="headerlink" title="Mongodb的object_id如何理解？"></a>Mongodb的object_id如何理解？</h2><p>  ObjectId 类似唯一主键，可以很快的去生成和排序，包含 12 bytes，含义如下： </p>
+<p><img src="/2022/03/19/interview-database/mongodb_objectID.png"></p>
+<p>  MongoDB 中存储的文档必须有一个 _id 键。这个键的值可以是任何类型的，默认是个 ObjectId 对象。</p>
+<h2 id="MongoDB如何保证可靠性的？"><a href="#MongoDB如何保证可靠性的？" class="headerlink" title="MongoDB如何保证可靠性的？"></a>MongoDB如何保证可靠性的？</h2><p>  通过复制将数据同步在多个服务器，保证冗余容灾。 </p>
+<p>  mongodb的复制至少需要两个节点。其中一个是主节点，负责处理客户端请求，其余的都是从节点，负责复制主节点上的数据。主节点记录在其上的所有操作oplog，从节点定期轮询主节点获取这些操作，然后对自己的数据副本执行这些操作，从而保证从节点的数据与主节点一致。 </p>
+<p>  <img src="/2022/03/19/interview-database/mongodb_sync.png"></p>
+<h2 id="说说MongoDB的分片？"><a href="#说说MongoDB的分片？" class="headerlink" title="说说MongoDB的分片？"></a>说说MongoDB的分片？</h2><p>  有时，MongoDB中的数据会非常庞大，以至于对如此大的数据集进行查询会导致服务器上大量的CPU被占用。为了解决这种情况，MongoDB提出了分片的概念，基本上是将数据集拆分到多个MongoDB实例中。 </p>
+<p>  分片的组成部分包括： </p>
+<ul>
+<li>分片（Shard）–基本上说，这不过是一个保存数据子集的MongoDB实例。在生产环境中，所有分片都必须是副本集的一部分。 </li>
+<li>配置服务器–一个mongodb实例，其中包含有关集群的元数据，基本上是有关将保存分片数据的各种mongodb实例的信息。 </li>
+<li>路由器–一个mongodb实例，主要负责将客户端发送的命令重定向到正确的服务器。</li>
+</ul>
+<p>  <img src="/2022/03/19/interview-database/mongodb_shard.png"></p>
+<h1 id="clickhouse"><a href="#clickhouse" class="headerlink" title="clickhouse"></a>clickhouse</h1><h2 id="什么是clickhouse？"><a href="#什么是clickhouse？" class="headerlink" title="什么是clickhouse？"></a>什么是clickhouse？</h2><p>  ClickHouse是一个用于联机分析(OLAP)的列式数据库管理系统(DBMS)。 </p>
+<p>  在传统的行式数据库系统中，数据按如下顺序存储，处于同一行中的数据总是被物理的存储在一起。如mysql。<br><img src="/2022/03/19/interview-database/row.png"><br>  在列式数据库系统中，数据按如下的顺序存储：<br><img src="/2022/03/19/interview-database/col.png"></p>
+<h2 id="列式存储的好处？"><a href="#列式存储的好处？" class="headerlink" title="列式存储的好处？"></a>列式存储的好处？</h2><ul>
+<li>针对分析类查询，通常只需要读取表的一小部分列。在列式数据库中你可以只读取你需要的数据。例如，如果只需要读取100列中的5列，这将帮助你最少减少20倍的I&#x2F;O消耗。 </li>
+<li>由于数据总是打包成批量读取的，所以压缩是非常容易的。同时数据按列分别存储这也更容易压缩。这进一步降低了I&#x2F;O的体积。 </li>
+<li>由于I&#x2F;O的降低，这将帮助更多的数据被系统缓存。</li>
+</ul>
+<h2 id="clickhouse的特点"><a href="#clickhouse的特点" class="headerlink" title="clickhouse的特点"></a>clickhouse的特点</h2><ul>
+<li>没有完整的事务支持。 </li>
+<li>缺少高频率，低延迟的修改或删除已存在数据的能力。仅能用于批量删除或修改数据， </li>
+<li>适合在线查询：在没有对数据做任何预处理的情况下以极低的延迟处理查询并将结果加载到用户的页面中。 </li>
+<li>真正的列式数据库管理系统 </li>
+<li>拥有完善的SQl支持和函数 </li>
+<li>支持高可用</li>
+</ul>
+<h2 id="行式存储和列式存储的区别？"><a href="#行式存储和列式存储的区别？" class="headerlink" title="行式存储和列式存储的区别？"></a>行式存储和列式存储的区别？</h2><ul>
+<li>行式存储（Row-based）的适用场景包括： <ul>
+<li>适合随机的增删改查操作; </li>
+<li>需要在行中选取所有属性的查询操作; </li>
+<li>需要频繁插入或更新的操作，其操作与索引和行的大小更为相关。<br>通常行式数据库的给出的优化方案是加“索引”，给表分区等等之类的.</li>
+</ul>
+</li>
+<li>列式存储的适用场景包括： <ul>
+<li>大数据量查询 </li>
+<li>非事务</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview-network</title>
+    <url>/2022/03/19/interview-network/</url>
+    <content><![CDATA[<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"><a href="#简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？" class="headerlink" title="简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"></a>简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？</h3><ul>
+<li><p>为什么需要三次握手：</p>
+<p><img src="/2022/03/19/interview-network/tcp3.png"></p>
+<p>客户端和服务端通信前要进行连接，“3次握手”的作用就是双方都能明确自己和对方的收、发能力是正常的。 </p>
+</li>
+<li><p>四次挥手的原因</p>
+<p><img src="/2022/03/19/interview-network/tcp4.png"></p>
+<p>客户端发送了FIN 连接释放报文之后，服务器收到了这个报文，就进入了CLOSE—WAIT状态。这个状态是为了让服务器端发送还未传送完毕的数据，传送完毕之后，服务器会发送FIN连接释放报文。</p>
+</li>
+<li><p>TIME_WAIT的原因</p>
+<p>客户端接收到服务器端的FIN报文后进入此状态，此时并不是直接进入CLOSED状态，还需要等待一个时间计时器设置的时间2MSL。这么做有两个理由：</p>
+<p>确保最后一个确认报文能够到达。如果B没收到A发送来的确认报文，那么就会重新发送连接释放请求报文，A等待一段时间就是为了处理这种情况的发生。</p>
+<p>等待一段时间是为了让本连接持续时间内所产生的所有报文都从网络中消失，使得下一个新的连接不会出现旧的连接请求报文。</p>
+</li>
+</ul>
+<h3 id="TCP-挥手时出现大量-CLOSE-WAIT-或-TIME-WAIT-怎么解决？"><a href="#TCP-挥手时出现大量-CLOSE-WAIT-或-TIME-WAIT-怎么解决？" class="headerlink" title="TCP 挥手时出现大量 CLOSE_WAIT 或 TIME_WAIT 怎么解决？"></a>TCP 挥手时出现大量 CLOSE_WAIT 或 TIME_WAIT 怎么解决？</h3><p>略</p>
+<h3 id="Syn-flood攻击及其防范"><a href="#Syn-flood攻击及其防范" class="headerlink" title="Syn flood攻击及其防范"></a>Syn flood攻击及其防范</h3><p>syn flood属于Dos攻击的一种。如果恶意地向某个服务器端口发送大量的SYN包，则可以使服务器打开大量的半开连接，分配TCB（Transmission Control Block）, 从而消耗大量的服务器资源，同时也使得正常的连接请求无法被响应。当开放了一个TCP端口后，该端口就处于Listening状态，不停地监视发到该端口的Syn报文，一旦接收到Client发来的Syn报文，就需要为该请求分配一个TCB，通常一个TCB至少需要280个字节，在某些操作系统中TCB甚至需要1300个字节，并返回一个SYN ACK命令，立即转为SYN-RECEIVED即半开连接状态。系统会为此耗尽资源。</p>
+<p>常见的防攻击方法有： </p>
+<p>监视系统的半开连接和不活动连接，当达到一定阈值时拆除这些连接，从而释放系统资源。这种方法对于所有的连接一视同仁，而且由于SYN Flood造成的半开连接数量很大，正常连接请求也被淹没在其中被这种方式误释放掉，因此这种方法属于入门级的SYN Flood方法。 </p>
+<h3 id="TCP-中常见的拥塞控制算法有哪些？"><a href="#TCP-中常见的拥塞控制算法有哪些？" class="headerlink" title="TCP 中常见的拥塞控制算法有哪些？"></a>TCP 中常见的拥塞控制算法有哪些？</h3><p>TCP主要通过四个算法来进行拥塞控制：慢开始、拥塞避免、快重传、快恢复。</p>
+<p><img src="/2022/03/19/interview-network/congestion_control.png"></p>
+<p>快重传算法规定，发送方只要一连收到三个重复确认就应当立即重传对方尚未收到的报文段 ，而不必继续等待设置的重传计时器到期。 </p>
+<p>与快重传配合使用的还有快恢复算法，其过程有以下两个要点：</p>
+<ol>
+<li><p>当发送方连续收到三个重复确认时，就执行“乘法减小”算法，把慢开始门限ssthresh减半。这是为了预防网络发生拥塞。请注意，接下去不执行慢开始算法。</p>
+</li>
+<li><p>由于发送方现在认为网络很可能没有发生拥塞（如果网络发生了严重的拥塞，就不会一连有好几个报文段连续到达接收方，也就不会导致接收方连续发送重复确认），因此与慢开始不同之处是现在不执行慢开始算法（即拥塞窗口cwnd现在不设置为1），而是把cwnd值设置为慢开始门限 ssthresh 减半后的数值，然后开始执行拥塞避免算法（“加法增大”），使拥塞窗口缓慢地线性增大。</p>
+</li>
+</ol>
+<h3 id="DNS解析过程，以及DNS劫持"><a href="#DNS解析过程，以及DNS劫持" class="headerlink" title="DNS解析过程，以及DNS劫持"></a>DNS解析过程，以及DNS劫持</h3><p><img src="/2022/03/19/interview-network/DNS.png"></p>
+<p>DNS劫持（DNS Hijacking）：又被称为域名劫持，DNS重定向（DNS direaction）,是一种DNS攻击方式。DNS查询没有得到正确的解析，以致引导user访问到恶意的网站，从而窃取用户隐私，或者进行某些恶意的操作。 </p>
+<p>DNS劫持现象：你入一个google.com网址，出来的是百度的页面 </p>
+<p>HTTP劫持现象：访问着github的页面，右下角出现了一个格格不入的广告弹窗 </p>
+<ol>
+<li><p>本机DNS劫持 </p>
+<p> 攻击者通过某些手段使用户的计算机感染上木马病毒，或者恶意软件之后，恶意修改本地DNS配置，比如修改本地hosts文件，缓存等 </p>
+</li>
+<li><p>路由DNS劫持 </p>
+<p> 很多用户默认路由器的默认密码，攻击者可以侵入到路由管理员账号中，修改路由器的默认配置。（路由器通常会提供 DNS 代理服务，接管整个网络的域名查询。） </p>
+</li>
+<li><p>攻击DNS服务器 </p>
+<p> 直接攻击DNS服务器，例如对DNS服务器进行DDOS攻击，可以是DNS服务器宕机，出现异常请求，还可以利用某些手段感染dns服务器的缓存，使给用户返回来的是恶意的ip地址</p>
+</li>
+</ol>
+<h3 id="TCP如何保证可靠传输？"><a href="#TCP如何保证可靠传输？" class="headerlink" title="TCP如何保证可靠传输？"></a>TCP如何保证可靠传输？</h3><ul>
+<li><p>确认应答和序列号 </p>
+<p>TCP传输时将每个字节的数据都进行了编号，这就是序列号。tcp按序号发送报文，接收端收到报文后，会给发送端一个ACK确认报文，用来表示已经成功接收到报文，报文中还带有ack，表示下一次发送端应该从哪里开始发送报文。 </p>
+</li>
+<li><p>校验和 </p>
+<p>这是一个端到端的检验和，目的是检测数据在传输过程中的任何变化。如果收到段的检验和有差错，TCP 将丢弃这个报文段 </p>
+</li>
+<li><p>超时重传 </p>
+<p>如果发送端发送的数据没有收到ACK确认，可能是：（1）发送给接收端的报文丢失了（2）接收端发送的ACK确认报文丢失了。不管是哪种原因，超过一定时间后，没有收到ACK确认，TCP启动超时重传机制，发送端重新发数据，如果接收端已经有了该数据，只是由于ACK确认丢失导致超时重传，会将刚刚发送过来的数据包丢弃。 </p>
+</li>
+<li><p>流量控制 </p>
+<p>发送端如果数据发送过快，导致接收端的缓冲区很快就满了，如果持续下去，数据溢出缓冲区，就会出现数据丢失。这时需要在发送端和接收端有一个窗口，窗口的作用为：在发送缓冲区，只有在窗口里面的数据，才能被发送，在接收缓冲区，只有在窗口里的数据才能被接收，接收端收到数据之后，会回复ack，发送端会根据ack的值来判断接收能力，从而动态调整窗口大小，实现流量控制。 </p>
+</li>
+<li><p>拥塞控制 </p>
+<p>如果网络出现拥塞，TCP会根据不同情况，采用不同的算法：慢开始，拥塞避免，快重传，快恢复来对窗口大小cwnd和慢开始门限值ssthresh进行调整，从而降低网络拥塞的可能性。</p>
+</li>
+</ul>
+<h3 id="什么是-TCP-粘包和拆包？"><a href="#什么是-TCP-粘包和拆包？" class="headerlink" title="什么是 TCP 粘包和拆包？"></a>什么是 TCP 粘包和拆包？</h3><p>  在socket通讯过程中，如果通讯的一端一次性连续发送多条数据包，tcp协议会将多个数据包打包成一个tcp报文发送出去，这就是所谓的粘包。而如果通讯的一端发送的数据包超过一次tcp报文所能传输的最大值时，就会将一个数据包拆成多个最大tcp长度的tcp报文分开传输，这就叫做拆包。 </p>
+<p>  <img src="/2022/03/19/interview-network/TCP_stick.png"></p>
+<p>  因为TCP是面向流，没有边界，而操作系统在发送TCP数据时，会通过缓冲区来进行优化，例如缓冲区为1024个字节大小。 </p>
+<p>  如果一次请求发送的数据量比较小，没达到缓冲区大小，TCP则会将多个请求合并为同一个请求进行发送，这就形成了粘包问题。 </p>
+<p>  如果一次请求发送的数据量比较大，超过了缓冲区大小，TCP就会将其拆分为多次发送，这就是拆包。</p>
+<h3 id="从系统层面上，UDP如何保证尽量可靠？"><a href="#从系统层面上，UDP如何保证尽量可靠？" class="headerlink" title="从系统层面上，UDP如何保证尽量可靠？"></a>从系统层面上，UDP如何保证尽量可靠？</h3><p>  传输层无法保证数据的可靠传输，只能通过应用层来实现了。实现的方式可以参照tcp可靠性传输的方式，只是实现不在传输层，实现转移到了应用层。 </p>
+<ul>
+<li>添加seq&#x2F;ack机制，确保数据发送到对端 </li>
+<li>添加发送和接收缓冲区，主要是用户超时重传。 </li>
+<li>添加超时重传机制。</li>
+</ul>
+<h3 id="什么是-ARP-协议？简述其使用场景？什么是RARP协议？"><a href="#什么是-ARP-协议？简述其使用场景？什么是RARP协议？" class="headerlink" title="什么是 ARP 协议？简述其使用场景？什么是RARP协议？"></a>什么是 ARP 协议？简述其使用场景？什么是RARP协议？</h3><p>  ARP实现由 IP 地址得到 MAC 地址。如果主机 A 知道主机 B 的 IP 地址，但是ARP 高速缓存中没有该 IP 地址到 MAC 地址的映射，此时主机 A 通过广播的方式发送ARP 请求分组，主机 B 收到该请求后会发送ARP 响应分组给主机 A 告知其 MAC 地址，随后主机 A 向其高速缓存中写入主机B 的IP 地址到MAC 地址的映射。 </p>
+<p>  ARP属于网络层协议 </p>
+<p>  RARP（Reverse Address Resolution Protocol）是将 ARP 反过来，从 MAC 地址定位 IP 地址的一种协议。对于使用嵌入式设备时，会遇到没有任何输入接口或无法通过 DHCP 动态获取 IP 地址的情况。在类似情况下，就可以使用 RARP。例如，打印机服务器等小型嵌入式设备接入到网络时会用到。</p>
+<p>  为此，需要架设一台 RARP 服务器，从而在这个服务器上注册设备的 MAC 地址及其 IP 地址。</p>
+<h3 id="简述在四层和七层网络协议中负载均衡的原理"><a href="#简述在四层和七层网络协议中负载均衡的原理" class="headerlink" title="简述在四层和七层网络协议中负载均衡的原理"></a>简述在四层和七层网络协议中负载均衡的原理</h3><p>  所谓四层就是基于IP+端口的负载均衡；七层就是基于URL等应用层信息的负载均衡。 </p>
+<p>  <img src="/2022/03/19/interview-network/network_protocol.png"></p>
+<ul>
+<li><p>四层负载均衡： </p>
+<p>  以常见的TCP为例，负载均衡设备在接收到第一个来自客户端的SYN 请求时，即通过上述方式选择一个最佳的服务器，并对报文中目标IP地址进行修改(改为后端服务器IP），直接转发给该服务器。TCP的连接建立，即三次握手是客户端和服务器直接建立的，负载均衡设备只是起到一个类似路由器的转发动作。 </p>
+</li>
+<li><p>七层负载均衡： </p>
+<p>  以常见的TCP为例，负载均衡设备如果要根据真正的应用层内容再选择服务器，只能先代理最终的服务器和客户端建立连接(三次握手)后，才可能接受到客户端发送的真正应用层内容的报文，然后再根据该报文中的特定字段，再加上负载均衡设备设置的服务器选择方式，决定最终选择的内部服务器。负载均衡设备在这种情况下，更类似于一个代理服务器。负载均衡和前端的客户端以及后端的服务器会分别建立TCP连接。</p>
+</li>
+</ul>
+<h2 id="Http"><a href="#Http" class="headerlink" title="Http"></a>Http</h2><h3 id="HTTP-中-GET-和-POST-区别？"><a href="#HTTP-中-GET-和-POST-区别？" class="headerlink" title="HTTP 中 GET 和 POST 区别？"></a>HTTP 中 GET 和 POST 区别？</h3><ul>
+<li>Get 是用来从服务器上获得数据，而 Post 是用来向服务器上传递数据。 </li>
+<li>Get 将表单中数据的按照 variable&#x3D;value 的形式，添加到 action 所指向的 URL 后面，并且两者使用“?”连接，而各个变量之间使用“&amp;”连接；Post 是将表单中的数据放在 form 的数据体中，按照变量和值相对应的方式，传递到 action 所指向 URL。 </li>
+<li>Get 是不安全的，因为在传输过程，数据被放在请求的 URL 中，而如今现有的很多服务器、代理服务器或者用户代理都会将请求URL记录到日志文件中，然后放在某个地方，这样就可能会有一些隐私的信息被第三方看到。另外，用户也可以在浏览器上直接看到提交的数据，一些系统内部消息将会一同显示在用户面前。Post 的所有操作对用户来说都是不可见的。 </li>
+<li>Get 传输的数据量小，这主要是因为受 URL 长度限制；而 Post 可以传输大量的数据，所以在上传文件只能使用 Post。</li>
+</ul>
+<h3 id="Cookie-和-Session-的关系和区别是什么？"><a href="#Cookie-和-Session-的关系和区别是什么？" class="headerlink" title="Cookie 和 Session 的关系和区别是什么？"></a>Cookie 和 Session 的关系和区别是什么？</h3><p>Cookie保存在客户端，Session保存在服务端，二者都是用来保存用户状态的。</p>
+<h3 id="简述-HTTP-1-0，1-1，2-0-的主要区别-？"><a href="#简述-HTTP-1-0，1-1，2-0-的主要区别-？" class="headerlink" title="简述 HTTP 1.0，1.1，2.0 的主要区别 ？"></a>简述 HTTP 1.0，1.1，2.0 的主要区别 ？</h3><ul>
+<li><p>HTTP 1.0，1.1 的主要区别 </p>
+<ul>
+<li><p>缓存处理 </p>
+<p>  HTTP1.0中主要使用header里的If-Modified-Since,Expires来作为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略如Entity tag，If-Unmodified-Since等。 </p>
+</li>
+<li><p>带宽优化及网络连接的使用 </p>
+<p>  HTTP1.0中，存在一些浪费带宽的现象，例如客户端只是需要某个对象的一部分，而服务器却将整个对象送过来了，并且不支持断点续传功能。HTTP1.1则在请求头引入了range头域，它允许只请求资源的某个部分，即返回码是206（Partial Content） </p>
+</li>
+<li><p>长连接 </p>
+<p>  HTTP 1.1支持长连接（PersistentConnection）和请求流水线（Pipelining）处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。 </p>
+<p>  <img src="/2022/03/19/interview-network/PersistentConnection.png"> </p>
+<p>  <img src="/2022/03/19/interview-network/pipeline.png"></p>
+</li>
+</ul>
+</li>
+<li><p>HTTP 1.x，2.0 的主要区别 </p>
+<ul>
+<li><p>新的二进制格式 </p>
+<p>  HTTP1.x的解析是基于文本。基于文本协议的格式解析存在天然缺陷，文本的表现形式有多样性，要做到健壮性考虑的场景必然很多，二进制则不同，只认0和1的组合。 </p>
+</li>
+<li><p>多路复用 </p>
+<p>  多路复用代替了 HTTP1.x 的序列和阻塞机制，所有的相同域名请求都通过同一个 TCP 连接并发完成。同一 Tcp 中可以发送多个请求，对端可以通过帧中的标识知道属于哪个请求。通过这个技术，可以避免 HTTP 旧版本中的队头阻塞问题，极大的提高传输性能。 </p>
+<p>  <img src="/http2.png"></p>
+</li>
+<li><p>header压缩     </p>
+<p>  HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。 </p>
+</li>
+<li><p>服务端推送（server push）</p>
+<p>  例如我的网页有一个sytle.css的请求，在客户端收到sytle.css数据的同时，服务端会将sytle.js的文件推送给客户端，当客户端再次尝试获取sytle.js时就可以直接从缓存中获取到，不用再发请求了</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="https的过程是什么样？"><a href="#https的过程是什么样？" class="headerlink" title="https的过程是什么样？"></a>https的过程是什么样？</h3><ul>
+<li><p>为什么需要https？ </p>
+<p>  传统的http协议可能有以下的问题： </p>
+<ul>
+<li>通信使用明文（不加密），内容可能被窃听 </li>
+<li>无法证明报文的完整性，所以可能遭篡改 </li>
+<li>不验证通信方的身份，因此有可能遭遇伪装</li>
+</ul>
+<p>  <img src="/https1.png"></p>
+</li>
+<li><p>https的工作流程 </p>
+<p>  <img src="/https2.png"></p>
+</li>
+<li><p>https的缺点 </p>
+<ul>
+<li>需要权威CA颁发的SSL证书。从证书的选择、购买到部署，传统的模式下都会比较耗时耗力。 </li>
+<li>HTTPS普遍认为性能消耗要大于HTTP，因为与纯文本通信相比，加密通信会消耗更多的CPU及内存资源。</li>
+</ul>
+</li>
+<li><p>http协议和https协议的区别 </p>
+<ul>
+<li>https协议需要到CA申请证书，一般免费证书较少，因而需要一定费用。 </li>
+<li>http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl&#x2F;tls加密传输协议。 </li>
+<li>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。 </li>
+<li>HTTPS协议比http有以下优势：数据隐私性、数据完整性、身份认证。</li>
+</ul>
+</li>
+</ul>
+<h3 id="什么是跨域，什么情况下会发生跨域请求？"><a href="#什么是跨域，什么情况下会发生跨域请求？" class="headerlink" title="什么是跨域，什么情况下会发生跨域请求？"></a>什么是跨域，什么情况下会发生跨域请求？</h3><p>  跨域”指的是不同源之间的资源访问。只要请求的 url 有以下不同，都属于“跨域”： </p>
+<ul>
+<li>协议: http, https, … </li>
+<li>域名 </li>
+<li>端口</li>
+</ul>
+<p>  这种“跨域”限制其实是 浏览器自带的安全机制，只有 在浏览器上 发生跨域请求操作时，才会自动禁止访问的错误。 </p>
+<p>  虽然浏览器出于安全考虑做了“跨域”访问的限制，但开发时不可避免会有这样不同源资源访问的需求，因此 W3C 就制定了 CORS(Cross-origin resource sharing 跨域资源共享) 的机制。CORS 是一种解决“跨域”的方案。 </p>
+<p>  然后就是后端服务器支持了，服务器需要在 Response Header 上添加 <code>Access-Control-xxx-yyy</code> 的字段，浏览器识别到了，才能放行该请求。比如，最常见的就是加 <code>Access-Control-Allow-Origin</code> 这个返回头，值设置为需要放行的域名。 </p>
+<h3 id="http常见的状态码"><a href="#http常见的状态码" class="headerlink" title="http常见的状态码"></a>http常见的状态码</h3><ul>
+<li>100（continue）：客户端在发送POST数据给服务器前，征询服务器情况，看服务器是否处理POST的数据，如果不处理，客户端则不上传POST数据，如果处理，则POST上传数据。常用于POST大数据传输。 </li>
+<li>200（OK）：成功。 </li>
+<li>206（Partial Content）：一般用来做断点续传，或者是视频文件等大文件的加载。 </li>
+<li>301（Move Permanently）：永久重定向会缓存。新域名替换旧域名，旧的域名不再使用时，用户访问旧域名时用301就重定向到新的域名 </li>
+<li>302（Found）：临时重定向不会缓存，常用 于未登陆的用户访问用户中心重定向到登录页面 </li>
+<li>304（Not Motified）：协商缓存，告诉客户端有缓存，直接使用缓存中的数据，返回页面的只有头部信息，是没有内容部分。 </li>
+<li>400（Bad Request）：参数有误，请求无法被服务器识别 </li>
+<li>403（Frobidden）：告诉客户端进制访问该站点或者资源，如在外网环境下，然后访问只有内网IP才能访问的时候则返回 </li>
+<li>404（Not Found）：服务器找不到资源时，或者服务器拒绝请求又不想说明理由时 </li>
+<li>503（Service Unavailable）：服务器停机维护时，主动用503响应请求或 nginx 设置限速，超过限速，会返回503</li>
+</ul>
+<h3 id="简述-HTTP-报文头部的组成结构"><a href="#简述-HTTP-报文头部的组成结构" class="headerlink" title="简述 HTTP 报文头部的组成结构"></a>简述 HTTP 报文头部的组成结构</h3><p><img src="/http_message1.png"><br><img src="/http_message2.png"><br><img src="/http_message3.png"></p>
+<h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><h3 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h3><ul>
+<li><p>什么是IO多路复用？ </p>
+<p>IO指的就是读入&#x2F;写出数据的过程，和等待读入&#x2F;写出数据的过程。一旦拿到数据后就变成了数据操作了，就不是IO了。 </p>
+<p>多路是指网络连接，复用指的是同一个线程。IO 多路复用是一种同步IO模型，实现一个线程可以监视多个文件句柄；一旦某个文件句柄就绪，就能够通知应用程序进行相应的读写操作；没有文件句柄就绪就会阻塞应用程序，交出CPU。 </p>
+</li>
+<li><p>为什么需要IO多路复用？ </p>
+<p>在没有IO多路复用之前，对于网络请求，有BIO、NIO两种实现方式，但它们都有一些问题。<br>1、同步阻塞（BIO） </p>
+<ul>
+<li><p>服务端采用单线程时，当 accept 一个请求后，在 recv 或 send 调用阻塞时，将无法 accept 其他请求（必须等上一个请求处理 recv 或 send 完 ）（无法处理并发） </p>
+<p>  <img src="/2022/03/19/interview-network/BIO.png"></p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 伪代码描述</span><br><span class="line">while (true) &#123;</span><br><span class="line">        // accept阻塞</span><br><span class="line">    client_fd = accept(listen_fd);</span><br><span class="line">    fds.append(client_fd);</span><br><span class="line">    for (fd in fds) &#123;</span><br><span class="line">            // recv阻塞（会影响上面的accept）</span><br><span class="line">        if (recv(fd)) &#123;</span><br><span class="line">                // logic</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+<li><p>服务端采用多线程时，当 accept 一个请求后，开启线程进行 recv，可以完成并发处理，但随着请求数增加需要增加系统线程，大量的线程占用很大的内存空间，并且线程切换会带来很大的开销。 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 伪代码描述</span><br><span class="line">while(true) &#123;</span><br><span class="line">    // accept阻塞</span><br><span class="line">    client_fd = accept(listen_fd)</span><br><span class="line">    // 开启线程read数据（fd增多导致线程数增多）</span><br><span class="line">    new Thread func() &#123;</span><br><span class="line">        // recv阻塞（多线程不影响上面的accept）</span><br><span class="line">        if (recv(fd)) &#123;</span><br><span class="line">            // logic</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>2、同步非阻塞（NIO） </p>
+<ul>
+<li>服务器端当 accept 一个请求后，加入 fds 集合，每次轮询一遍 fds 集合 recv (非阻塞)数据，没有数据则立即返回错误，每次轮询所有 fd （包括没有发生读写实际的 fd）会很浪费 CPU。<br><img src="/2022/03/19/interview-network/NIO.png"><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 伪代码描述</span><br><span class="line">while(true) &#123;</span><br><span class="line">    // accept非阻塞（cpu一直忙轮询）</span><br><span class="line">    client_fd = accept(listen_fd)</span><br><span class="line">    if (client_fd != null) &#123;</span><br><span class="line">        // 有人连接</span><br><span class="line">        fds.append(client_fd)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 无人连接</span><br><span class="line">    &#125;  </span><br><span class="line">    for (fd in fds) &#123;</span><br><span class="line">        // recv非阻塞</span><br><span class="line">        setNonblocking(client_fd)</span><br><span class="line">        // recv 为非阻塞命令</span><br><span class="line">        if (len = recv(fd) &amp;&amp; len &gt; 0) &#123;</span><br><span class="line">            // 有读写数据</span><br><span class="line">            // logic</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // 无读写数据</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>IO多路复用如何工作？ </p>
+<ul>
+<li><p>select 函数： </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int select(</span><br><span class="line">    int max_fd, </span><br><span class="line">    fd_set *readset, </span><br><span class="line">    fd_set *writeset, </span><br><span class="line">    fd_set *exceptset, </span><br><span class="line">    struct timeval *timeout</span><br><span class="line">)    </span><br></pre></td></tr></table></figure>
+
+<p>select 函数监视的文件描述符分3类，分别是writefds、readfds、和exceptfds。调用后select函数会阻塞，直到有描述符就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。当select函数返回后，可以通过遍历fdset，来找到就绪的描述符。 </p>
+<p>缺点： </p>
+<ol>
+<li><p>单个进程所打开的FD是有限制的，通过 FD_SETSIZE 设置，默认1024 ; </p>
+</li>
+<li><p>每次调用 select，都需要把 fd 集合从用户态拷贝到内核态，这个开销在 fd 很多时会很大； </p>
+</li>
+<li><p>对 socket 扫描时是线性扫描，采用轮询的方法，效率较低（高并发）</p>
+</li>
+</ol>
+<p>例子：<a href="https://kongkongk.github.io/2020/07/02/select-function-application-example/">https://kongkongk.github.io/2020/07/02/select-function-application-example/</a> </p>
+</li>
+<li><p>poll 函数</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int poll(struct pollfd *fds, nfds_t nfds, int timeout);</span><br><span class="line">struct pollfd &#123;</span><br><span class="line">    int   fd;         /* file descriptor */</span><br><span class="line">    short events;     /* requested events */</span><br><span class="line">    short revents;    /* returned events */</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态， 但是它没有最大连接数的限制，原因是它是基于链表来存储的.<br>例子：<a href="https://www.cnblogs.com/pang1567/p/4122729.html">https://www.cnblogs.com/pang1567/p/4122729.html</a> </p>
+</li>
+<li><p>epoll 函数： </p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 创建用于epoll工作的FD</span><br><span class="line">int epoll_create(int size);</span><br><span class="line"></span><br><span class="line">// 对事件操作：增、删等</span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event); </span><br><span class="line"></span><br><span class="line">// 等待事件</span><br><span class="line">int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout); </span><br></pre></td></tr></table></figure>
+<p>  <img src="/2022/03/19/interview-network/epoll.png"></p>
+<p>  epoll 通过两个方面，很好解决了 select&#x2F;poll 的问题。 </p>
+<p>  第一点，epoll 在内核里使用红黑树来跟踪进程所有待检测的文件描述字，把需要监控的 socket 通过 <code>epoll_ctl()</code> 函数加入内核中的红黑树里，红黑树是个高效的数据结构，增删查一般时间复杂度是 O(logn)，通过对这棵黑红树进行操作，这样就不需要像 select&#x2F;poll 每次操作时都传入整个 socket 集合，只需要传入一个待检测的 socket，减少了内核和用户空间大量的数据拷贝和内存分配。 </p>
+<p>  第二点， epoll 使用事件驱动的机制，内核里维护了一个链表来记录就绪事件，当某个 socket 有事件发生时，通过回调函数内核会将其加入到这个就绪事件列表中，当用户调用 epoll_wait() 函数时，只会返回有事件发生的文件描述符的个数，不需要像 select&#x2F;poll 那样轮询扫描整个 socket 集合，大大提高了检测的效率。</p>
+<p>  epoll 支持两种事件触发模式，分别是边缘触发（edge-triggered，ET）和水平触发（level-triggered，LT）： </p>
+<ul>
+<li>使用边缘触发模式时，当被监控的 Socket 描述符上有可读事件发生时，服务器端只会从 epoll_wait 中苏醒一次，即使进程没有调用 read 函数从内核读取数据，也依然只苏醒一次，因此我们程序要保证一次性将内核缓冲区的数据读取完； </li>
+<li>使用水平触发模式时，当被监控的 Socket 上有可读事件发生时，服务器端不断地从 epoll_wait 中苏醒，直到内核缓冲区数据被 read 函数读完才结束，目的是告诉我们有数据需要读取； </li>
+<li>如何理解名字：边缘（电平发生变化：高电平到低电平,或者低电平到高电平），水平（只有高电平(1)或低电平(0)时才触发通知）</li>
+</ul>
+<p>  实例：<br>  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int main(int argc, char* argv[])&#123;</span><br><span class="line">/*</span><br><span class="line">* 在这里进行一些初始化的操作，</span><br><span class="line">* 比如初始化数据和socket等。</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">    // 内核中创建ep对象</span><br><span class="line">    epfd=epoll_create(256);</span><br><span class="line">    // 需要监听的socket放到ep中</span><br><span class="line">    epoll_ctl(epfd,EPOLL_CTL_ADD,listenfd,&amp;ev);</span><br><span class="line"></span><br><span class="line">    while(1) &#123;</span><br><span class="line">        // 阻塞获取</span><br><span class="line">        nfds = epoll_wait(epfd,events,20,0);</span><br><span class="line">        for(i=0;i&lt;nfds;++i) &#123;</span><br><span class="line">            if(events[i].data.fd==listenfd) &#123;</span><br><span class="line">                // 这里处理accept事件</span><br><span class="line">                connfd = accept(listenfd);</span><br><span class="line">                // 接收新连接写到内核对象中</span><br><span class="line">                epoll_ctl(epfd,EPOLL_CTL_ADD,connfd,&amp;ev);</span><br><span class="line">            &#125; else if (events[i].events&amp;EPOLLIN) &#123;</span><br><span class="line">                // 这里处理read事件</span><br><span class="line">                read(sockfd, BUF, MAXLINE);</span><br><span class="line">                //读完后准备写</span><br><span class="line">                epoll_ctl(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">            &#125; else if(events[i].events&amp;EPOLLOUT) &#123;</span><br><span class="line">                // 这里处理write事件</span><br><span class="line">                write(sockfd, BUF, n);</span><br><span class="line">                //写完后准备读</span><br><span class="line">                epoll_ctl(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</li>
+</ul>
+</li>
+<li><p>select 、 poll、epoll的区别： </p>
+<p><img src="/2022/03/19/interview-network/IO.png"></p>
+<p>使用场景： </p>
+<ul>
+<li>select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制。 select 可移植性更好，几乎被所有主流平台所支持。 </li>
+<li>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。 </li>
+<li>只需要运行在 Linux 平台上，有大量的描述符需要同时轮询，并且这些连接最好是长连接。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Redis为什么使用IO多路复用技术？"><a href="#Redis为什么使用IO多路复用技术？" class="headerlink" title="Redis为什么使用IO多路复用技术？"></a>Redis为什么使用IO多路复用技术？</h3><p>Redis 是跑在单线程中的，所有的操作都是按照顺序线性执行的，但是由于读写操作等待用户输入或输出都是阻塞的，所以 I&#x2F;O 操作在一般情况下往往不能直接返回，这会导致某一文件的 I&#x2F;O 阻塞导致整个进程无法对其它客户提供服务，而 I&#x2F;O 多路复用 就是为了解决这个问题而出现的。</p>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Network</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview_security</title>
+    <url>/2022/03/18/interview-security/</url>
+    <content><![CDATA[<h3 id="AES和DES的区别？秘钥长度"><a href="#AES和DES的区别？秘钥长度" class="headerlink" title="AES和DES的区别？秘钥长度"></a>AES和DES的区别？秘钥长度</h3><ul>
+<li><p>DES </p>
+<p>DES是对称性加密里常见的一种，是一种使用秘钥加密的块算法。秘钥长度是64位（bit）， 超过位数秘钥被忽略。对称性加密一般会按照固定长度，把待加密字符串分成块。不足一整块或者刚好最后有特殊填充字符。 </p>
+<p><img src="/2022/03/18/interview-security/des.png"></p>
+<p>特点：分组比较短、秘钥太短、密码生命周期短、运算速度较慢。 </p>
+</li>
+<li><p>AES </p>
+<p>AES的区块长度固定为128 比特，密钥长度则可以是128，192或256比特； </p>
+<p>特点：运算速度快，安全性高，资源消耗少 </p>
+</li>
+<li><p>总结：AES是高级算法，它比DES更快，更安全。</p>
+</li>
+</ul>
+<h3 id="非对称加密和对称加密的区别？"><a href="#非对称加密和对称加密的区别？" class="headerlink" title="非对称加密和对称加密的区别？"></a>非对称加密和对称加密的区别？</h3><ul>
+<li><p>对称加密</p>
+<p>  指的就是加、解密使用的同是一串密钥，所以被称做对称加密。对称加密只有一个密钥作为私钥。常见的对称加密算法：DES，AES等。 </p>
+</li>
+<li><p>非对称加密</p>
+<p>  指的是加、解密使用不同的密钥，一把作为公开的公钥，另一把作为私钥。公钥加密的信息，只有私钥才能解密。 </p>
+</li>
+<li><p>总结</p>
+<p>  非对称加密更安全，但是效率比较慢，对称加密效率高，但是不安全。一般来说可以混合使用：将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通，例如https。</p>
+</li>
+</ul>
+<h3 id="RSA的原理？"><a href="#RSA的原理？" class="headerlink" title="RSA的原理？"></a>RSA的原理？</h3><p><a href="https://cjting.me/2020/03/13/rsa/">https://cjting.me/2020/03/13/rsa/</a> </p>
+<p>密钥越长，它就越难破解。一般来说，1024位的RSA密钥基本安全，2048位的密钥极其安全。 </p>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Information Security</tag>
       </tags>
   </entry>
 </search>

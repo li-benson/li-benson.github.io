@@ -19,23 +19,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="本文为准备面试时遇到的信息安全知识">
+  <meta name="description" content="本文记录了Git的一些用法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="interview_security">
-<meta property="og:url" content="http://example.com/2022/03/18/interview-security/index.html">
+<meta property="og:title" content="git基本用法">
+<meta property="og:url" content="http://example.com/2022/03/25/git/index.html">
 <meta property="og:site_name" content="Benson&#39;s Blog">
-<meta property="og:description" content="本文为准备面试时遇到的信息安全知识">
+<meta property="og:description" content="本文记录了Git的一些用法">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2022/03/18/interview-security/des.png">
-<meta property="article:published_time" content="2022-03-18T14:34:13.000Z">
-<meta property="article:modified_time" content="2022-03-18T14:39:37.268Z">
+<meta property="article:published_time" content="2022-03-25T08:49:36.000Z">
+<meta property="article:modified_time" content="2022-03-27T14:24:53.919Z">
 <meta property="article:author" content="Benson">
-<meta property="article:tag" content="Interview">
-<meta property="article:tag" content="Information Security">
+<meta property="article:tag" content="git">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2022/03/18/interview-security/des.png">
 
-<link rel="canonical" href="http://example.com/2022/03/18/interview-security/">
+<link rel="canonical" href="http://example.com/2022/03/25/git/">
 
 
 <script id="page-configurations">
@@ -48,7 +45,7 @@
   };
 </script>
 
-  <title>interview_security | Benson's Blog</title>
+  <title>git基本用法 | Benson's Blog</title>
   
 
 
@@ -199,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/18/interview-security/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/25/git/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -212,7 +209,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          interview_security
+          git基本用法
         </h1>
 
         <div class="post-meta">
@@ -221,17 +218,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-03-18 22:34:13 / 修改时间：22:39:37" itemprop="dateCreated datePublished" datetime="2022-03-18T22:34:13+08:00">2022-03-18</time>
+              <time title="创建时间：2022-03-25 16:49:36" itemprop="dateCreated datePublished" datetime="2022-03-25T16:49:36+08:00">2022-03-25</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-27 22:24:53" itemprop="dateModified" datetime="2022-03-27T22:24:53+08:00">2022-03-27</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Interview-Knowledge/" itemprop="url" rel="index"><span itemprop="name">Interview Knowledge</span></a>
+                  <a href="/categories/Dev-Tools/" itemprop="url" rel="index"><span itemprop="name">Dev Tools</span></a>
                 </span>
             </span>
 
@@ -248,16 +251,16 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>573</span>
+              <span>2.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
-            <div class="post-description">本文为准备面试时遇到的信息安全知识</div>
+            <div class="post-description">本文记录了Git的一些用法</div>
 
         </div>
       </header>
@@ -268,32 +271,114 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="AES和DES的区别？秘钥长度"><a href="#AES和DES的区别？秘钥长度" class="headerlink" title="AES和DES的区别？秘钥长度"></a>AES和DES的区别？秘钥长度</h3><ul>
-<li><p>DES </p>
-<p>DES是对称性加密里常见的一种，是一种使用秘钥加密的块算法。秘钥长度是64位（bit）， 超过位数秘钥被忽略。对称性加密一般会按照固定长度，把待加密字符串分成块。不足一整块或者刚好最后有特殊填充字符。 </p>
-<p><img src="/2022/03/18/interview-security/des.png"></p>
-<p>特点：分组比较短、秘钥太短、密码生命周期短、运算速度较慢。 </p>
+        <h1 id="Git的常用命令"><a href="#Git的常用命令" class="headerlink" title="Git的常用命令"></a>Git的常用命令</h1><h2 id="Git跳过使用暂存区域并提交文件更改"><a href="#Git跳过使用暂存区域并提交文件更改" class="headerlink" title="Git跳过使用暂存区域并提交文件更改"></a>Git跳过使用暂存区域并提交文件更改</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -am &quot;message&quot;</span><br></pre></td></tr></table></figure>
+<p>其中，-a参数可以将所有已跟踪文件中的执行修改或删除操作的文件都提交到本地仓库，即使它们没有经过git add添加到暂存区。</p>
+<p>不过需要注意的是，新加的文件（即没有被git系统管理的文件）是不能被提交到本地仓库的。建议一般不要使用-a参数，正常的提交还是使用git add先将要改动的文件添加到暂存区，再用git commit 提交到本地版本库。</p>
+<p>如果确保没有新添加的文件，可以直接通过<code>-a</code>参数，省去了<code>git add</code>的操作。</p>
+<h2 id="重写最近的提交消息"><a href="#重写最近的提交消息" class="headerlink" title="重写最近的提交消息"></a>重写最近的提交消息</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit --amend </span><br></pre></td></tr></table></figure>
+
+<p>输入上面的命令后会弹出vim框，编辑之后保存提交。</p>
+<p>或者直接使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit --amend -m &quot;message&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="回退之前的提交"><a href="#回退之前的提交" class="headerlink" title="回退之前的提交"></a>回退之前的提交</h2><p>我们用Git的时候有可能commit提交代码后，发现这一次commit的内容是有错误的，那么有两种处理方法：</p>
+<ul>
+<li>修改错误内容，再次commit一次</li>
+<li>使用git reset 命令撤销这一次错误的commit</li>
+</ul>
+<p>第一种方法虽然直接，但是会多一种commit记录。</p>
+<p><code>git reset</code> 命令用于回退版本，可以指定退回某一次提交的版本。其命令语法格式如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset [--soft | --mixed | --hard] [HEAD]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>--soft</code> 修改版本库，保留暂存区，保留工作区</li>
+<li><code>--mixed</code> 为默认，可以不用带该参数，用于重置暂存区的文件与上一次的提交(commit)保持一致，工作区文件内容保持不变。文件会回退到未 add（未暂存）的状态。修改版本库，修改暂存区，保留工作区</li>
+<li><code>--hard</code> 参数撤销工作区中所有未提交的修改内容，将暂存区与工作区都回到上一次版本，并删除之前的所有信息提交。注意：谨慎使用 <code>–hard</code> 参数，它会删除回退点之前的所有信息。修改版本库，修改暂存区，修改工作区。</li>
+</ul>
+<p>HEAD 说明：</p>
+<ul>
+<li><p>HEAD 表示当前版本</p>
 </li>
-<li><p>AES </p>
-<p>AES的区块长度固定为128 比特，密钥长度则可以是128，192或256比特； </p>
-<p>特点：运算速度快，安全性高，资源消耗少 </p>
+<li><p>HEAD^ 上一个版本</p>
 </li>
-<li><p>总结：AES是高级算法，它比DES更快，更安全。</p>
+<li><p>HEAD^^ 上上一个版本</p>
+</li>
+<li><p>以此类推</p>
 </li>
 </ul>
-<h3 id="非对称加密和对称加密的区别？"><a href="#非对称加密和对称加密的区别？" class="headerlink" title="非对称加密和对称加密的区别？"></a>非对称加密和对称加密的区别？</h3><ul>
-<li><p>对称加密</p>
-<p>  指的就是加、解密使用的同是一串密钥，所以被称做对称加密。对称加密只有一个密钥作为私钥。常见的对称加密算法：DES，AES等。 </p>
+<p>可以使用 ～数字表示</p>
+<ul>
+<li><p>HEAD~0 表示当前版本</p>
 </li>
-<li><p>非对称加密</p>
-<p>  指的是加、解密使用不同的密钥，一把作为公开的公钥，另一把作为私钥。公钥加密的信息，只有私钥才能解密。 </p>
+<li><p>HEAD~1 上一个版本</p>
 </li>
-<li><p>总结</p>
-<p>  非对称加密更安全，但是效率比较慢，对称加密效率高，但是不安全。一般来说可以混合使用：将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通，例如https。</p>
+<li><p>HEAD^2 上上一个版本</p>
+</li>
+<li><p>以此类推</p>
 </li>
 </ul>
-<h3 id="RSA的原理？"><a href="#RSA的原理？" class="headerlink" title="RSA的原理？"></a>RSA的原理？</h3><p><a target="_blank" rel="noopener" href="https://cjting.me/2020/03/13/rsa/">https://cjting.me/2020/03/13/rsa/</a> </p>
-<p>密钥越长，它就越难破解。一般来说，1024位的RSA密钥基本安全，2048位的密钥极其安全。 </p>
+<h2 id="缓存stash的使用"><a href="#缓存stash的使用" class="headerlink" title="缓存stash的使用"></a>缓存stash的使用</h2><p>如果我们不想提交完成一半或者不完善的代码，但是却不得不去修改一个紧急Bug，那么使用<code>git stash</code>就可以将你当前未提交到本地（和服务器）的代码推入到Git的栈中。等到修完Bug，提交到服务器上后，再使用<code>git stash apply</code>将以前一半的工作应用回来。这样会避免log上会有多余不必要的记录。</p>
+<h3 id="stash当前修改"><a href="#stash当前修改" class="headerlink" title="stash当前修改"></a>stash当前修改</h3><p><code>git stash</code> 会把所有未提交的修改（包括暂存的和非暂存的）都保存起来，用于后续恢复当前工作目录。补充：stash是本地的，不会通过git push命令上传到git server上。</p>
+<h3 id="重新应用缓存的stash"><a href="#重新应用缓存的stash" class="headerlink" title="重新应用缓存的stash"></a>重新应用缓存的stash</h3><p><code>git stash pop</code> 命令恢复之前缓存的工作目录，这个指令将缓存堆栈中的第一个stash删除，并将对应修改应用到当前的工作目录下。</p>
+<p>你也可以使用<code>git stash apply</code>命令，将缓存堆栈中的stash多次应用到工作目录中，但并不删除stash拷贝。</p>
+<h3 id="查看现有stash"><a href="#查看现有stash" class="headerlink" title="查看现有stash"></a>查看现有stash</h3><p>可以使用<code>git stash list</code>命令，查看所有的stash情况。</p>
+<h3 id="移除stash"><a href="#移除stash" class="headerlink" title="移除stash"></a>移除stash</h3><p>可以使用<code>git stash drop</code>命令，后面可以跟着stash名字。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git stash list</span><br><span class="line">stash@&#123;0&#125;: WIP on master: 049d078 added the index file</span><br><span class="line">stash@&#123;1&#125;: WIP on master: c264051 Revert &quot;added file_size&quot;</span><br><span class="line">stash@&#123;2&#125;: WIP on master: 21d80a5 added number to log</span><br><span class="line"></span><br><span class="line">$ git stash drop stash@&#123;0&#125;</span><br><span class="line">Dropped stash@&#123;0&#125; (364e91f3f268f0900bc3ee613f9f733e82aaed43)</span><br></pre></td></tr></table></figure>
+<p>或者使用<code>git stash clear</code>命令，删除所有缓存的stash。</p>
+<h3 id="从stash创建分支"><a href="#从stash创建分支" class="headerlink" title="从stash创建分支"></a>从stash创建分支</h3><p>运行<code>git stash branch</code>，这会创建一个新的分支，检出你储藏工作时的所处的提交，重新应用你的工作，如果成功，将会丢弃储藏。</p>
+<p>这是一个很棒的捷径来恢复储藏的工作然后在新的分支上继续当时的工作。</p>
+<h2 id="移除文件"><a href="#移除文件" class="headerlink" title="移除文件"></a>移除文件</h2><p><code>git rm</code> 命令用于删除文件。</p>
+<ul>
+<li>如果删除之前修改过并且已经放到暂存区域的话，则必须要用强制删除选项 <code>-f</code>。</li>
+<li>如果想把文件从暂存区域移除，但仍然希望保留在当前工作目录中，换句话说，仅是从跟踪清单中删除，使用 <code>--cached</code> 选项即可</li>
+<li>可以递归删除，即如果后面跟的是一个目录做为参数，则会递归删除整个目录中的所有子目录和文件：  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm –r * </span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="查看历史提交记录"><a href="#查看历史提交记录" class="headerlink" title="查看历史提交记录"></a>查看历史提交记录</h2><p><code>git log</code> 命令可用于查看历史提交记录，支持多种不同格式的查看</p>
+<ul>
+<li><p>查看最近n次的提交历史: <code>git log -n</code></p>
+</li>
+<li><p>显示每次提交所引入的差异: <code>git log -p</code></p>
+</li>
+<li><p>统计总结: <code>git log stat</code></p>
+</li>
+<li><p>显示提交说明中包含指定字符串的提交: <code>git log --grep &#123;字符串&#125;</code></p>
+</li>
+<li><p>格式化查看: <code>git log --pretty=format:&quot;%h&quot;</code></p>
+<p>  这里为常用的一些格式化占位符：</p>
+<ul>
+<li><p><code>%H</code>: commit hash</p>
+</li>
+<li><p><code>%h</code>: 缩短的commit hash</p>
+</li>
+<li><p><code>%T</code>: tree hash</p>
+</li>
+<li><p><code>%t</code>: 缩短的 tree hash</p>
+</li>
+<li><p><code>%an</code>: 作者名字</p>
+</li>
+<li><p><code>%ae</code>: 作者邮箱</p>
+</li>
+<li><p><code>%cd</code>: 提交日期 (–date&#x3D; 制定的格式)</p>
+</li>
+<li><p><code>%s</code>: commit信息标题</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>“</p>
+<h2 id="打标签"><a href="#打标签" class="headerlink" title="打标签"></a>打标签</h2><p>Git 可以给仓库历史中的某一个提交打上标签，以示重要。 比较有代表性的是人们会使用这个功能来标记发布结点（ v1.0 、 v2.0 等等）</p>
+<h3 id="列出标签"><a href="#列出标签" class="headerlink" title="列出标签"></a>列出标签</h3><p>在 Git 中列出已有的标签非常简单，只需要输入 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag 或者 git tag -l</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建标签"><a href="#创建标签" class="headerlink" title="创建标签"></a>创建标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag &#123;tagName&#125;</span><br></pre></td></tr></table></figure>
+<p>有一些选项:</p>
+<ul>
+<li><code>-a</code> 表示创建附注信息</li>
+<li><code>-m</code> 表示为附注标签指定一条信息</li>
+</ul>
+<h3 id="查看标签提交信息"><a href="#查看标签提交信息" class="headerlink" title="查看标签提交信息"></a>查看标签提交信息</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git show &#123;tagName&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除标签"><a href="#删除标签" class="headerlink" title="删除标签"></a>删除标签</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag -d &#123;tagName&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -333,8 +418,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Interview/" rel="tag"># Interview</a>
-              <a href="/tags/Information-Security/" rel="tag"># Information Security</a>
+              <a href="/tags/git/" rel="tag"># git</a>
           </div>
 
         
@@ -343,13 +427,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/03/18/interview-intelligence/" rel="prev" title="interview_intelligence">
-      <i class="fa fa-chevron-left"></i> interview_intelligence
+    <a href="/2022/03/20/interview-OOP/" rel="prev" title="interview-OOP">
+      <i class="fa fa-chevron-left"></i> interview-OOP
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/03/18/interview-OperatorSystem/" rel="next" title="interview-OperatorSystem">
-      interview-OperatorSystem <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -409,7 +490,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#AES%E5%92%8CDES%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F%E7%A7%98%E9%92%A5%E9%95%BF%E5%BA%A6"><span class="nav-number">1.</span> <span class="nav-text">AES和DES的区别？秘钥长度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E5%92%8C%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">非对称加密和对称加密的区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA%E7%9A%84%E5%8E%9F%E7%90%86%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">RSA的原理？</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Git%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">Git的常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E8%B7%B3%E8%BF%87%E4%BD%BF%E7%94%A8%E6%9A%82%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%B9%B6%E6%8F%90%E4%BA%A4%E6%96%87%E4%BB%B6%E6%9B%B4%E6%94%B9"><span class="nav-number">1.1.</span> <span class="nav-text">Git跳过使用暂存区域并提交文件更改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%86%99%E6%9C%80%E8%BF%91%E7%9A%84%E6%8F%90%E4%BA%A4%E6%B6%88%E6%81%AF"><span class="nav-number">1.2.</span> <span class="nav-text">重写最近的提交消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E9%80%80%E4%B9%8B%E5%89%8D%E7%9A%84%E6%8F%90%E4%BA%A4"><span class="nav-number">1.3.</span> <span class="nav-text">回退之前的提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98stash%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">缓存stash的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#stash%E5%BD%93%E5%89%8D%E4%BF%AE%E6%94%B9"><span class="nav-number">1.4.1.</span> <span class="nav-text">stash当前修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E5%BA%94%E7%94%A8%E7%BC%93%E5%AD%98%E7%9A%84stash"><span class="nav-number">1.4.2.</span> <span class="nav-text">重新应用缓存的stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%8E%B0%E6%9C%89stash"><span class="nav-number">1.4.3.</span> <span class="nav-text">查看现有stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4stash"><span class="nav-number">1.4.4.</span> <span class="nav-text">移除stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Estash%E5%88%9B%E5%BB%BA%E5%88%86%E6%94%AF"><span class="nav-number">1.4.5.</span> <span class="nav-text">从stash创建分支</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.</span> <span class="nav-text">移除文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8E%86%E5%8F%B2%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">1.6.</span> <span class="nav-text">查看历史提交记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.</span> <span class="nav-text">打标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.1.</span> <span class="nav-text">列出标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.2.</span> <span class="nav-text">创建标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A0%87%E7%AD%BE%E6%8F%90%E4%BA%A4%E4%BF%A1%E6%81%AF"><span class="nav-number">1.7.3.</span> <span class="nav-text">查看标签提交信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.4.</span> <span class="nav-text">删除标签</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -605,7 +686,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'li-benson.github.io',
       owner       : 'li-benson',
       admin       : ['li-benson'],
-      id          : 'a7ea62390df40e5c5ee739b62c9499e1',
+      id          : 'f419be3448959d6fc0ddeb6b36cee4a8',
         language: 'zh-CN',
       distractionFreeMode: false
     });
