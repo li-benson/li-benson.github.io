@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文为准备面试时遇到的Golang知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="interview-Golang">
+<meta property="og:url" content="http://example.com/2022/03/28/interview-Golang/index.html">
+<meta property="og:site_name" content="Benson&#39;s Blog">
+<meta property="og:description" content="本文为准备面试时遇到的Golang知识">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/goroutine.png">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/GM.webp">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/GMP.webp">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/GMP1.webp">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/GMP2.webp">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/GC.webp">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/STW1.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/STW2.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/STW3.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/3color1.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/3color2.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/3color3.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/3color4.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/3color5.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/3color6.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/3color7.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/3color8.jpeg">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/process.png">
+<meta property="og:image" content="http://example.com/2022/03/28/interview-Golang/map.webp">
+<meta property="article:published_time" content="2022-03-28T08:53:44.000Z">
+<meta property="article:modified_time" content="2022-04-03T12:28:33.541Z">
+<meta property="article:author" content="Benson">
+<meta property="article:tag" content="Interview">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/03/28/interview-Golang/goroutine.png">
+
+<link rel="canonical" href="http://example.com/2022/03/28/interview-Golang/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>interview-Golang | Benson's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Benson's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-study">
+
+    <a href="/study/" rel="section"><i class="fa fa-archive fa-fw"></i>学习</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/li-benson" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/28/interview-Golang/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Benson">
+      <meta itemprop="description" content="学习、记录、成长">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          interview-Golang
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-28 16:53:44" itemprop="dateCreated datePublished" datetime="2022-03-28T16:53:44+08:00">2022-03-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-03 20:28:33" itemprop="dateModified" datetime="2022-04-03T20:28:33+08:00">2022-04-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Interview-Knowledge/" itemprop="url" rel="index"><span itemprop="name">Interview Knowledge</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+            <div class="post-description">本文为准备面试时遇到的Golang知识</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="简述-slice-的底层原理，slice-和数组的区别是什么"><a href="#简述-slice-的底层原理，slice-和数组的区别是什么" class="headerlink" title="简述 slice 的底层原理，slice 和数组的区别是什么"></a>简述 slice 的底层原理，slice 和数组的区别是什么</h2><ul>
+<li><p>数组</p>
+<p>  数组是一个由固定长度的特定类型元素组成的序列，一个数组可以由零个或多个元素组成。</p>
+</li>
+<li><p>slice</p>
+<p>  Slice(切片)代表变长的序列，序列中每个元素都有相同的类型。一个slice类型一般写作 []T，其中T代表slice中元素的类型;slice的语法和数组很像，只是没有固定长度而已。</p>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> slice <span class="keyword">struct</span> &#123;</span><br><span class="line">    array unsafe.Pointer</span><br><span class="line">    <span class="built_in">len</span>   <span class="type">int</span></span><br><span class="line">    <span class="built_in">cap</span>   <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li><p>slice复制的坑</p>
+<p>  不能像这样直接复制s2 :&#x3D; s1[:]，如果这样操作，在改变s1的时候s2的值也会被相应改变，因为他们的底层数据结构也就是数组指向相同的地址。如果要进行深拷贝，可以使用<code>copy</code>函数。</p>
+</li>
+<li><p>slice判空</p>
+<p>  正确方法：<code>len(slice) == 0</code>，不能使用<code>slice == nil</code>，因为<code>slice!=nil</code>也有可能元素数量为0；</p>
+</li>
+<li><p>slice做函数参数</p>
+<p>  从slice的结构可以看到，做参数时会复制一份结构体进行传递。此时参数切片跟外部切片都共同指向同一块内存区域，如果函数内部修改了内存值，修改也会传递到外部。但是如果对参数切片进行append操作，不会影响外部，外部切片的size还是原来大小。</p>
+<p>  简而言之，当对切片进行 append 操作，导致长度超出容量时，就会创建新的数组，这会导致和原有切片的分离。</p>
+<p>  举例如下：</p>
+  <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">5</span>)</span><br><span class="line">b := a[<span class="number">0</span>:<span class="number">4</span>]</span><br><span class="line">a = <span class="built_in">append</span>(a, <span class="number">1</span>)</span><br><span class="line">a[<span class="number">1</span>] = <span class="number">5</span></span><br><span class="line">fmt.Println(b)</span><br><span class="line"><span class="comment">// [0 0 0 0]</span></span><br><span class="line">fmt.Println(a)</span><br><span class="line"><span class="comment">// [0 5 0 0 0 1]&lt;/pre&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="简单介绍-GMP-模型以及该模型的优点"><a href="#简单介绍-GMP-模型以及该模型的优点" class="headerlink" title="简单介绍 GMP 模型以及该模型的优点"></a>简单介绍 GMP 模型以及该模型的优点</h2><h3 id="goroutine协程的产生"><a href="#goroutine协程的产生" class="headerlink" title="goroutine协程的产生"></a>goroutine协程的产生</h3><p>在多进程&#x2F;多线程的操作系统中，进程或者线程的切换都会浪费时间，同时还需要面对线程间通信，同步互斥等问题，于是引入了协程。可以理解为简化的用户态线程。</p>
+<p>具体实现是将N个用户态协程绑定到M个内核态的线程上，优点就是协程在用户态线程即完成切换，不会陷入到内核态，这种切换非常的轻量快速。</p>
+<p><img src="/2022/03/28/interview-Golang/goroutine.png" alt="image"></p>
+<p>协程跟线程是有区别的，线程由CPU调度是抢占式的，协程由用户态调度是协作式的，一个协程让出CPU后，才执行下一个协程。</p>
+<p>Go中，协程被称为goroutine，它非常轻量，一个goroutine只占几KB，并且这几KB就足够goroutine运行完，这就能在有限的内存空间内支持大量goroutine，支持了更多的并发。虽然一个goroutine的栈只占几KB，但实际是可伸缩的，如果需要更多内容，runtime会自动为goroutine分配。</p>
+<p>Goroutine特点：</p>
+<ul>
+<li>占用内存更小（几kb）</li>
+<li>调度更灵活(runtime调度)</li>
+</ul>
+<h3 id="Golang调度器的产生"><a href="#Golang调度器的产生" class="headerlink" title="Golang调度器的产生"></a><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000021951119">Golang调度器的产生</a></h3><h4 id="GM模型介绍"><a href="#GM模型介绍" class="headerlink" title="GM模型介绍"></a>GM模型介绍</h4><p>最初Golang使用的是GM模型，现在已经被废弃，它的原理图如下：<br><img src="/2022/03/28/interview-Golang/GM.webp" alt="image"></p>
+<p>M想要执行、放回G都必须访问全局G队列，并且M有多个，即多线程访问同一资源需要加锁进行保证互斥&#x2F;同步，所以全局G队列是有互斥锁进行保护的。</p>
+<p>老调度器有几个缺点：</p>
+<ol>
+<li>创建、销毁、调度G都需要每个M获取锁，这就形成了激烈的锁竞争。</li>
+<li>M转移G会造成延迟和额外的系统负载。比如当G中包含创建新协程的时候，M创建了G’，为了继续执行G，需要把G’交给M’执行，也造成了很差的局部性，因为G’和G是相关的，最好放在M上执行，而不是其他M’。</li>
+<li>系统调用(CPU在M之间的切换)导致频繁的线程阻塞和取消阻塞操作增加了系统开销。</li>
+</ol>
+<h4 id="GMP分别的含义"><a href="#GMP分别的含义" class="headerlink" title="GMP分别的含义"></a>GMP分别的含义</h4><p><img src="/2022/03/28/interview-Golang/GMP.webp" alt="image"></p>
+<ul>
+<li><p>G(代表一个gr) : 存储有gr的栈信息, gr的状态, 以及gr需要执行的函数</p>
+</li>
+<li><p>P: Processor的简称，即调度器</p>
+</li>
+<li><p>M: 代表一个线程</p>
+</li>
+</ul>
+<h4 id="GMP模型具体实现"><a href="#GMP模型具体实现" class="headerlink" title="GMP模型具体实现"></a>GMP模型具体实现</h4><p>面对之前GM模型的问题，Go设计了新的调度器。在Go中，线程是运行goroutine的实体，调度器的功能是把可运行的goroutine分配到工作线程上。</p>
+<p><img src="/2022/03/28/interview-Golang/GMP1.webp" alt="image"></p>
+<p>调度流程为：</p>
+<p><img src="/2022/03/28/interview-Golang/GMP2.webp" alt="image"></p>
+<p>总结：Go调度本质是把大量的goroutine分配到少量线程上去执行，并利用多核并行，实现更强大的并发。</p>
+<h2 id="简述-Golang-垃圾回收的机制"><a href="#简述-Golang-垃圾回收的机制" class="headerlink" title="简述 Golang 垃圾回收的机制"></a><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/861507">简述 Golang 垃圾回收的机制</a></h2><h3 id="常见的垃圾回收算法"><a href="#常见的垃圾回收算法" class="headerlink" title="常见的垃圾回收算法"></a>常见的垃圾回收算法</h3><p>目前比较常见的垃圾回收算法有三种：</p>
+<ol>
+<li><p>引用计数：为每个对象维护一个引用计数，当引用该对象的对象销毁时，引用计数 -1，当对象引用计数为 0 时回收该对象。</p>
+<p> 代表语言：Python、PHP、Swift</p>
+<p> 优点：对象回收快，不会出现内存耗尽或达到某个阈值时才回收。</p>
+<p> 缺点：不能很好的处理循环引用，而实时维护引用计数也是有损耗的。</p>
+</li>
+<li><p>标记-清除：从根变量开始遍历所有引用的对象，标记引用的对象，没有被标记的进行回收。</p>
+<p> 代表语言：Golang（三色标记法）</p>
+<p> 优点：解决了引用计数的缺点。</p>
+<p> 缺点：需要 STW，暂时停掉程序运行。</p>
+</li>
+<li><p>分代收集：按照对象生命周期长短划分不同的代空间，生命周期长的放入老年代，短的放入新生代，不同代有不同的回收算法和回收频率。</p>
+<p> 代表语言：Java</p>
+<p> 优点：回收性能好</p>
+<p> 缺点：算法复杂</p>
+</li>
+</ol>
+<h3 id="标记清除法"><a href="#标记清除法" class="headerlink" title="标记清除法"></a>标记清除法</h3><p>原始的标记清楚法分为两个步骤：</p>
+<ol>
+<li><p>标记。先STP(Stop The World)，暂停整个程序的全部运行线程，将被引用的对象打上标记。</p>
+</li>
+<li><p>清除没有被打标机的对象，即回收内存资源，然后恢复运行线程。</p>
+</li>
+</ol>
+<p>这样做有个很大的问题就是要通过STW保证GC期间标记对象的状态不能变化，整个程序都要暂停掉，在外部看来程序就会卡顿。</p>
+<h3 id="三色标记原理"><a href="#三色标记原理" class="headerlink" title="三色标记原理"></a>三色标记原理</h3><p>三色标记法是对标记阶段的改进，原理如下：</p>
+<ol>
+<li>首先把所有的对象都放到白色的集合中</li>
+<li>从根节点开始遍历对象，遍历到的白色对象从白色集合中放到灰色集合中</li>
+<li>遍历灰色集合中的对象，把灰色对象引用的白色集合的对象放入到灰色集合中，同时把遍历过的灰色集合中的对象放到黑色的集合中</li>
+<li>循环步骤3，知道灰色集合中没有对象</li>
+<li>步骤4结束后，白色集合中的对象就是不可达对象，也就是垃圾，进行回收</li>
+</ol>
+<p><img src="/2022/03/28/interview-Golang/GC.webp" alt="image"></p>
+<p>Root 区域主要是程序运行到当前时刻的栈和全局数据区域，是实时正在使用到的内存.</p>
+<h3 id="没有STW的三色标记法"><a href="#没有STW的三色标记法" class="headerlink" title="没有STW的三色标记法"></a>没有STW的三色标记法</h3><p><img src="/2022/03/28/interview-Golang/STW1.jpeg" alt="image"><br><img src="/2022/03/28/interview-Golang/STW2.jpeg" alt="image"><br><img src="/2022/03/28/interview-Golang/STW3.jpeg" alt="image"></p>
+<p>可以看出，有两种情况，在三色标记法中，是不希望被发生的。</p>
+<ul>
+<li>条件1: 一个白色对象被黑色对象引用(白色被挂在黑色下)</li>
+<li>条件2: 灰色对象与它之间的可达关系的白色对象遭到破坏(灰色同时丢了该白色)<br>如果当以上两个条件同时满足时，就会出现对象丢失现象!</li>
+</ul>
+<p>为了解决这个问题，在保证对象不丢失的情况下合理地尽可能地提高GC效率，减少STW时间，Golang引入了屏障机制</p>
+<h3 id="屏障机制"><a href="#屏障机制" class="headerlink" title="屏障机制"></a>屏障机制</h3><h4 id="强-弱”-三色不变式"><a href="#强-弱”-三色不变式" class="headerlink" title="强-弱” 三色不变式"></a>强-弱” 三色不变式</h4><ul>
+<li><p>强三色不变式</p>
+<p>  不存在黑色对象引用到白色对象的指针。<br>  <img src="/2022/03/28/interview-Golang/3color1.jpeg" alt="image"></p>
+</li>
+<li><p>弱三色不变式</p>
+<p>  所有被黑色对象引用的白色对象都处于灰色保护状态。<br>  <img src="/2022/03/28/interview-Golang/3color2.jpeg" alt="image"></p>
+</li>
+</ul>
+<p>为了遵循上述的两个方式，GC算法演进到两种屏障方式，他们“插入屏障”, “删除屏障”。</p>
+<h4 id="插入屏障"><a href="#插入屏障" class="headerlink" title="插入屏障"></a>插入屏障</h4><p>具体操作: 在A对象引用B对象的时候，B对象被标记为灰色。(将B挂在A下游，B必须被标记为灰色)</p>
+<p>满足: 强三色不变式. (不存在黑色对象引用白色对象的情况了， 因为白色会强制变成灰色)<br><img src="/2022/03/28/interview-Golang/3color3.jpeg" alt="image"></p>
+<p><img src="/2022/03/28/interview-Golang/3color4.jpeg" alt="image"></p>
+<p><img src="/2022/03/28/interview-Golang/3color5.jpeg" alt="image"></p>
+<p>当全部三色标记扫描之后,栈上有可能依然存在白色对象被引用的情况(如上图的对象9). 所以要对栈重新进行三色标记扫描, 但这次为了对象不丢失, 要对本次标记扫描启动STW暂停. 直到栈空间的三色标记结束.</p>
+<p><img src="/2022/03/28/interview-Golang/3color6.jpeg" alt="image"></p>
+<h4 id="删除屏障"><a href="#删除屏障" class="headerlink" title="删除屏障"></a>删除屏障</h4><p>具体操作: 被删除的对象，如果自身为灰色或者白色，那么被标记为灰色。</p>
+<p>满足: 弱三色不变式. (保护灰色对象到白色对象的路径不会断)</p>
+<p><img src="/2022/03/28/interview-Golang/3color7.jpeg" alt="image"><br><img src="/2022/03/28/interview-Golang/3color8.jpeg" alt="image"></p>
+<p>这种方式的回收精度低，一个对象即使被删除了最后一个指向它的指针也依旧可以活过这一轮，在下一轮GC中被清理掉。</p>
+<h3 id="混合写屏障"><a href="#混合写屏障" class="headerlink" title="混合写屏障"></a>混合写屏障</h3><p>插入写屏障和删除写屏障的短板：</p>
+<ul>
+<li>插入写屏障：结束时需要STW来重新扫描栈，标记栈上引用的白色对象的存活；</li>
+<li>删除写屏障：回收精度低，GC开始时STW扫描堆栈来记录初始快照，这个过程会保护开始时刻的所有存活对象。</li>
+</ul>
+<p>Go V1.8版本引入了混合写屏障机制（hybrid write barrier），避免了对栈re-scan的过程，极大的减少了STW的时间。结合了两者的优点。</p>
+<h4 id="混合写屏障规则"><a href="#混合写屏障规则" class="headerlink" title="混合写屏障规则"></a>混合写屏障规则</h4><p>具体操作:</p>
+<ol>
+<li><p>GC开始将栈上的对象全部扫描并标记为黑色(之后不再进行第二次重复扫描，无需STW)，</p>
+</li>
+<li><p>GC期间，任何在栈上创建的新对象，均为黑色。</p>
+</li>
+<li><p>被删除的对象标记为灰色。</p>
+</li>
+<li><p>被添加的对象标记为灰色。</p>
+</li>
+</ol>
+<p>满足: 变形的弱三色不变式.</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><p>GoV1.3- 普通标记清除法，整体过程需要启动STW，效率极低。</p>
+</li>
+<li><p>GoV1.5- 三色标记法， 堆空间启动写屏障，栈空间不启动，全部扫描之后，需要重新扫描一次栈(需要STW)，效率普通。</p>
+</li>
+<li><p>GoV1.8-三色标记法，混合写屏障机制， 栈空间不启动，堆空间启动。整个过程几乎不需要STW，效率较高。</p>
+</li>
+</ul>
+<h3 id="垃圾回收触发机制"><a href="#垃圾回收触发机制" class="headerlink" title="垃圾回收触发机制"></a>垃圾回收触发机制</h3><ol>
+<li>阈值：默认内存扩大一倍，启动gc</li>
+<li>定期：默认2min触发一次gc</li>
+<li>手动：调用runtime.gc()</li>
+</ol>
+<h2 id="协程与进程，线程的区别是什么？协程有什么优势？"><a href="#协程与进程，线程的区别是什么？协程有什么优势？" class="headerlink" title="协程与进程，线程的区别是什么？协程有什么优势？"></a>协程与进程，线程的区别是什么？协程有什么优势？</h2><h3 id="进程和线程的区别"><a href="#进程和线程的区别" class="headerlink" title="进程和线程的区别"></a>进程和线程的区别</h3><ol>
+<li>线程是程序执行的最小单位，而进程是操作系统分配资源的最小单位；</li>
+<li>一个进程由一个或多个线程组成，线程是一个进程中代码的不同执行路线；</li>
+<li>进程之间相互独立，但同一进程下的各个线程之间共享程序的内存空间(包括代码段、数据集、堆等)及一些进程级的资源(如打开文件和信号)，某进程内的线程在其它进程不可见；</li>
+<li>调度和切换：线程上下文切换比进程上下文切换要快得多。</li>
+</ol>
+<p>　　线程与进程关系的示意图：<br><img src="/2022/03/28/interview-Golang/process.png" alt="image"></p>
+<h3 id="什么是协程"><a href="#什么是协程" class="headerlink" title="什么是协程"></a>什么是协程</h3><p>协程是一种用户态的轻量级线程，协程的调度完全由用户控制。从技术的角度来说，“协程就是你可以暂停执行的函数”。协程拥有自己的寄存器上下文和栈。协程调度切换时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈，直接操作栈则基本没有内核切换的开销，可以不加锁的访问全局变量，所以上下文的切换非常快。</p>
+<h3 id="线程和协程的区别"><a href="#线程和协程的区别" class="headerlink" title="线程和协程的区别"></a>线程和协程的区别</h3><ol>
+<li><p>线程的切换由操作系统负责调度，协程由用户自己进行调度，因此减少了上下文切换，提高了效率。</p>
+</li>
+<li><p>线程的默认Stack大小是1M，而协程更轻量，接近1K。因此可以在相同的内存中开启更多的协程。</p>
+</li>
+<li><p>由于在同一个线程上，因此可以避免竞争关系而使用锁。</p>
+</li>
+</ol>
+<h3 id="协程的优势"><a href="#协程的优势" class="headerlink" title="协程的优势"></a>协程的优势</h3><ol>
+<li>节省 CPU：避免系统内核级的线程频繁切换，造成的 CPU 资源浪费。好钢用在刀刃上。而协程是用户态的线程，用户可以自行控制协程的创建于销毁，极大程度避免了系统级线程上下文切换造成的资源浪费。</li>
+<li>节约内存：在 64 位的Linux中，一个线程需要分配 8MB 栈内存和 64MB 堆内存，系统内存的制约导致我们无法开启更多线程实现高并发。而在协程编程模式下，可以轻松有十几万协程，这是线程无法比拟的。</li>
+<li>开发效率：使用协程在开发程序之中，可以很方便的将一些耗时的IO操作异步化，例如写文件、耗时 IO 请求等。</li>
+</ol>
+<h2 id="简述-defer-的执行顺序"><a href="#简述-defer-的执行顺序" class="headerlink" title="简述 defer 的执行顺序"></a>简述 defer 的执行顺序</h2><h3 id="多个defer的执行顺序"><a href="#多个defer的执行顺序" class="headerlink" title="多个defer的执行顺序"></a>多个defer的执行顺序</h3><p>通过下面这个个例子，我们看下defer的执行顺序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> fmt.Println(<span class="string">&quot;main defer1&quot;</span>)</span><br><span class="line">    test()</span><br><span class="line">    <span class="keyword">defer</span> fmt.Println(<span class="string">&quot;main defer2&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> () &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;test defer1&quot;</span>)</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;test defer2&quot;</span>)</span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">test defer2</span><br><span class="line">test defer1</span><br><span class="line">main defer2</span><br><span class="line">main defer1</span><br></pre></td></tr></table></figure>
+
+<p>我们发现defer就像一个LIFO的栈，后defer的会先执行，且在函数退出时才会执行。</p>
+<h3 id="defer与return的执行顺序"><a href="#defer与return的执行顺序" class="headerlink" title="defer与return的执行顺序"></a>defer与return的执行顺序</h3><p>defer、return、返回值三者的执行逻辑应该是：</p>
+<ol>
+<li>return最先执行，return负责将结果写入返回值中；</li>
+<li>接着defer开始执行一些收尾工作；</li>
+<li>最后函数携带当前返回值退出。</li>
+</ol>
+<p>例子1</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ret := test()</span><br><span class="line">    fmt.Println(<span class="string">&quot;test return:&quot;</span>, ret)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> ( <span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> i <span class="type">int</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        i++        <span class="comment">//defer里面对i增1</span></span><br><span class="line">        fmt.Println(<span class="string">&quot;test defer, i = &quot;</span>, i)</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">test defer, i =  1</span><br><span class="line">test return: 0</span><br></pre></td></tr></table></figure>
+
+<p>函数的返回值没有被提前声名，其值来自于其他变量的赋值，而defer中修改的也是其他变量，而非返回值本身，因此函数退出时返回值并没有被改变。</p>
+<p>例子2</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ret := test()</span><br><span class="line">    fmt.Println(<span class="string">&quot;test return:&quot;</span>, ret)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//返回值改为命名返回值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> (i <span class="type">int</span>) &#123;</span><br><span class="line">    <span class="comment">//var i int</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        i++</span><br><span class="line">        fmt.Println(<span class="string">&quot;test defer, i = &quot;</span>, i)</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">test defer, i =  1</span><br><span class="line">test return: 1</span><br></pre></td></tr></table></figure>
+
+<p>函数的返回值被提前声明，也就意味着defer中是可以调用到真实返回值的，因此defer在return赋值返回值 i 之后，再一次地修改了 i 的值，最终函数退出后的返回值才会是defer修改过的值。</p>
+<h2 id="Golang-有哪些优缺点、错误处理有什么优缺点？"><a href="#Golang-有哪些优缺点、错误处理有什么优缺点？" class="headerlink" title="Golang 有哪些优缺点、错误处理有什么优缺点？"></a>Golang 有哪些优缺点、错误处理有什么优缺点？</h2><h3 id="go的优点"><a href="#go的优点" class="headerlink" title="go的优点"></a>go的优点</h3><ul>
+<li>go语言是一种静态强类型、编译型、并发型，并具有垃圾回收功能的编程语言</li>
+<li>Go 极其地快。其性能与 C++相似。</li>
+<li>它的自动垃圾回收降低了开发难度</li>
+<li>并发性&amp;通道：其唯一的创新之处是 goroutines 和通道。Goroutines 是 Go 面向线程的轻量级方法，而通道是 goroutines 之间通信的优先方式。</li>
+<li>编译时间很快</li>
+</ul>
+<h3 id="go的缺点"><a href="#go的缺点" class="headerlink" title="go的缺点"></a>go的缺点</h3><ul>
+<li>错误处理。没有python的try expect,只能用error来返回</li>
+<li>不支持类型继承</li>
+<li>不支持任何方法或运算符重载</li>
+</ul>
+<h3 id="Go的错误处理机制"><a href="#Go的错误处理机制" class="headerlink" title="Go的错误处理机制"></a>Go的错误处理机制</h3><p>对于预期的错误函数可以返回内置的接口error类型，对于未知的异常panic，可以通过defer和revover协作进行捕获。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestDeferAndRecover</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> err:=<span class="built_in">recover</span>(); err != <span class="literal">nil</span>&#123;</span><br><span class="line">            fmt.Println(<span class="string">&quot;异常信息为:&quot;</span>,err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()    </span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;发生恐慌了&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// 异常信息为: 发生恐慌了</span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以在 defer 中通过 recover 关键字恢复我们的恐慌，将之处理，转化为一个错误并打印，否则将导致整个 go 程序终止。</p>
+<h2 id="协程间的通信"><a href="#协程间的通信" class="headerlink" title="协程间的通信"></a>协程间的通信</h2><ol>
+<li><p>共享变量</p>
+<p> 在Go中并不提倡这样做，因为这种方式给所有的共享内存的多线程都带来了困难。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zengweigang.gitbooks.io/core-go/content/eBook/14.2.html">通道</a></p>
+<p> 通道实际上是类型化消息的队列：使数据得以传输。它是先进先出的结构所以可以保证发送给他们的元素的顺序。</p>
+ <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">identifier := <span class="built_in">make</span>(<span class="keyword">chan</span> datatype)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Golang-是如何实现-Map-的？"><a href="#Golang-是如何实现-Map-的？" class="headerlink" title="Golang 是如何实现 Map 的？"></a>Golang 是如何实现 Map 的？</h2><h3 id="一般的Map是如何实现的"><a href="#一般的Map是如何实现的" class="headerlink" title="一般的Map是如何实现的"></a>一般的Map是如何实现的</h3><p>一般的Map会包含两个主要结构：</p>
+<ul>
+<li>数组：数组里的值指向一个链表</li>
+<li>链表：目的解决hash冲突的问题，并存放键值<br>大致结构如下：</li>
+</ul>
+<p><img src="/2022/03/28/interview-Golang/map.webp" alt="image"></p>
+<p>读取一个key值的过程大致如下：</p>
+<ul>
+<li>key通过hash函数得到key的hash值</li>
+<li>key的hash值通过取模或者位操作得到key在数组上的索引</li>
+<li>通过索引找到对应的链表</li>
+<li>遍历链表对比key和目标key</li>
+<li>相等则返回value</li>
+</ul>
+<h3 id="Go语言里Map的实现思路"><a href="#Go语言里Map的实现思路" class="headerlink" title="Go语言里Map的实现思路"></a>Go语言里Map的实现思路</h3><p>哈希表的数据结构中一些关键字段如下所示：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> Hmap</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint8</span>   B;    <span class="comment">// 可以容纳2^B个项</span></span><br><span class="line">    <span class="type">uint16</span>  bucketsize;   <span class="comment">// 每个桶的大小</span></span><br><span class="line"></span><br><span class="line">    <span class="type">byte</span>    *buckets;     <span class="comment">// 2^B个Buckets的数组</span></span><br><span class="line">    <span class="type">byte</span>    *oldbuckets;  <span class="comment">// 前一个buckets，只有当正在扩容时才不为空</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>具体的Bucket结构如下所示：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> Bucket</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint8</span>  tophash[BUCKETSIZE]; <span class="comment">// hash值的高8位....低位从bucket的array定位到bucket</span></span><br><span class="line">    Bucket *overflow;           <span class="comment">// 溢出桶链表，如果有</span></span><br><span class="line">    <span class="type">byte</span>   data[<span class="number">1</span>];             <span class="comment">// BUCKETSIZE keys followed by BUCKETSIZE values</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其中BUCKETSIZE是用宏定义的8，每个bucket中存放最多8个key&#x2F;value对, 如果多于8个，那么会申请一个新的bucket，并将它与之前的bucket链起来。</p>
+<p>此外，溢出指针是为了解决哈希冲突，每一个bucket 里面的溢出指针 会指向另外一个 bucket ，每一个bucket 里面存放的是 8 个 key 和 8 个 value ，bucket 里面的溢出指针又指向另外一个bucket，用类似链表的方式将他们连接起来。</p>
+<p>map具体查询的过程为：</p>
+<ol>
+<li>按key的类型采用相应的hash算法得到key的hash值。</li>
+<li>将hash值的低位当作Hmap结构体中buckets数组的index，找到key所在的bucket。</li>
+<li>将hash的高8位存储在了bucket的tophash中。注意，这里高8位不是用来当作key&#x2F;value在bucket内部的offset的，而是作为一个主键，在查找时对tophash数组的每一项进行顺序匹配的。</li>
+<li>先比较hash值高位与bucket的tophash[i]是否相等，如果相等则再比较bucket的第i个的key与所给的key是否相等。如果相等，则返回其对应的value.</li>
+<li>反之，在overflow buckets中按照上述方法继续寻找</li>
+</ol>
+<h2 id="Map-是线程安全的吗？怎么解决它的并发安全问题？"><a href="#Map-是线程安全的吗？怎么解决它的并发安全问题？" class="headerlink" title="Map 是线程安全的吗？怎么解决它的并发安全问题？"></a>Map 是线程安全的吗？怎么解决它的并发安全问题？</h2><p>首先，Map不是线程安全的，在同一时间段内，让不同 goroutine 中的代码，对同一个字典进行读写操作是不安全的。字典值本身可能会因这些操作而产生混乱，相关的程序也可能会因此发生不可预知的问题。</p>
+<p>有一些安全使用Map的方法：</p>
+<h3 id="sync-Map"><a href="#sync-Map" class="headerlink" title="sync.Map"></a>sync.Map</h3><p>它的存、取、删等操作都可以基本保证在常数时间内执行完毕。换句话说，它们的算法复杂度与map类型一样都是O(1)的。与单纯使用原生map和互斥锁的方案相比，使用sync.Map可以显著地减少锁的争用。sync.Map本身虽然也用到了锁，但是，它其实在尽可能地避免使用锁。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ma sync.Map<span class="comment">// 该类型是开箱即用，只需要声明既可</span></span><br><span class="line">ma.Store(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>) <span class="comment">// 存储值</span></span><br><span class="line">ma.Delete(<span class="string">&quot;key&quot;</span>) <span class="comment">//删除值</span></span><br><span class="line">ma.LoadOrStore(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>)<span class="comment">// 获取值，如果没有则存储</span></span><br><span class="line">fmt.Println(ma.Load(<span class="string">&quot;key&quot;</span>))<span class="comment">//获取值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="增加同步机制"><a href="#增加同步机制" class="headerlink" title="增加同步机制"></a>增加同步机制</h3><p>可以使用<code>sync.RWMutex</code>来保证访问数据的安全性，举例如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过匿名结构体声明了一个变量counter，变量中包含了map和sync.RWMutex</span></span><br><span class="line"><span class="keyword">var</span> counter = <span class="keyword">struct</span>&#123;</span><br><span class="line">    sync.RWMutex</span><br><span class="line">    m <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span></span><br><span class="line">&#125;&#123;m: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>)&#125;</span><br><span class="line"><span class="comment">// 读取数据的时候使用读锁</span></span><br><span class="line">counter.RLock()</span><br><span class="line">n := counter.m[<span class="string">&quot;Tony&quot;</span>]</span><br><span class="line">counter.RUnlock()</span><br><span class="line"><span class="comment">// 写数据的使用使用写锁</span></span><br><span class="line">counter.Lock()</span><br><span class="line">counter.m[<span class="string">&quot;Tony&quot;</span>]++</span><br><span class="line">counter.Unlock()</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:16px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>您的捐赠是对作者的最大鼓励</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpeg" alt="Benson 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpeg" alt="Benson 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Interview/" rel="tag"># Interview</a>
+              <a href="/tags/Golang/" rel="tag"># Golang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/27/Linux-Commands/" rel="prev" title="Linux-Commands">
+      <i class="fa fa-chevron-left"></i> Linux-Commands
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-slice-%E7%9A%84%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%8Cslice-%E5%92%8C%E6%95%B0%E7%BB%84%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">简述 slice 的底层原理，slice 和数组的区别是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.1.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D-GMP-%E6%A8%A1%E5%9E%8B%E4%BB%A5%E5%8F%8A%E8%AF%A5%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">简单介绍 GMP 模型以及该模型的优点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#goroutine%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="nav-number">2.1.</span> <span class="nav-text">goroutine协程的产生</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Golang%E8%B0%83%E5%BA%A6%E5%99%A8%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="nav-number">2.2.</span> <span class="nav-text">Golang调度器的产生</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GM%E6%A8%A1%E5%9E%8B%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.2.1.</span> <span class="nav-text">GM模型介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GMP%E5%88%86%E5%88%AB%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">2.2.2.</span> <span class="nav-text">GMP分别的含义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GMP%E6%A8%A1%E5%9E%8B%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.3.</span> <span class="nav-text">GMP模型具体实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-Golang-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9A%84%E6%9C%BA%E5%88%B6"><span class="nav-number">3.</span> <span class="nav-text">简述 Golang 垃圾回收的机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">常见的垃圾回收算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">标记清除法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E5%8E%9F%E7%90%86"><span class="nav-number">3.3.</span> <span class="nav-text">三色标记原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B2%A1%E6%9C%89STW%E7%9A%84%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95"><span class="nav-number">3.4.</span> <span class="nav-text">没有STW的三色标记法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%8F%E9%9A%9C%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.</span> <span class="nav-text">屏障机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%BA-%E5%BC%B1%E2%80%9D-%E4%B8%89%E8%89%B2%E4%B8%8D%E5%8F%98%E5%BC%8F"><span class="nav-number">3.5.1.</span> <span class="nav-text">强-弱” 三色不变式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E5%B1%8F%E9%9A%9C"><span class="nav-number">3.5.2.</span> <span class="nav-text">插入屏障</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%B1%8F%E9%9A%9C"><span class="nav-number">3.5.3.</span> <span class="nav-text">删除屏障</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E5%86%99%E5%B1%8F%E9%9A%9C"><span class="nav-number">3.6.</span> <span class="nav-text">混合写屏障</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E5%86%99%E5%B1%8F%E9%9A%9C%E8%A7%84%E5%88%99"><span class="nav-number">3.6.1.</span> <span class="nav-text">混合写屏障规则</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E8%A7%A6%E5%8F%91%E6%9C%BA%E5%88%B6"><span class="nav-number">3.8.</span> <span class="nav-text">垃圾回收触发机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E7%A8%8B%E4%B8%8E%E8%BF%9B%E7%A8%8B%EF%BC%8C%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E5%8D%8F%E7%A8%8B%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E5%8A%BF%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">协程与进程，线程的区别是什么？协程有什么优势？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.1.</span> <span class="nav-text">进程和线程的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%8F%E7%A8%8B"><span class="nav-number">4.2.</span> <span class="nav-text">什么是协程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.3.</span> <span class="nav-text">线程和协程的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-number">4.4.</span> <span class="nav-text">协程的优势</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-defer-%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">5.</span> <span class="nav-text">简述 defer 的执行顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E4%B8%AAdefer%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">5.1.</span> <span class="nav-text">多个defer的执行顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#defer%E4%B8%8Ereturn%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">5.2.</span> <span class="nav-text">defer与return的执行顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Golang-%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BC%98%E7%BC%BA%E7%82%B9%E3%80%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">Golang 有哪些优缺点、错误处理有什么优缺点？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#go%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">6.1.</span> <span class="nav-text">go的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#go%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">6.2.</span> <span class="nav-text">go的缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Go%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="nav-number">6.3.</span> <span class="nav-text">Go的错误处理机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="nav-number">7.</span> <span class="nav-text">协程间的通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Golang-%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0-Map-%E7%9A%84%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">Golang 是如何实现 Map 的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E7%9A%84Map%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84"><span class="nav-number">8.1.</span> <span class="nav-text">一般的Map是如何实现的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Go%E8%AF%AD%E8%A8%80%E9%87%8CMap%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF"><span class="nav-number">8.2.</span> <span class="nav-text">Go语言里Map的实现思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map-%E6%98%AF%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E5%90%97%EF%BC%9F%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%E5%AE%83%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">Map 是线程安全的吗？怎么解决它的并发安全问题？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sync-Map"><span class="nav-number">9.1.</span> <span class="nav-text">sync.Map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6"><span class="nav-number">9.2.</span> <span class="nav-text">增加同步机制</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Benson"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Benson</p>
+  <div class="site-description" itemprop="description">学习、记录、成长</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/li-benson" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;li-benson" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:benson_li@stu.pku.edu.cn" title="E-Mail → mailto:benson_li@stu.pku.edu.cn" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Benson</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">108k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:38</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '78e128a5e6832a2a453f',
+      clientSecret: '1c1f08f5d6455a4478e97ad5b09b0513fc5e7e0e',
+      repo        : 'li-benson.github.io',
+      owner       : 'li-benson',
+      admin       : ['li-benson'],
+      id          : '39741c00e40acbd2cb49d685902b78dd',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
