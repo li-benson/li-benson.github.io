@@ -42,7 +42,7 @@
 <meta property="og:image" content="http://example.com/2022/03/18/interview-OperatorSystem/zero_copy2.png">
 <meta property="og:image" content="http://example.com/2022/03/18/interview-OperatorSystem/zero_copy3.png">
 <meta property="article:published_time" content="2022-03-18T14:41:09.000Z">
-<meta property="article:modified_time" content="2022-03-18T16:02:55.667Z">
+<meta property="article:modified_time" content="2022-04-11T10:16:42.407Z">
 <meta property="article:author" content="Benson">
 <meta property="article:tag" content="Interview">
 <meta property="article:tag" content="Operator System">
@@ -243,7 +243,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-19 00:02:55" itemprop="dateModified" datetime="2022-03-19T00:02:55+08:00">2022-03-19</time>
+                <time title="修改时间：2022-04-11 18:16:42" itemprop="dateModified" datetime="2022-04-11T18:16:42+08:00">2022-04-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -288,114 +288,114 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="线程间同步方式"><a href="#线程间同步方式" class="headerlink" title="线程间同步方式"></a>线程间同步方式</h3><p>  互斥量、信号量、条件变量 </p>
-<h3 id="进程与线程的本质区别、以及各自的使用场景。"><a href="#进程与线程的本质区别、以及各自的使用场景。" class="headerlink" title="进程与线程的本质区别、以及各自的使用场景。"></a>进程与线程的本质区别、以及各自的使用场景。</h3><ul>
-<li>需要频繁创建销毁的优先用线程（进程的创建和销毁开销过大） 这种原则最常见的应用就是Web服务器了，来一个连接建立一个线程，断了就销毁线程，要是用进程，创建和销毁的代价是很难承受的。 </li>
+        <h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="线程间同步方式"><a href="#线程间同步方式" class="headerlink" title="线程间同步方式"></a>线程间同步方式</h3><p>  互斥量、信号量、条件变量</p>
+<h3 id="进程与线程的本质区别、以及各自的使用场景"><a href="#进程与线程的本质区别、以及各自的使用场景" class="headerlink" title="进程与线程的本质区别、以及各自的使用场景"></a>进程与线程的本质区别、以及各自的使用场景</h3><ul>
+<li>需要频繁创建销毁的优先用线程（进程的创建和销毁开销过大） 这种原则最常见的应用就是Web服务器了，来一个连接建立一个线程，断了就销毁线程，要是用进程，创建和销毁的代价是很难承受的。</li>
 <li>需要稳定性，则考虑进程。比如可能存在一些网页不符合编程规范，容易崩溃，采用多进程一个网页崩溃不会影响其他网页；而采用多线程会。</li>
 </ul>
 <h3 id="进程调度算法的特点以及使用场景"><a href="#进程调度算法的特点以及使用场景" class="headerlink" title="进程调度算法的特点以及使用场景"></a>进程调度算法的特点以及使用场景</h3><ul>
-<li><p>批处理系统 </p>
-<p>先来先服务：利于长作业</p>
-<p>短作业优先：长作业可能饿死 </p>
-<p>最短剩余时间优先：可抢占、每个进程包含优先级和要求运行时间。 </p>
-<p>高响应比优先调度算法：R&#x3D;（等待时间+需要时间）&#x2F;需要时间 </p>
+<li><p>批处理系统</p>
+<p>  先来先服务：利于长作业</p>
+<p>  短作业优先：长作业可能饿死</p>
+<p>  最短剩余时间优先：可抢占、每个进程包含优先级和要求运行时间。</p>
+<p>  高响应比优先调度算法：R&#x3D;（等待时间+需要时间）&#x2F;需要时间</p>
 </li>
-<li><p>交互式系统 </p>
-<p>时间片轮转：时间片小，进程切换消耗大；时间片大，实时性无法保证。 </p>
-<p>优先级调度：防止低优先级饿死，随时间增加等待进程的优先级。 </p>
-<p>多级反馈队列：不同队列优先级不同、时间片大小不同。 </p>
+<li><p>交互式系统</p>
+<p>  时间片轮转：时间片小，进程切换消耗大；时间片大，实时性无法保证。</p>
+<p>  优先级调度：防止低优先级饿死，随时间增加等待进程的优先级。</p>
+<p>  多级反馈队列：不同队列优先级不同、时间片大小不同。</p>
 </li>
-<li><p>实时系统 </p>
-<p>软实时：请求允许一定超时 </p>
-<p>硬实时：请求必须满足绝对的截止时间</p>
+<li><p>实时系统</p>
+<p>  软实时：请求允许一定超时</p>
+<p>  硬实时：请求必须满足绝对的截止时间</p>
 </li>
 </ul>
 <h3 id="操作系统页面置换算法"><a href="#操作系统页面置换算法" class="headerlink" title="操作系统页面置换算法"></a>操作系统页面置换算法</h3><ul>
-<li><p>最佳置换算法 </p>
-<p>要换出的页面为最长时间不再被访问的页面，可保证最低缺页率。 </p>
+<li><p>最佳置换算法</p>
+<p>  要换出的页面为最长时间不再被访问的页面，可保证最低缺页率。</p>
 </li>
-<li><p>最近最久未使用（LRU） </p>
-<p>要在内存中维护一个所有页面的链表。当一个页面被访问时，将这个页面移到链表表头。这样就能保证链表表尾的页面是最近最久未访问的。 </p>
+<li><p>最近最久未使用（LRU）</p>
+<p>  要在内存中维护一个所有页面的链表。当一个页面被访问时，将这个页面移到链表表头。这样就能保证链表表尾的页面是最近最久未访问的。</p>
 </li>
-<li><p>最近未使用（NRU）或时钟算法 </p>
-<p>每个页面都有两个状态位：R与M，当页面被访问时设置页面的R＝1，当页面被修改时设置M＝1。其中R位会定时被清零。可以将页面分成以下四类：</p>
-<p>R&#x3D;0,M&#x3D;0</p>
-<p>R&#x3D;0,M&#x3D;1</p>
-<p>R&#x3D;1,M&#x3D;0</p>
-<p>R&#x3D;1,M&#x3D;1</p>
-<p>当发生缺页中断时，NRU算法随机地从类编号最小的非空类中挑选一个页面将它换出。</p>
-<p>NRU优先换出已经被修改的脏页面（R＝0，M＝1），而不是被频繁使用的干净页面（R＝1，M＝0）。</p>
+<li><p>最近未使用（NRU）或时钟算法</p>
+<p>  每个页面都有两个状态位：R与M，当页面被访问时设置页面的R＝1，当页面被修改时设置M＝1。其中R位会定时被清零。可以将页面分成以下四类：</p>
+<p>  R&#x3D;0,M&#x3D;0</p>
+<p>  R&#x3D;0,M&#x3D;1</p>
+<p>  R&#x3D;1,M&#x3D;0</p>
+<p>  R&#x3D;1,M&#x3D;1</p>
+<p>  当发生缺页中断时，NRU算法随机地从类编号最小的非空类中挑选一个页面将它换出。</p>
+<p>  NRU优先换出已经被修改的脏页面（R＝0，M＝1），而不是被频繁使用的干净页面（R＝1，M＝0）。</p>
 </li>
 <li><p>先进先出FIFO</p>
 </li>
 </ul>
 <h3 id="进程间有哪些通信方式？"><a href="#进程间有哪些通信方式？" class="headerlink" title="进程间有哪些通信方式？"></a>进程间有哪些通信方式？</h3><ul>
-<li><p>管道 </p>
-<p>管道的实质是一个内核缓冲区，进程以先进先出的方式从缓冲区存取数据，管道一端的进程顺序地将数据写入缓冲区，另一端的进程则顺序地读出数据。</p>
-<p>管道的用法： </p>
+<li><p>管道</p>
+<p>  管道的实质是一个内核缓冲区，进程以先进先出的方式从缓冲区存取数据，管道一端的进程顺序地将数据写入缓冲区，另一端的进程则顺序地读出数据。</p>
+<p>  管道的用法：</p>
 <ol>
-<li><p>父进程创建管道，得到两个文件描述符指向管道的两端。使用函数 <code>int pipe(int fd[2])</code> </p>
+<li><p>父进程创建管道，得到两个文件描述符指向管道的两端。使用函数 <code>int pipe(int fd[2])</code></p>
 </li>
 <li><p>利用fork函数创建出子进程，则子进程也得到两个文件描述符指向同一管道</p>
 </li>
 <li><p>父进程关闭读端<code>pipe[0]</code>,子进程关闭写端<code>pipe[1]</code>，则此时父进程可以往管道中进行写操作，子进程可以从管道中读，从而实现了通过管道的进程间通信。</p>
 </li>
 </ol>
-<p><img src="/2022/03/18/interview-OperatorSystem/pipe.png"></p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/pipe.png" alt="image"></p>
 </li>
-<li><p>FIFO命名管道 </p>
-<p>命名管道以文件的形式存在，由于有一个路径名，使用没有亲缘关系的进程间也可以使用命名管道。去除了只能在父子进程中使用的限制 </p>
+<li><p>FIFO命名管道</p>
+<p>  命名管道以文件的形式存在，由于有一个路径名，使用没有亲缘关系的进程间也可以使用命名管道。去除了只能在父子进程中使用的限制</p>
 </li>
-<li><p>消息队列 </p>
-<p>消息队列可以独立于读写进程存在，从而避免了FIFO 中同步管道的打开和关闭时可能产生的困难；避免了FIFO 的同步阻塞问题，不需要进程自己提供同步方法；读进程可以根据消息类型有选择地接收消息，而不像 FIFO 那样只能默认地接收。 </p>
+<li><p>消息队列</p>
+<p>  消息队列可以独立于读写进程存在，从而避免了FIFO 中同步管道的打开和关闭时可能产生的困难；避免了FIFO 的同步阻塞问题，不需要进程自己提供同步方法；读进程可以根据消息类型有选择地接收消息，而不像 FIFO 那样只能默认地接收。</p>
 </li>
-<li><p>信号量 </p>
+<li><p>信号量</p>
 </li>
-<li><p>共享内存 </p>
-<p>允许多个进程共享一个给定的存储区。因为数据不需要在进程之间复制，所以这是最快的一种 IPC。需要使用信号量用来同步对共享存储的访问。 </p>
+<li><p>共享内存</p>
+<p>  允许多个进程共享一个给定的存储区。因为数据不需要在进程之间复制，所以这是最快的一种 IPC。需要使用信号量用来同步对共享存储的访问。</p>
 </li>
-<li><p>套接字 </p>
-<p>它可用于不同机器间的进程通信</p>
+<li><p>套接字</p>
+<p>  它可用于不同机器间的进程通信</p>
 </li>
 </ul>
-<h3 id="死锁必要条件、解决死锁策略"><a href="#死锁必要条件、解决死锁策略" class="headerlink" title="死锁必要条件、解决死锁策略"></a>死锁必要条件、解决死锁策略</h3><p>  死锁必要条件：互斥、占用并保持、不可剥夺、环路等待。 </p>
-<p>  处理方法： </p>
+<h3 id="死锁必要条件、解决死锁策略"><a href="#死锁必要条件、解决死锁策略" class="headerlink" title="死锁必要条件、解决死锁策略"></a>死锁必要条件、解决死锁策略</h3><p>  死锁必要条件：互斥、占用并保持、不可剥夺、环路等待。</p>
+<p>  处理方法：</p>
 <ul>
-<li><p>鸵鸟策略 </p>
-<p>Linux、Windows都是选择忽略死锁。 </p>
+<li><p>鸵鸟策略</p>
+<p>  Linux、Windows都是选择忽略死锁。</p>
 </li>
-<li><p>死锁检测和死锁恢复 </p>
-<p>每种类型一个资源的死锁检测：在资源分配图中检测有向图是否存在环。 </p>
-<p>每种类型多个资源的死锁检测：类似死锁避免。 </p>
+<li><p>死锁检测和死锁恢复</p>
+<p>  每种类型一个资源的死锁检测：在资源分配图中检测有向图是否存在环。</p>
+<p>  每种类型多个资源的死锁检测：类似死锁避免。</p>
 </li>
-<li><p>死锁预防——破坏死锁的必要条件 </p>
-<p>破坏互斥条件：例如SPOOLing技术将独占设备改为共享设备 </p>
-<p>破坏占用并保持：规定所有进程在开始执行前请求所需要的全部资源 </p>
-<p>破坏不可抢占 </p>
-<p>破坏环路等待：给资源统一编号，进程只能按编号顺序来请求资源 </p>
+<li><p>死锁预防——破坏死锁的必要条件</p>
+<p>  破坏互斥条件：例如SPOOLing技术将独占设备改为共享设备</p>
+<p>  破坏占用并保持：规定所有进程在开始执行前请求所需要的全部资源</p>
+<p>  破坏不可抢占</p>
+<p>  破坏环路等待：给资源统一编号，进程只能按编号顺序来请求资源</p>
 </li>
-<li><p>死锁避免 </p>
-<p>银行家算法</p>
+<li><p>死锁避免</p>
+<p>  银行家算法</p>
 </li>
 </ul>
 <h3 id="简述操作系统中-malloc-的实现原理"><a href="#简述操作系统中-malloc-的实现原理" class="headerlink" title="简述操作系统中 malloc 的实现原理"></a>简述操作系统中 malloc 的实现原理</h3><ul>
-<li><p>当开辟的空间小于 128K 时，调用 <code>brk()</code>函数，malloc 的底层实现是系统调用函数<code>brk()</code>，其主要移动指针 <code>_enddata</code>(此时的 <code>_enddata</code> 指的是 Linux 地址空间中堆段的末尾地址，不是数据段的末尾地址) </p>
+<li><p>当开辟的空间小于 128K 时，调用 <code>brk()</code>函数，malloc 的底层实现是系统调用函数<code>brk()</code>，其主要移动指针 <code>_enddata</code>(此时的 <code>_enddata</code> 指的是 Linux 地址空间中堆段的末尾地址，不是数据段的末尾地址)</p>
 </li>
-<li><p>当开辟的空间大于 128K 时，<code>mmap()</code>系统调用函数来在虚拟地址空间中（堆和栈中间，称为“文件映射区域”的地方）找一块空间来开辟。 </p>
-<p>这两种方式分配的都是虚拟内存，没有分配物理内存。在第一次访问已分配的虚拟地址空间的时候，发生缺页中断，操作系统负责分配物理内存，然后建立虚拟内存和物理内存之间的映射关系，之后再重新执行发生中断时的指令。</p>
+<li><p>当开辟的空间大于 128K 时，<code>mmap()</code>系统调用函数来在虚拟地址空间中（堆和栈中间，称为“文件映射区域”的地方）找一块空间来开辟。</p>
+<p>  这两种方式分配的都是虚拟内存，没有分配物理内存。在第一次访问已分配的虚拟地址空间的时候，发生缺页中断，操作系统负责分配物理内存，然后建立虚拟内存和物理内存之间的映射关系，之后再重新执行发生中断时的指令。</p>
 </li>
-<li><p>具体分配过程： </p>
+<li><p>具体分配过程：</p>
 <ul>
-<li><p>情况一：malloc 小于 128K 的内存，使用 brk 分配 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/brk.png"></p>
-<p>malloc函数会调用brk系统调用，将_edata指针往高地址推30K，就完成虚拟内存分配。事实是：_edata+30K只是完成虚拟地址的分配，A这块内存现在还是没有物理页与之对应的，等到进程第一次读写A这块内存的时候，发生缺页中断，这个时候，内核才分配A这块内存对应的物理页。也就是说，如果用malloc分配了A这块内容，然后从来不访问它，那么，A对应的物理页是不会被分配的。 </p>
-<p>由于<code>brk/sbrk/mmap</code>属于系统调用，如果每次申请内存，都调用这三个函数中的一个，那么每次都要产生系统调用开销（即cpu从用户态切换到内核态的上下文切换，这里要保存用户态数据，等会还要切换回用户态），这是非常影响性能的；其次，这样申请的内存容易产生碎片，因为堆是从低地址到高地址，如果低地址的内存没有被释放，高地址的内存就不能被回收。</p>
-<p>鉴于此，malloc采用的是内存池的实现方式，malloc内存池实现方式更类似于STL分配器和memcached的内存池，先申请一大块内存，然后将内存分成不同大小的内存块，然后用户申请内存时，直接从内存池中选择一块相近的内存块即可。 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/malloc.png"></p>
+<li><p>情况一：malloc 小于 128K 的内存，使用 brk 分配</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/brk.png" alt="image"></p>
+<p>  malloc函数会调用brk系统调用，将_edata指针往高地址推30K，就完成虚拟内存分配。事实是：_edata+30K只是完成虚拟地址的分配，A这块内存现在还是没有物理页与之对应的，等到进程第一次读写A这块内存的时候，发生缺页中断，这个时候，内核才分配A这块内存对应的物理页。也就是说，如果用malloc分配了A这块内容，然后从来不访问它，那么，A对应的物理页是不会被分配的。</p>
+<p>  由于<code>brk/sbrk/mmap</code>属于系统调用，如果每次申请内存，都调用这三个函数中的一个，那么每次都要产生系统调用开销（即cpu从用户态切换到内核态的上下文切换，这里要保存用户态数据，等会还要切换回用户态），这是非常影响性能的；其次，这样申请的内存容易产生碎片，因为堆是从低地址到高地址，如果低地址的内存没有被释放，高地址的内存就不能被回收。</p>
+<p>  鉴于此，malloc采用的是内存池的实现方式，malloc内存池实现方式更类似于STL分配器和memcached的内存池，先申请一大块内存，然后将内存分成不同大小的内存块，然后用户申请内存时，直接从内存池中选择一块相近的内存块即可。</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/malloc.png" alt="image"></p>
 </li>
-<li><p>情况二：malloc 大于 128K 的内存，使用 mmap 分配 </p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/mmap.png"></p>
-<p>brk分配的内存需要等到高地址内存释放以后才能释放，而mmap分配的内存可以单独释放。</p>
+<li><p>情况二：malloc 大于 128K 的内存，使用 mmap 分配</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/mmap.png" alt="image"></p>
+<p>  brk分配的内存需要等到高地址内存释放以后才能释放，而mmap分配的内存可以单独释放。</p>
 </li>
 </ul>
 </li>
@@ -449,50 +449,50 @@
 </li>
 </ol>
 <h3 id="简述创建进程的流程"><a href="#简述创建进程的流程" class="headerlink" title="简述创建进程的流程"></a>简述创建进程的流程</h3><ul>
-<li><p>fork() </p>
-<p>在系统中表示一个进程的实体是进程控制块，创建新进程的主要工作就是要创建一个新控制块，而创建一个新控制块最简单的方法就是复制。 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/fork.png"></p>
-<p>父进程和子进程运行的是同一个程序，也正是这个理由，系统并未在内存中给子进程配置独立的程序运行空间，而只是简单地将程序指针指向父进程的代码； </p>
-<p>两个进程具有各自的数据区和用户堆栈，在函数fork()生成子进程时，将父进程数据区和用户堆栈的内容分别复制给了子进程。 </p>
+<li><p>fork()</p>
+<p>  在系统中表示一个进程的实体是进程控制块，创建新进程的主要工作就是要创建一个新控制块，而创建一个新控制块最简单的方法就是复制。</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/fork.png" alt="image"></p>
+<p>  父进程和子进程运行的是同一个程序，也正是这个理由，系统并未在内存中给子进程配置独立的程序运行空间，而只是简单地将程序指针指向父进程的代码；</p>
+<p>  两个进程具有各自的数据区和用户堆栈，在函数fork()生成子进程时，将父进程数据区和用户堆栈的内容分别复制给了子进程。</p>
 </li>
-<li><p>exec() </p>
-<p>如果一个进程调用了execv()，那么该函数便会把函数参数path所指定的可执行文件加载到进程的用户内存空间，并覆盖掉原文件，然后便运行这个新加载的可执行文件。通常调用execv()的都是子进程。调用execv()后，父进程与子进程存储结构的示意图如下： </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/exec.png"></p>
+<li><p>exec()</p>
+<p>  如果一个进程调用了execv()，那么该函数便会把函数参数path所指定的可执行文件加载到进程的用户内存空间，并覆盖掉原文件，然后便运行这个新加载的可执行文件。通常调用execv()的都是子进程。调用execv()后，父进程与子进程存储结构的示意图如下：</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/exec.png" alt="image"></p>
 </li>
-<li><p>wait() </p>
-<p>由于子进程毕竟由父进程所创建，父进程需要在子进程结束之后释放子进程所占用的系统资源。那么为了保证完成为子进程释放资源的任务，父进程应该调用系统调用wait()。</p>
-<p>如果父进程先于子进程结束进程，则子进程会因为失去父进程而成为“孤儿进程”。如果子进程退出，而父进程并没有调用wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。这种进程称之为僵尸进程</p>
+<li><p>wait()</p>
+<p>  由于子进程毕竟由父进程所创建，父进程需要在子进程结束之后释放子进程所占用的系统资源。那么为了保证完成为子进程释放资源的任务，父进程应该调用系统调用wait()。</p>
+<p>  如果父进程先于子进程结束进程，则子进程会因为失去父进程而成为“孤儿进程”。如果子进程退出，而父进程并没有调用wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。这种进程称之为僵尸进程</p>
 </li>
 </ul>
 <h3 id="如何设计一个线程池？"><a href="#如何设计一个线程池？" class="headerlink" title="如何设计一个线程池？"></a>如何设计一个线程池？</h3><ul>
-<li><p>是什么 </p>
-<p>线程池使用了池化技术，将线程存储起来放在一个 池子 （容器）里面，来了任务可以用已有的空闲的线程进行处理， 处理完成之后，归还到容器，可以复用。如果线程不够，还可以根据规则动态增加，线程多余的时候，亦可以让多余的线程死亡。 </p>
+<li><p>是什么</p>
+<p>  线程池使用了池化技术，将线程存储起来放在一个 池子 （容器）里面，来了任务可以用已有的空闲的线程进行处理， 处理完成之后，归还到容器，可以复用。如果线程不够，还可以根据规则动态增加，线程多余的时候，亦可以让多余的线程死亡。</p>
 </li>
-<li><p>为什么 </p>
+<li><p>为什么</p>
 <ul>
-<li>降低资源消耗：池化技术可以重复利用已经创建的线程，降低线程创建和销毁的损耗。 </li>
-<li>提高响应速度：利用已经存在的线程进行处理，少去了创建线程的时间 </li>
-<li>管理线程可控：线程是稀缺资源，不能无限创建，线程池可以做到统一分配和监控 </li>
+<li>降低资源消耗：池化技术可以重复利用已经创建的线程，降低线程创建和销毁的损耗。</li>
+<li>提高响应速度：利用已经存在的线程进行处理，少去了创建线程的时间</li>
+<li>管理线程可控：线程是稀缺资源，不能无限创建，线程池可以做到统一分配和监控</li>
 <li>拓展其他功能：比如定时线程池，可以定时执行任务</li>
 </ul>
 </li>
-<li><p>设计以及需要考虑的点 </p>
+<li><p>设计以及需要考虑的点</p>
 <ul>
-<li>线程池状态： <ul>
+<li>线程池状态：<ul>
 <li>有哪些状态？如何维护状态？</li>
 </ul>
 </li>
-<li>线程 <ul>
-<li>线程怎么封装？线程放在哪个池子里？ </li>
-<li>线程怎么取得任务？ </li>
-<li>线程有哪些状态？ </li>
-<li>线程的数量怎么限制？动态变化？自动伸缩？ </li>
+<li>线程<ul>
+<li>线程怎么封装？线程放在哪个池子里？</li>
+<li>线程怎么取得任务？</li>
+<li>线程有哪些状态？</li>
+<li>线程的数量怎么限制？动态变化？自动伸缩？</li>
 <li>线程怎么消亡？如何重复利用？</li>
 </ul>
 </li>
-<li>任务 <ul>
-<li>任务少可以直接处理，多的时候，放在哪里？ </li>
-<li>任务队列满了，怎么办？ </li>
+<li>任务<ul>
+<li>任务少可以直接处理，多的时候，放在哪里？</li>
+<li>任务队列满了，怎么办？</li>
 <li>用什么队列？</li>
 </ul>
 </li>
@@ -502,83 +502,83 @@
 </li>
 </ul>
 <h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><ul>
-<li><p>awk </p>
+<li><p>awk</p>
 </li>
-<li><p>sed </p>
+<li><p>sed</p>
 </li>
-<li><p>grep </p>
+<li><p>grep</p>
 </li>
-<li><p>head </p>
-<p>用法：<code>head [-n lines | -c bytes] [file ...] </code></p>
+<li><p>head</p>
+<p>用法：<code>head [-n lines | -c bytes] [file ...]</code></p>
 <p>例子：<br>显示文件的前n行  <code>head -n 10 file.txt</code></p>
 </li>
-<li><p>wc </p>
-<p>用途：可以计算文件的Byte数、行数、或是列数(单词数) </p>
+<li><p>wc</p>
+<p>用途：可以计算文件的Byte数、行数、或是列数(单词数)</p>
 <p>用法：<code>wc [-clw][文件...]</code></p>
 </li>
-<li><p>tr </p>
-<p>用途：用于转换或删除文件中的字符。 </p>
+<li><p>tr</p>
+<p>用途：用于转换或删除文件中的字符。</p>
 <p>用法：<code>tr [-cdst][第一字符集][第二字符集]</code></p>
 <p>例子：输入字符小写转大写 <code>echo HELLO WORLD | tr &#39;A-Z&#39; &#39;a-z&#39;</code></p>
 </li>
-<li><p>sort </p>
-<p>用途：将文本文件内容加以排序。 </p>
+<li><p>sort</p>
+<p>用途：将文本文件内容加以排序。</p>
 </li>
-<li><p>uniq </p>
-<p>用途：用于检查及删除文本文件中重复出现的行列 </p>
+<li><p>uniq</p>
+<p>用途：用于检查及删除文本文件中重复出现的行列</p>
 </li>
-<li><p>top </p>
-<p>实时显示系统中各个进程的资源占用状况 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/top.png"></p>
+<li><p>top</p>
+<p>实时显示系统中各个进程的资源占用状况</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/top.png" alt="image"></p>
 </li>
-<li><p>lsof </p>
-<p>(list open file) </p>
-<p><code>lsof -i:端口号</code> 用于查看当前端口号被占用情况 </p>
+<li><p>lsof</p>
+<p>(list open file)</p>
+<p><code>lsof -i:端口号</code> 用于查看当前端口号被占用情况</p>
 </li>
-<li><p>tail </p>
+<li><p>tail</p>
 <p><code>tail -f 文件名</code> 用于实时显示xxx文件更新的内容</p>
 </li>
 </ul>
 <h3 id="开发工具gdb"><a href="#开发工具gdb" class="headerlink" title="开发工具gdb"></a>开发工具gdb</h3><ul>
-<li><p>准备 </p>
+<li><p>准备</p>
 <p>gdb调试时，首先要在编译时将调试信息加到可执行文件中。</p>
-<p>使用编译器（cc&#x2F;gcc&#x2F;g++）的 -g 参数可以做到这一点。如：<code>gcc -g hello.c -o hello </code></p>
+<p>使用编译器（cc&#x2F;gcc&#x2F;g++）的 -g 参数可以做到这一点。如：<code>gcc -g hello.c -o hello</code></p>
 </li>
-<li><p>启动 </p>
+<li><p>启动</p>
 <ul>
-<li>gdb program<br>直接加可执行程序即可 </li>
-<li>gdb program core </li>
+<li>gdb program<br>直接加可执行程序即可</li>
+<li>gdb program core</li>
 <li>gdb program pid_num<br>如果你的程序是一个服务程序，那么你可以指定这个服务程序运行时的进程ID。gdb会自动attach上去，并调试他</li>
 </ul>
 </li>
-<li><p>运行 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_run.png"></p>
+<li><p>运行</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_run.png" alt="image"></p>
 </li>
-<li><p>断点 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_bp.png"></p>
+<li><p>断点</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_bp.png" alt="image"></p>
 </li>
-<li><p>查看源代码 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_list.png"></p>
+<li><p>查看源代码</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_list.png" alt="image"></p>
 </li>
-<li><p>打印表达式 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_print.png"></p>
+<li><p>打印表达式</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_print.png" alt="image"></p>
 </li>
-<li><p>查询运行信息 </p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_runing.png"></p>
+<li><p>查询运行信息</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_runing.png" alt="image"></p>
 </li>
 </ul>
 <h3 id="开发工具makefile"><a href="#开发工具makefile" class="headerlink" title="开发工具makefile"></a>开发工具makefile</h3><p>  待补充</p>
 <h3 id="开发工具cmake"><a href="#开发工具cmake" class="headerlink" title="开发工具cmake"></a>开发工具cmake</h3><p>  待补充</p>
 <h3 id="开发工具gcc"><a href="#开发工具gcc" class="headerlink" title="开发工具gcc"></a>开发工具gcc</h3><p>  待补充</p>
-<h3 id="简述-Linux-零拷贝的原理"><a href="#简述-Linux-零拷贝的原理" class="headerlink" title="简述 Linux 零拷贝的原理"></a>简述 Linux 零拷贝的原理</h3><p>  所谓的零拷贝（Zero-Copy）是指将数据直接从磁盘文件复制到网卡设备中，而不需要经由应用程序之手 。零拷贝大大提高了应用程序的性能，减少了内核和用户模式之间的上下文切换。 </p>
-<p>  考虑这样一种常用的情形：你需要将静态内容(类似图片、文件)展示给用户。这个情形就意味着需要先将静态内容从磁盘中复制出来放到一个内存 buf 中，然后将这个 buf 通过套接字（Socket）传输给用户，进而用户获得静态内容。流程图如下： </p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy1.png"></p>
+<h3 id="简述-Linux-零拷贝的原理"><a href="#简述-Linux-零拷贝的原理" class="headerlink" title="简述 Linux 零拷贝的原理"></a>简述 Linux 零拷贝的原理</h3><p>  所谓的零拷贝（Zero-Copy）是指将数据直接从磁盘文件复制到网卡设备中，而不需要经由应用程序之手 。零拷贝大大提高了应用程序的性能，减少了内核和用户模式之间的上下文切换。</p>
+<p>  考虑这样一种常用的情形：你需要将静态内容(类似图片、文件)展示给用户。这个情形就意味着需要先将静态内容从磁盘中复制出来放到一个内存 buf 中，然后将这个 buf 通过套接字（Socket）传输给用户，进而用户获得静态内容。流程图如下：</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy1.png" alt="image"></p>
 <p>  如果采用了零拷贝技术，那么应用程序可以直接请求内核把磁盘中的数据传输给 Socket, 如下图所示。</p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy2.png"></p>
-<p>  改进的地方：我们将上下文切换的次数从四次减少到了两次，将数据复制的次数从四次减少到了三次。但是这种方案尚未达到我们的零拷贝要求。真正的零拷贝如下： </p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy2.png" alt="image"></p>
+<p>  改进的地方：我们将上下文切换的次数从四次减少到了两次，将数据复制的次数从四次减少到了三次。但是这种方案尚未达到我们的零拷贝要求。真正的零拷贝如下：</p>
 <ul>
-<li><code>transferTo()</code> 方法引发 DMA 引擎将文件内容拷贝到内核缓冲区。 </li>
-<li>数据未被拷贝到套接字缓冲区。取而代之的是，只有包含关于数据的位置和长度的信息的描述符被追加到了套接字缓冲区。DMA 引擎直接把数据从内核缓冲区传输到协议引擎，从而消除了剩下的最后一次 CPU 拷贝。<br>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy3.png"></li>
+<li><code>transferTo()</code> 方法引发 DMA 引擎将文件内容拷贝到内核缓冲区。</li>
+<li>数据未被拷贝到套接字缓冲区。取而代之的是，只有包含关于数据的位置和长度的信息的描述符被追加到了套接字缓冲区。DMA 引擎直接把数据从内核缓冲区传输到协议引擎，从而消除了剩下的最后一次 CPU 拷贝。<br><img src="/2022/03/18/interview-OperatorSystem/zero_copy3.png" alt="image"></li>
 </ul>
 <h2 id="Shell"><a href="#Shell" class="headerlink" title="Shell"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problemset/shell/">Shell</a></h2>
     </div>
@@ -695,7 +695,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E9%97%B4%E5%90%8C%E6%AD%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">线程间同步方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%9C%AC%E8%B4%A8%E5%8C%BA%E5%88%AB%E3%80%81%E4%BB%A5%E5%8F%8A%E5%90%84%E8%87%AA%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E3%80%82"><span class="nav-number">1.2.</span> <span class="nav-text">进程与线程的本质区别、以及各自的使用场景。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E7%9A%84%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.3.</span> <span class="nav-text">进程调度算法的特点以及使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">操作系统页面置换算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E6%9C%89%E5%93%AA%E4%BA%9B%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">进程间有哪些通信方式？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E5%BF%85%E8%A6%81%E6%9D%A1%E4%BB%B6%E3%80%81%E8%A7%A3%E5%86%B3%E6%AD%BB%E9%94%81%E7%AD%96%E7%95%A5"><span class="nav-number">1.6.</span> <span class="nav-text">死锁必要条件、解决死锁策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%AD-malloc-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.7.</span> <span class="nav-text">简述操作系统中 malloc 的实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%9C%89%E5%A4%9A%E5%B0%91%E7%A7%8D%E7%8A%B6%E6%80%81%EF%BC%8C%E7%8A%B6%E6%80%81%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.8.</span> <span class="nav-text">线程有多少种状态，状态之间如何转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0%E5%88%9B%E5%BB%BA%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">1.9.</span> <span class="nav-text">简述创建进程的流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%9F"><span class="nav-number">1.10.</span> <span class="nav-text">如何设计一个线程池？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux"><span class="nav-number">2.</span> <span class="nav-text">Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">2.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7gdb"><span class="nav-number">2.2.</span> <span class="nav-text">开发工具gdb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7makefile"><span class="nav-number">2.3.</span> <span class="nav-text">开发工具makefile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7cmake"><span class="nav-number">2.4.</span> <span class="nav-text">开发工具cmake</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7gcc"><span class="nav-number">2.5.</span> <span class="nav-text">开发工具gcc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-Linux-%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">2.6.</span> <span class="nav-text">简述 Linux 零拷贝的原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Shell"><span class="nav-number">3.</span> <span class="nav-text">Shell</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E9%97%B4%E5%90%8C%E6%AD%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">线程间同步方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%9C%AC%E8%B4%A8%E5%8C%BA%E5%88%AB%E3%80%81%E4%BB%A5%E5%8F%8A%E5%90%84%E8%87%AA%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.2.</span> <span class="nav-text">进程与线程的本质区别、以及各自的使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E7%9A%84%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.3.</span> <span class="nav-text">进程调度算法的特点以及使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">操作系统页面置换算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E6%9C%89%E5%93%AA%E4%BA%9B%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">进程间有哪些通信方式？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E5%BF%85%E8%A6%81%E6%9D%A1%E4%BB%B6%E3%80%81%E8%A7%A3%E5%86%B3%E6%AD%BB%E9%94%81%E7%AD%96%E7%95%A5"><span class="nav-number">1.6.</span> <span class="nav-text">死锁必要条件、解决死锁策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%AD-malloc-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.7.</span> <span class="nav-text">简述操作系统中 malloc 的实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%9C%89%E5%A4%9A%E5%B0%91%E7%A7%8D%E7%8A%B6%E6%80%81%EF%BC%8C%E7%8A%B6%E6%80%81%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.8.</span> <span class="nav-text">线程有多少种状态，状态之间如何转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0%E5%88%9B%E5%BB%BA%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">1.9.</span> <span class="nav-text">简述创建进程的流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%9F"><span class="nav-number">1.10.</span> <span class="nav-text">如何设计一个线程池？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux"><span class="nav-number">2.</span> <span class="nav-text">Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">2.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7gdb"><span class="nav-number">2.2.</span> <span class="nav-text">开发工具gdb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7makefile"><span class="nav-number">2.3.</span> <span class="nav-text">开发工具makefile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7cmake"><span class="nav-number">2.4.</span> <span class="nav-text">开发工具cmake</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7gcc"><span class="nav-number">2.5.</span> <span class="nav-text">开发工具gcc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-Linux-%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">2.6.</span> <span class="nav-text">简述 Linux 零拷贝的原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Shell"><span class="nav-number">3.</span> <span class="nav-text">Shell</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -772,12 +772,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">108k</span>
+    <span title="站点总字数">109k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:38</span>
+    <span title="站点阅读时长">1:39</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
