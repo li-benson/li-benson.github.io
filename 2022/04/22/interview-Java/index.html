@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文为准备面试时遇到的Java知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="interview-Java">
+<meta property="og:url" content="http://example.com/2022/04/22/interview-Java/index.html">
+<meta property="og:site_name" content="Benson&#39;s Blog">
+<meta property="og:description" content="本文为准备面试时遇到的Java知识">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/example1.png">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/example2.png">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/example3.png">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/jmm.jpeg">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/jmm_action.png">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/gc.png">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/mark_sweep.png">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/Eden_Survivor.webp">
+<meta property="og:image" content="http://example.com/2022/04/22/interview-Java/mark_compact.png">
+<meta property="article:published_time" content="2022-04-22T01:37:05.000Z">
+<meta property="article:modified_time" content="2022-04-24T09:37:12.366Z">
+<meta property="article:author" content="Benson">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/04/22/interview-Java/example1.png">
+
+<link rel="canonical" href="http://example.com/2022/04/22/interview-Java/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>interview-Java | Benson's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Benson's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-study">
+
+    <a href="/study/" rel="section"><i class="fa fa-archive fa-fw"></i>学习</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/li-benson" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/22/interview-Java/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Benson">
+      <meta itemprop="description" content="学习、记录、成长">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Benson's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          interview-Java
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-22 09:37:05" itemprop="dateCreated datePublished" datetime="2022-04-22T09:37:05+08:00">2022-04-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-24 17:37:12" itemprop="dateModified" datetime="2022-04-24T17:37:12+08:00">2022-04-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Interview-Knowledge/" itemprop="url" rel="index"><span itemprop="name">Interview Knowledge</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+            <div class="post-description">本文为准备面试时遇到的Java知识</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Java-基础"><a href="#Java-基础" class="headerlink" title="Java 基础"></a>Java 基础</h2><h2 id="Java-容器"><a href="#Java-容器" class="headerlink" title="Java 容器"></a>Java 容器</h2><h3 id="HashMap-的实现原理是怎样的？"><a href="#HashMap-的实现原理是怎样的？" class="headerlink" title="HashMap 的实现原理是怎样的？"></a>HashMap 的实现原理是怎样的？</h3><p>HashMap 是基于 Map 接口的实现，线程不安全。JDK8 及之后的版本，数据结构可以看成”数组+链表+红黑树”，也就是说 HashMap  底层采用数组实现，数组的每个位置都存储一个单向链表，当链表的长度超过一定的阈值时，就会转换成红黑树。转换的目的是当链表中元素较多时，也能保证HashMap的存取效率。</p>
+<h4 id="HashMap-关键参数：“初始容量”和“加载因子”"><a href="#HashMap-关键参数：“初始容量”和“加载因子”" class="headerlink" title="HashMap 关键参数：“初始容量”和“加载因子”"></a>HashMap 关键参数：“初始容量”和“加载因子”</h4><ul>
+<li>容量 capacity：就是哈希表中数组的数量，默认初始容量是16，容量必须是2的N次幂，这是为了提高计算机的执行效率。</li>
+<li>加载因子 loadfactor：在 HashMap 扩容之前，容量可以达到多满的程度，默认值为 0.75</li>
+<li>扩容阈值 threshold &#x3D; capacity * loadfactor</li>
+</ul>
+<h4 id="HashMap-的-put-方法添加元素的过程"><a href="#HashMap-的-put-方法添加元素的过程" class="headerlink" title="HashMap 的 put() 方法添加元素的过程"></a>HashMap 的 put() 方法添加元素的过程</h4><ol>
+<li>重新计算 hash 值，<code>（key == null）? 0 : ( h = key.hashcode()) ^ (h &gt;&gt;&gt; 16)</code></li>
+<li>计算元素存放在数组中的哪个位置，<code>h &amp; (length - 1)</code></li>
+<li>将 key-value 添加到数组中。<ul>
+<li>如果计算出的数组位置上为空，那么直接将这个元素插入放到该位置中。</li>
+<li>如果数组该位置上已经存在链表，则使用 equals() 比较链表上是否存在 key 相同的节点，如果为true，则替换原元素；如果不存在，则在链表的尾部插入新节点。</li>
+<li>插入元素后，如果链表的节点数是否超过8个，则调用 treeifyBin() 将链表节点转为红黑树节点。</li>
+<li>最后判断 HashMap 总容量是否超过阈值 threshold，如果超过则调用 resize() 方法进行扩容，扩容后数组的长度变成原来的2倍。</li>
+</ul>
+</li>
+</ol>
+<h4 id="HashMap扩容的过程"><a href="#HashMap扩容的过程" class="headerlink" title="HashMap扩容的过程"></a>HashMap扩容的过程</h4><ol>
+<li><p>重新建立一个新的数组，长度为原数组的两倍；</p>
+</li>
+<li><p>遍历旧数组的每个数据，重新计算每个元素在新数组中的存储位置。使用节点的hash值与旧数组长度进行位与运算，如果运算结果为0，表示元素在新数组中的位置不变；否则，则在新数组中的位置下标&#x3D;原位置+原数组长度。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Node&lt;K,V&gt;[] resize() &#123;</span><br><span class="line"> <span class="comment">// ......接上文</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&#123;&quot;rawtypes&quot;,&quot;unchecked&quot;&#125;)</span></span><br><span class="line">    Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])<span class="keyword">new</span> <span class="title class_">Node</span>[newCap];</span><br><span class="line">    table = newTab;</span><br><span class="line">    <span class="keyword">if</span> (oldTab != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; oldCap; ++j) &#123; </span><br><span class="line">         <span class="comment">// 遍历原本的table</span></span><br><span class="line">            Node&lt;K,V&gt; e;</span><br><span class="line">            <span class="keyword">if</span> ((e = oldTab[j]) != <span class="literal">null</span>) &#123;</span><br><span class="line">                oldTab[j] = <span class="literal">null</span>; <span class="comment">// 为了GC</span></span><br><span class="line">                <span class="keyword">if</span> (e.next == <span class="literal">null</span>)</span><br><span class="line">                    <span class="comment">// 如果table上没有链表的情况下，直接转移到对应位置</span></span><br><span class="line">                    <span class="comment">// 转移到的位置就是get方法中取的下标位置，tab[(n - 1) &amp; hash]</span></span><br><span class="line">                    newTab[e.hash &amp; (newCap - <span class="number">1</span>)] = e;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                    <span class="comment">// 如果是红黑树，就进入红黑树的拆分逻辑，这里不展开来说</span></span><br><span class="line">                    ((TreeNode&lt;K,V&gt;)e).split(<span class="built_in">this</span>, newTab, j, oldCap);</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 原本槽内的一个链表，会被拆分成两个两个链表</span></span><br><span class="line">                    Node&lt;K,V&gt; loHead = <span class="literal">null</span>, loTail = <span class="literal">null</span>;</span><br><span class="line">                    Node&lt;K,V&gt; hiHead = <span class="literal">null</span>, hiTail = <span class="literal">null</span>;</span><br><span class="line">                    Node&lt;K,V&gt; next;</span><br><span class="line">                    <span class="keyword">do</span> &#123;</span><br><span class="line">                        next = e.next;</span><br><span class="line">                        <span class="comment">// 如果entry的哈希值高位为0，会被拆分到lo链表</span></span><br><span class="line">                        <span class="keyword">if</span> ((e.hash &amp; oldCap) == <span class="number">0</span>) &#123;</span><br><span class="line">                            <span class="keyword">if</span> (loTail == <span class="literal">null</span>)</span><br><span class="line">                                loHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                loTail.next = e;</span><br><span class="line">                            loTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">// 如果entry的哈希值高位为1，会被拆分到hi链表                            </span></span><br><span class="line">                            <span class="keyword">if</span> (hiTail == <span class="literal">null</span>)</span><br><span class="line">                                hiHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                hiTail.next = e;</span><br><span class="line">                            hiTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">while</span> ((e = next) != <span class="literal">null</span>);</span><br><span class="line">                    <span class="keyword">if</span> (loTail != <span class="literal">null</span>) &#123;</span><br><span class="line">                        loTail.next = <span class="literal">null</span>;</span><br><span class="line">                        <span class="comment">// 高位是0，因此lo链表不需要移位，</span></span><br><span class="line">                        <span class="comment">// hash &amp; (newCap-1)和hash &amp; (oldCap-1)获得下标位置一样</span></span><br><span class="line">                        newTab[j] = loHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (hiTail != <span class="literal">null</span>) &#123;</span><br><span class="line">                        hiTail.next = <span class="literal">null</span>;</span><br><span class="line">                        <span class="comment">// 高位是1，hi链表移位到 j+oldCap位置，</span></span><br><span class="line">                        <span class="comment">//  j + oldCap相当于高位补1，直接移到这个位置</span></span><br><span class="line">                        newTab[j + oldCap] = hiHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> newTab;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 举例说明，假设原本有几个key，他们的的hash值如下，初始表容量为16</p>
+<p> <img src="/2022/04/22/interview-Java/example1.png" alt="image"></p>
+<p> 那么这几个key都会存储到<code>table[5]</code>的位置，如下：</p>
+<p> <img src="/2022/04/22/interview-Java/example2.png" alt="image"></p>
+<p> 当进行扩容时，容量变为32，此时<code>hash &amp; (table.length - 1)</code> 就会出现两种情况：</p>
+<ul>
+<li>key1 和 key3 的下标还是5（0000 0101）</li>
+<li>key2 和 key4 的下标变为了21（0001 0101）</li>
+</ul>
+<p> 其实就是看key高一位的哈希值是1还是0，来决定是放到哪个队列里。 移位后的HashMap如下图：</p>
+<p> <img src="/2022/04/22/interview-Java/example3.png" alt="image"></p>
+<p> 综上来看，HashMap非常精妙的实现了扩容，没有重新计算对象的哈希值，甚至连下标的重新计算也只需要进行一位相与的计算<code>hash &amp; oldCap</code>来判断。</p>
+</li>
+</ol>
+<h3 id="ConcurrentHashMap的实现原理，它是如何保证线程安全的？"><a href="#ConcurrentHashMap的实现原理，它是如何保证线程安全的？" class="headerlink" title="ConcurrentHashMap的实现原理，它是如何保证线程安全的？"></a>ConcurrentHashMap的实现原理，它是如何保证线程安全的？</h3><p>在 JDK8 及以上的版本中，ConcurrentHashMap 的底层数据结构依然采用“数组+链表+红黑树”。在实现线程安全性方面，采用了 synchronized + CAS 算法来保证线程安全。这类方法是利用一个CAS算法实现无锁化的修改值操作，可以大大减少使用加锁造成的性能消耗。</p>
+<h3 id="简述-ArrayList-与-LinkedList-的底层实现以及常见操作的时间复杂度"><a href="#简述-ArrayList-与-LinkedList-的底层实现以及常见操作的时间复杂度" class="headerlink" title="简述 ArrayList 与 LinkedList 的底层实现以及常见操作的时间复杂度"></a>简述 ArrayList 与 LinkedList 的底层实现以及常见操作的时间复杂度</h3><h2 id="Java-并发"><a href="#Java-并发" class="headerlink" title="Java 并发"></a>Java 并发</h2><h3 id="Synchronized-关键字底层是如何实现的？它与-Lock-相比优缺点分别是什么？"><a href="#Synchronized-关键字底层是如何实现的？它与-Lock-相比优缺点分别是什么？" class="headerlink" title="Synchronized 关键字底层是如何实现的？它与 Lock 相比优缺点分别是什么？"></a>Synchronized 关键字底层是如何实现的？它与 Lock 相比优缺点分别是什么？</h3><h4 id="synchronized关键字的3种应用方式"><a href="#synchronized关键字的3种应用方式" class="headerlink" title="synchronized关键字的3种应用方式"></a>synchronized关键字的3种应用方式</h4><ul>
+<li><p>修饰实例方法，作用于当前实例对象加锁，进入同步代码前要获得当前实例对象的锁。</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">method</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="comment">// 代码</span></span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修饰静态方法，作用于当前类对象加锁，进入同步代码前要获得当前类对象的锁。</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">method</span><span class="params">()</span>&#123;</span><br><span class="line">   <span class="comment">// 代码</span></span><br><span class="line">&#125;       </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修饰代码块，指定加锁对象，对给定对象加锁，进入同步代码库前要获得给定对象的锁。</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(<span class="built_in">this</span>)&#123;</span><br><span class="line">    <span class="comment">//代码                                  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="底层原理"><a href="#底层原理" class="headerlink" title="底层原理"></a>底层原理</h4><p>synchronized 关键字无论是修饰代码块，还是修饰实例方法和静态方法，本质上都是作用于对象上。synchronized 锁的都是对象，而非代码！</p>
+<p>当用 synchronized 修饰代码块时，编译后的字节码会有 <code>monitorenter</code> 和 <code>monitorexit</code> 指令，分别对应的是获得锁和解锁。</p>
+<p>当用 synchronized 修饰方法时，会给方法加上标记 <code>ACC_SYNCHRONIZED</code>，这样 JVM 就知道这个方法是一个同步方法，于是在进入同步方法的时候就会进行执行竞争锁的操作，只有拿到锁才能继续执行。</p>
+<p>无论是通过<code>monitorenter</code>还是<code>ACC_SYNCHRONIZED</code>获取锁，都是试图去获取这个对象对应的Monitor对象的所有权，抢到了就是成功获取锁了；执行 <code>monitorexit</code> 指令则是释放了Monitor的所有权。这个Monitor对象也称为管程或监视器锁。</p>
+<h4 id="与Lock的对比"><a href="#与Lock的对比" class="headerlink" title="与Lock的对比"></a>与Lock的对比</h4><p>Synchronized相比于Lock，它的优点是：</p>
+<p>Synchronized不需要用户手动去释放锁，当synchronized方法或者代码块执行完毕后，系统会自动让线程释放锁的占用，无论中途是否遇到异常都能自动释放；而Lock需要用户手动去释放，一般写在finally块中避免执行中途遇到异常无法正常释放锁。</p>
+<p>缺点是：</p>
+<ol>
+<li>Lock可以被中断或设置超时等待，可以让等待锁的线程响应中断，而synchronized却不行，使用synchronized时，等待锁的线程会一直等下去，不能响应中断。例如，synchronized代码执行时，如果这个获取锁的线程由于要等待IO或者其他原因（比如调用sleep方法）被阻塞了，但是又没有释放锁，其他线程便只能等待。</li>
+<li>Lock可以设置公平锁，而synchronized只能是非公平实现(公平锁通过在锁竞争前判断自己是否是头节点来实现)。</li>
+<li>Lock可以支持多个条件变量(Condition)，而synchronized只支持一个条件变量，所有的等待都在同一个waitset中。</li>
+</ol>
+<h3 id="JMM-中内存模型是怎样的？什么是指令序列重排序？"><a href="#JMM-中内存模型是怎样的？什么是指令序列重排序？" class="headerlink" title="JMM 中内存模型是怎样的？什么是指令序列重排序？"></a>JMM 中内存模型是怎样的？什么是指令序列重排序？</h3><h4 id="什么是JMM"><a href="#什么是JMM" class="headerlink" title="什么是JMM"></a>什么是JMM</h4><p>JMM就是Java内存模型(java memory model)。它是为了屏蔽不同硬件厂商和操作系统对内存访问的差异，以实现让java程序在各种平台下都能达到一致的并发效果。</p>
+<p>JMM规定全局变量，实例变量，静态变量都保存在主内存中，不包括局部变量和方法参数。每个线程都有自己的工作内存，线程的工作内存保存了该线程用到的变量和主内存的副本拷贝，线程对变量的操作都在工作内存中进行。线程不能直接读写主内存中的变量。</p>
+<p><img src="/2022/04/22/interview-Java/jmm.jpeg" alt="image"></p>
+<h4 id="JMM三大特性"><a href="#JMM三大特性" class="headerlink" title="JMM三大特性"></a>JMM三大特性</h4><p>个Java内存模型实际上是围绕着三个特征建立起来的。分别是：原子性，可见性，有序性。这三个特征可谓是整个Java并发的基础。</p>
+<ul>
+<li><p>原子性</p>
+<p>  JMM 保证了 read、load、assign、use、store 和 write 六个操作具有原子性.</p>
+<p>  <img src="/2022/04/22/interview-Java/jmm_action.png" alt="image"></p>
+<p>  如果想要一个颗粒度更大的原子性保证，就可以使用 lock 和 unlock 这两个操作。例如i++。</p>
+</li>
+<li><p>可见性</p>
+<p>  可见性指当一个线程修改共享变量的值，其他线程能够立即知道被修改了。Java是利用volatile关键字来提供可见性的。 当变量被volatile修饰时，这个变量被修改后会立刻刷新到主内存，当其它线程需要读取该变量时，会去主内存中读取新值。而普通变量则不能保证这一点。</p>
+<p>  除了volatile关键字之外，final和synchronized也能实现可见性。synchronized的原理是，在执行完，进入unlock之前，必须将共享变量同步到主内存中。final修饰的字段，一旦初始化完成，如果没有对象逸出，那么对于其他线程都是可见的。</p>
+</li>
+<li><p>有序性</p>
+<p>  volatile关键字是使用内存屏障达到禁止指令重排序，以保证有序性。</p>
+<p>  synchronized的原理是，一个线程lock之后，必须unlock后，其他线程才可以重新lock，使得被synchronized包住的代码块在多线程之间是串行执行的。</p>
+</li>
+</ul>
+<h4 id="volatile关键字"><a href="#volatile关键字" class="headerlink" title="volatile关键字"></a>volatile关键字</h4><p>很多并发编程都使用了volatile关键字，主要的作用包括两点：</p>
+<ul>
+<li>保证线程间变量的可见性。</li>
+<li>禁止CPU进行指令重排序。</li>
+</ul>
+<blockquote>
+<p>volatile一定能保证线程安全吗？</p>
+<p>不能，可见性不能保证操作的原子性。例如多线程中执行count++操作，会当做三步，先读取count的值，然后+1，最后赋值回去count变量。需要保证线程安全的话，需要使用synchronized关键字或者lock锁，给count++这段代码上锁。</p>
+</blockquote>
+<h4 id="指令重排"><a href="#指令重排" class="headerlink" title="指令重排"></a>指令重排</h4><p>为了使指令更加符合CPU的执行特性，最大限度的发挥机器的性能，提高程序的执行效率，只要程序的最终结果与它顺序化情况的结果相等，那么指令的执行顺序可以与代码逻辑顺序不一致，这个过程就叫做指令的重排序。</p>
+<p>指令重排序在单线程是没有问题的，不会影响执行结果，而且还提高了性能。但是在多线程的环境下就不能保证一定不会影响执行结果了。</p>
+<p>所以在多线程环境下，就需要禁止指令重排序。</p>
+<p>volatile关键字禁止指令重排序有两层意思：</p>
+<ul>
+<li>当程序执行到volatile变量的读操作或者写操作时，在其前面的操作的更改肯定全部已经进行，且结果已经对后面的操作可见，在其后面的操作肯定还没有进行。</li>
+<li>在进行指令优化时，不能将在对volatile变量访问的语句放在其后面执行，也不能把volatile变量后面的语句放到其前面执行。</li>
+</ul>
+<p>举例说明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> a;<span class="comment">//非volatile修饰变量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> b;<span class="comment">//非volatile修饰变量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> <span class="type">int</span> k;<span class="comment">//volatile修饰变量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">hello</span><span class="params">()</span> &#123;</span><br><span class="line">    a = <span class="number">1</span>;  <span class="comment">//语句1</span></span><br><span class="line">    b = <span class="number">2</span>;  <span class="comment">//语句2</span></span><br><span class="line">    k = <span class="number">3</span>;  <span class="comment">//语句3</span></span><br><span class="line">    a = <span class="number">4</span>;  <span class="comment">//语句4</span></span><br><span class="line">    b = <span class="number">5</span>;  <span class="comment">//语句5</span></span><br><span class="line">    <span class="comment">//以下省略...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>变量a，b是非volatile修饰的变量，k则使用volatile修饰。所以语句3不能放在语句1、2前，也不能放在语句4、5后。但是语句1、2的顺序是不能保证的，同理，语句4、5也不能保证顺序。</p>
+<p>并且，执行到语句3的时候，语句1，2是肯定执行完毕的，而且语句1,2的执行结果对于语句3,4,5是可见的。</p>
+<h4 id="volatile禁止指令重排序的原理"><a href="#volatile禁止指令重排序的原理" class="headerlink" title="volatile禁止指令重排序的原理"></a>volatile禁止指令重排序的原理</h4><p>内存屏障（Memory Barrier）用于控制在特定条件下的重排序和内存可见性问题。Java 编译器在生成字节码时，会在执行指令序列的适当位置插入内存屏障来限制处理器的重排序。</p>
+<ul>
+<li><p>Load-Load Barriers</p>
+<p>  保证 load1 数据的装载优先于 load2 以及所有后续装载指令的装载。对于 Load Barrier 来说，在指令前插入 Load Barrier，可以让高速缓存中的数据失效，强制重新从主内存加载数据。</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">load1</span><br><span class="line">LoadLoad</span><br><span class="line">load2 </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Load-Store Barriers</p>
+<p>  保证 load1 数据装载优先于 store2 以及后续的存储指令刷新到内存。</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">load1</span><br><span class="line">LoadStore</span><br><span class="line">store2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Store-Store Barriers</p>
+<p>  保证 store1 数据对其他处理器可见，优先于 store2 以及所有后续存储指令的存储。对于 Store Barrier 来说，在指令后插入 Store Barrier，能让写入缓存中的最新数据更新写入主内存，让其他线程可见。</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">store1</span><br><span class="line">StoreStore</span><br><span class="line">store</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Store-Load Barriers</p>
+<p>  在 Load2 及后续所有读取操作执行前，保证 Store1 的写入对所有处理器可见。这条内存屏障指令是一个全能型的屏障，它同时具有其他 3 条屏障的效果，而且它的开销也是四种屏障中最大的一个。</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">store1</span><br><span class="line">StoreLoad</span><br><span class="line">load2</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="Java-虚拟机"><a href="#Java-虚拟机" class="headerlink" title="Java 虚拟机"></a>Java 虚拟机</h2><h3 id="Java-垃圾回收机制中如何判断对象需要回收？"><a href="#Java-垃圾回收机制中如何判断对象需要回收？" class="headerlink" title="Java 垃圾回收机制中如何判断对象需要回收？"></a>Java 垃圾回收机制中如何判断对象需要回收？</h3><ol>
+<li><p>引用计数算法</p>
+<p> 为对象添加一个引用计数器，当对象增加一个引用时计数器加 1，引用失效时计数器减 1。引用计数为 0 的对象可被回收。</p>
+<p> 在两个对象出现循环引用的情况下，此时引用计数器永远不为 0，导致无法对它们进行回收。正是因为循环引用的存在，因此 Java 虚拟机不使用引用计数算法。</p>
+</li>
+<li><p>可达性分析算法</p>
+<p> 这个算法的基本思路就是通过一系列称为“GC Roots”的根对象作为起始节点集。通过遍历找到不可达的对象，并进行回收。</p>
+<p> <img src="/2022/04/22/interview-Java/gc.png" alt="image"></p>
+</li>
+</ol>
+<h3 id="常见的-GC-回收算法有哪些？"><a href="#常见的-GC-回收算法有哪些？" class="headerlink" title="常见的 GC 回收算法有哪些？"></a>常见的 GC 回收算法有哪些？</h3><ol>
+<li><p>标记-清除(Mark-Sweep)算法:</p>
+<p> 算法分为“标记”和“清除”两个阶段: 首先标记出所有需要回收的对象，在标记完成后，统一回收掉所有被标记的对象，也可以反过来，标记存 活的对象，统一回收所有未被标记的对象。标记过程就是对象是否属于垃圾的判定过程。</p>
+<p> 缺点主要有两个，第一个是执行效率不稳定，如果Java堆中包含大量对象，而且其中大部分是需要被回收的，这时必须进行大量标记和清除的动作，导致标记和清除两个过程的执行效率都随对象数量增⻓而降低; 第二个是内存空间的碎片化问题，标记、清除之后会产生大量不连续的内存碎片。</p>
+<p> <img src="/2022/04/22/interview-Java/mark_sweep.png" alt="image"></p>
+</li>
+<li><p>标记-复制算法：</p>
+<p> 将内存划分为大小相等的两块，每次只使用其中一块，当这一块内存用完了就将还存活的对象复制到另一块上面，然后再把使用过的内存空间进行一次清理，这样可以避免出现内存碎片的问题。</p>
+<p> 主要不足是只使用了内存的一半。</p>
+<p> 优化：大部分对象都是生命周期很短的，通过使用Eden区和Survivor区，新生代内存区域被划分为三块，可以保证内存的利用率为90%。</p>
+<p> <img src="/2022/04/22/interview-Java/Eden_Survivor.webp" alt="image"></p>
+<p> 1个Eden区，2个Survivor区，其中Eden区占80%内存空间，每一块Survivor区各占10%内存空间。刚开始先使用Eden区，当快满时触发垃圾回收，将存活的对象转移到其中一个空着的Survivor区，接着Eden区清空，可再次被分配对象。如果再次满了，会将Eden区和之前Survivor区中存活的对象转移到另一块Survivor区域中，再一次性把Eden和之前的Survivor区清空。</p>
+</li>
+<li><p>标记-整理算法：</p>
+<p> 标记-复制算法在对象存活率较高时就要进行较多的复制操作，效率将会降低。所以在老年代一般不能直接选用这种算法。</p>
+<p> 标记- 整理”算法中，标记过程仍然与“标记-清除”算法一样，但后续步骤是让所有存活的对象都向内存空间一端移动，然后直接清理掉边界以外的内存。</p>
+<p> <img src="/2022/04/22/interview-Java/mark_compact.png" alt="image"></p>
+</li>
+<li><p>分代收集法：</p>
+<p> 现在的商业虚拟机采用分代收集算法，它根据对象存活周期将内存划分为几块，不同块采用适当的收集算法。</p>
+<p> 一般将堆分为新生代和老年代。</p>
+<p> 新生代使用：复制算法</p>
+<p> 老年代使用：标记 - 清除 或者 标记 - 整理 算法</p>
+<blockquote>
+<p>对象如何从新生代到老年代？</p>
+<p>有一些规则：对象躲过15次垃圾回收进入；大对象直接进入等等。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="Java-I-x2F-O"><a href="#Java-I-x2F-O" class="headerlink" title="Java I&#x2F;O"></a>Java I&#x2F;O</h2>
+    </div>
+
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:16px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>您的捐赠是对作者的最大鼓励</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpeg" alt="Benson 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpeg" alt="Benson 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/21/DDIA-5/" rel="prev" title="DDIA笔记-第五章：复制">
+      <i class="fa fa-chevron-left"></i> DDIA笔记-第五章：复制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/25/one-on-one/" rel="next" title="当你和mentor聊天的时候应该聊些什么">
+      当你和mentor聊天的时候应该聊些什么 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">Java 基础</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E5%AE%B9%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">Java 容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">HashMap 的实现原理是怎样的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HashMap-%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0%EF%BC%9A%E2%80%9C%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E2%80%9D%E5%92%8C%E2%80%9C%E5%8A%A0%E8%BD%BD%E5%9B%A0%E5%AD%90%E2%80%9D"><span class="nav-number">2.1.1.</span> <span class="nav-text">HashMap 关键参数：“初始容量”和“加载因子”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HashMap-%E7%9A%84-put-%E6%96%B9%E6%B3%95%E6%B7%BB%E5%8A%A0%E5%85%83%E7%B4%A0%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.2.</span> <span class="nav-text">HashMap 的 put() 方法添加元素的过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HashMap%E6%89%A9%E5%AE%B9%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.3.</span> <span class="nav-text">HashMap扩容的过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentHashMap%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%EF%BC%8C%E5%AE%83%E6%98%AF%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">ConcurrentHashMap的实现原理，它是如何保证线程安全的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0-ArrayList-%E4%B8%8E-LinkedList-%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">2.3.</span> <span class="nav-text">简述 ArrayList 与 LinkedList 的底层实现以及常见操作的时间复杂度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E5%B9%B6%E5%8F%91"><span class="nav-number">3.</span> <span class="nav-text">Java 并发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Synchronized-%E5%85%B3%E9%94%AE%E5%AD%97%E5%BA%95%E5%B1%82%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F%E5%AE%83%E4%B8%8E-Lock-%E7%9B%B8%E6%AF%94%E4%BC%98%E7%BC%BA%E7%82%B9%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">Synchronized 关键字底层是如何实现的？它与 Lock 相比优缺点分别是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#synchronized%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%843%E7%A7%8D%E5%BA%94%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.1.</span> <span class="nav-text">synchronized关键字的3种应用方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86"><span class="nav-number">3.1.2.</span> <span class="nav-text">底层原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8ELock%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="nav-number">3.1.3.</span> <span class="nav-text">与Lock的对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM-%E4%B8%AD%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E6%8C%87%E4%BB%A4%E5%BA%8F%E5%88%97%E9%87%8D%E6%8E%92%E5%BA%8F%EF%BC%9F"><span class="nav-number">3.2.</span> <span class="nav-text">JMM 中内存模型是怎样的？什么是指令序列重排序？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFJMM"><span class="nav-number">3.2.1.</span> <span class="nav-text">什么是JMM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JMM%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7"><span class="nav-number">3.2.2.</span> <span class="nav-text">JMM三大特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#volatile%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">3.2.3.</span> <span class="nav-text">volatile关键字</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="nav-number">3.2.4.</span> <span class="nav-text">指令重排</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#volatile%E7%A6%81%E6%AD%A2%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92%E5%BA%8F%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">3.2.5.</span> <span class="nav-text">volatile禁止指令重排序的原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">4.</span> <span class="nav-text">Java 虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E4%B8%AD%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%AF%B9%E8%B1%A1%E9%9C%80%E8%A6%81%E5%9B%9E%E6%94%B6%EF%BC%9F"><span class="nav-number">4.1.</span> <span class="nav-text">Java 垃圾回收机制中如何判断对象需要回收？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84-GC-%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">4.2.</span> <span class="nav-text">常见的 GC 回收算法有哪些？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-I-x2F-O"><span class="nav-number">5.</span> <span class="nav-text">Java I&#x2F;O</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Benson"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Benson</p>
+  <div class="site-description" itemprop="description">学习、记录、成长</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/li-benson" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;li-benson" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:benson_li@stu.pku.edu.cn" title="E-Mail → mailto:benson_li@stu.pku.edu.cn" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Benson</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">125k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:54</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '78e128a5e6832a2a453f',
+      clientSecret: '1c1f08f5d6455a4478e97ad5b09b0513fc5e7e0e',
+      repo        : 'li-benson.github.io',
+      owner       : 'li-benson',
+      admin       : ['li-benson'],
+      id          : '7a698cbb0ee8d5bc35a3ac37742db82b',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
