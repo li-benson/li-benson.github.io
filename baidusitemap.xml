@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://example.com/2022/08/24/Java/</loc>
+    <lastmod>2022-09-05</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/18/interview-algorithm/</loc>
+    <lastmod>2022-08-07</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/28/interview-Golang/</loc>
+    <lastmod>2022-08-07</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/19/interview-database/</loc>
+    <lastmod>2022-08-06</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/19/interview-network/</loc>
+    <lastmod>2022-07-30</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/03/17/interview-Cpp/</loc>
+    <lastmod>2022-07-30</lastmod>
+  </url>
+  <url>
     <loc>http://example.com/2022/04/22/interview-Java/</loc>
     <lastmod>2022-07-12</lastmod>
   </url>
   <url>
-    <loc>http://example.com/2022/03/26/git/</loc>
+    <loc>http://example.com/2022/03/25/git/</loc>
     <lastmod>2022-07-01</lastmod>
   </url>
   <url>
     <loc>http://example.com/2022/04/25/one-on-one/</loc>
     <lastmod>2022-04-25</lastmod>
-  </url>
-  <url>
-    <loc>http://example.com/2022/03/17/interview-Cpp/</loc>
-    <lastmod>2022-04-22</lastmod>
   </url>
   <url>
     <loc>http://example.com/2022/04/21/DDIA-5/</loc>
@@ -31,14 +51,6 @@
   <url>
     <loc>http://example.com/2022/04/13/%E5%9B%9B%E6%9F%B1%E5%85%AB%E5%AD%97%E5%91%BD%E7%90%86%E5%AD%A6/</loc>
     <lastmod>2022-04-14</lastmod>
-  </url>
-  <url>
-    <loc>http://example.com/2022/03/18/interview-algorithm/</loc>
-    <lastmod>2022-04-13</lastmod>
-  </url>
-  <url>
-    <loc>http://example.com/2022/03/19/interview-database/</loc>
-    <lastmod>2022-04-11</lastmod>
   </url>
   <url>
     <loc>http://example.com/2022/03/27/Linux-Commands/</loc>
@@ -63,13 +75,5 @@
   <url>
     <loc>http://example.com/2022/03/20/interview-OOP/</loc>
     <lastmod>2022-04-11</lastmod>
-  </url>
-  <url>
-    <loc>http://example.com/2022/03/19/interview-network/</loc>
-    <lastmod>2022-04-11</lastmod>
-  </url>
-  <url>
-    <loc>http://example.com/2022/03/28/interview-Golang/</loc>
-    <lastmod>2022-04-03</lastmod>
   </url>
 </urlset> 
