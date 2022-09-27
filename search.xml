@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>DDIA笔记-第二章：数据模型与查询语言</title>
+    <url>/2022/04/14/DDIA-2/</url>
+    <content><![CDATA[<p>在本章中，我们将研究一系列用于数据存储和查询的通用数据模型，如JSON或XML文档，关系数据库中的表、或图模型。特别地，我们将比较关系模型，文档模型和少量基于图形的数据模型。我们还将查看各种查询语言并比较它们的用例。</p>
+<h2 id="对象关系阻抗不匹配"><a href="#对象关系阻抗不匹配" class="headerlink" title="对象关系阻抗不匹配"></a>对象关系阻抗不匹配</h2><p>“阻抗失配”这一词组通常用来描述面向对象应用向传统的关系数据库（RDBMS）存放数据时所遇到的数据表述不一致问题。</p>
+<p>比如要开发一个汽车登记程序。一部汽车（automobile）有以下的一些数据：make，model，trim line，year，VIN等，它可以有一个或几个车主（owners），一个或多个驾驶员（driver），还要有维修记录（repair history），汽车还能有登记，被划伤等行为。</p>
+<p>通过上面的分析，使用对象方法描述汽车（automobile）数据可以创建Car，Person，Owner，Driver和RepairHistory类。</p>
+<p>Owner和Driver类可以从Person类中继承方法和属性。你可以对这两项进行扩展，添加新的属性和方法。Owner，Driver和RepairHistory类可以按集合的方式放到Car类中，前两个可以采用参考集合的方式，后一个可以采用嵌入式类。</p>
+<p>当我们用对象方式和SQL分别实现给定Car的VIN查找它所有者的行为时，它们的方法如下所示：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">objCar=Open Car(vin);</span><br><span class="line">owner_count=objCar.Owners.Count();</span><br><span class="line"><span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;owner_count; i++) &#123;</span><br><span class="line">      owner_name=objCar.Owners.Get(i).Name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Select</span> Car.VIN,Person.Name</span><br><span class="line"><span class="keyword">From</span> Car, CarOwners, Owner, Person</span><br><span class="line"><span class="keyword">Where</span> CarOwners.Fkey_Car<span class="operator">=</span>Car.CarID</span><br><span class="line"><span class="keyword">And</span> CarOwners.Fkey_Owner<span class="operator">=</span>Owner.OwnerID</span><br><span class="line"><span class="keyword">And</span> Owner.Fkey_Person<span class="operator">=</span>Person.PersonID</span><br><span class="line"><span class="keyword">And</span> Car.VIN<span class="operator">=</span>:vin</span><br></pre></td></tr></table></figure>
+
+<p>在混合使用面向对象应用和关系型数据库时，还需要考虑到以下的几个问题。</p>
+<ul>
+<li><p>需要将类转换为一个或多个底层的表</p>
+<p>  这个任务是将类中的每一个属性对应成为表格中的列。如果类和表格能够一一对应的话，这种转换就十分简单，但是大多数的对象模型都需要把多个表格进行分解，并从中抽取一部分作为类的属性。</p>
+</li>
+<li><p>注意模式的演变</p>
+<p>  因为使用到了对象－关系映射，所以必须注意对象模式和关系模式在演变的同时能否保持映射的同步.</p>
+</li>
+<li><p>…</p>
+</li>
+</ul>
+<h2 id="多对一和多对多的关系"><a href="#多对一和多对多的关系" class="headerlink" title="多对一和多对多的关系"></a>多对一和多对多的关系</h2><p>以个人简历为例，一个人可能有他的位置和行业信息，这两个字段可以用ID来表示，也可以直接使用字符串来表示，例如Bob在China，所在行业为Teacher。</p>
+<p>如果用户界面用一个自由文本字段来输入区域和行业，那么将他们存储为纯文本字符串是合理的。另一方式是给出地理区域和行业的标准化的列表，并让用户从下拉列表或自动填充器中进行选择，其优势如下：</p>
+<ul>
+<li>各个简介之间样式和拼写统一</li>
+<li>避免歧义（例如，如果有几个同名的城市）</li>
+<li>易于更新——名称只存储在一个地方，如果需要更改（例如，由于政治事件而改变城市名称），很容易进行全面更新。</li>
+<li>本地化支持——当网站翻译成其他语言时，标准化的列表可以被本地化，使得地区和行业可以使用用户的语言来显示</li>
+</ul>
+<p>存储ID还是文本字符串，这是个 副本（duplication） 问题。当使用ID时，对人类有意义的信息（比如单词：Philanthropy）只存储在一处，所有引用它的地方使用ID（ID只在数据库中有意义）。当直接存储文本时，对人类有意义的信息会复制在每处使用记录中。</p>
+<p>使用ID的好处是，ID对人类没有任何意义，因而永远不需要改变：ID可以保持不变，即使它标识的信息发生变化。但是，这会导致写入和查询开销，也存在不一致的风险（一些副本被更新了，还有些副本没有被更新）</p>
+<h2 id="关系型数据库与文档数据库的对比"><a href="#关系型数据库与文档数据库的对比" class="headerlink" title="关系型数据库与文档数据库的对比"></a>关系型数据库与文档数据库的对比</h2><h3 id="哪个数据模型写代码更方便"><a href="#哪个数据模型写代码更方便" class="headerlink" title="哪个数据模型写代码更方便"></a>哪个数据模型写代码更方便</h3><p>如果应用程序中的数据具有类似文档的结构（即，一对多关系树，通常一次性加载整个树），那么使用文档模型可能是一个好主意。</p>
+<p>但是，如果你的应用程序确实使用多对多关系，那么文档模型就没有那么吸引人了。通过向数据库发出多个请求，可以在应用程序代码中模拟连接，但是这也将复杂性转移到应用程序中，并且通常比由数据库内的专用代码执行的连接慢。在这种情况下，使用文档模型会导致更复杂的应用程序代码和更差的性能.</p>
+<h3 id="文档模型中的架构灵活性"><a href="#文档模型中的架构灵活性" class="headerlink" title="文档模型中的架构灵活性"></a>文档模型中的架构灵活性</h3><p>大多数文档数据库以及关系数据库中的JSON支持都不会强制文档中的数据采用何种模式。没有模式意味着可以将任意的键和值添加到文档中，并且当读取时，客户端无法保证文档可能包含的字段。</p>
+<p>文档数据库有时称为读时模式（schema-on-read）（数据的结构是隐含的，只有在数据被读取时才被解释），相应的是写时模式（schema-on-write）（传统的关系数据库方法中，模式明确，且数据库确保所有的数据都符合其模式）。读时模式类似于编程语言中的动态（运行时）类型检查，而写时模式类似于静态（编译时）类型检查。</p>
+<h3 id="查询的数据局部性"><a href="#查询的数据局部性" class="headerlink" title="查询的数据局部性"></a>查询的数据局部性</h3><p>文档通常以单个连续字符串形式进行存储，编码为JSON，XML或其二进制变体（如MongoDB的BSON）。如果应用程序经常需要访问整个文档（例如，将其渲染至网页），那么存储局部性会带来性能优势。如果将数据分割到多个表中（如图2-1所示），则需要进行多次索引查找才能将其全部检索出来，这可能需要更多的磁盘查找并花费更多的时间。</p>
+]]></content>
+      <categories>
+        <category>DDIA</category>
+      </categories>
+      <tags>
+        <tag>DDIA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>DDIA笔记-第一章：可靠性，可扩展性，可维护性</title>
     <url>/2022/04/13/DDIA-1/</url>
     <content><![CDATA[<p>现今很多应用程序都是 数据密集型（data-intensive） 的，而非 计算密集型（compute-intensive） 的。因此CPU很少成为这类应用的瓶颈，更大的问题通常来自数据量、数据复杂性、以及数据的变更速度。</p>
@@ -102,135 +149,6 @@
       </categories>
       <tags>
         <tag>DDIA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>DDIA笔记-第二章：数据模型与查询语言</title>
-    <url>/2022/04/14/DDIA-2/</url>
-    <content><![CDATA[<p>在本章中，我们将研究一系列用于数据存储和查询的通用数据模型，如JSON或XML文档，关系数据库中的表、或图模型。特别地，我们将比较关系模型，文档模型和少量基于图形的数据模型。我们还将查看各种查询语言并比较它们的用例。</p>
-<h2 id="对象关系阻抗不匹配"><a href="#对象关系阻抗不匹配" class="headerlink" title="对象关系阻抗不匹配"></a>对象关系阻抗不匹配</h2><p>“阻抗失配”这一词组通常用来描述面向对象应用向传统的关系数据库（RDBMS）存放数据时所遇到的数据表述不一致问题。</p>
-<p>比如要开发一个汽车登记程序。一部汽车（automobile）有以下的一些数据：make，model，trim line，year，VIN等，它可以有一个或几个车主（owners），一个或多个驾驶员（driver），还要有维修记录（repair history），汽车还能有登记，被划伤等行为。</p>
-<p>通过上面的分析，使用对象方法描述汽车（automobile）数据可以创建Car，Person，Owner，Driver和RepairHistory类。</p>
-<p>Owner和Driver类可以从Person类中继承方法和属性。你可以对这两项进行扩展，添加新的属性和方法。Owner，Driver和RepairHistory类可以按集合的方式放到Car类中，前两个可以采用参考集合的方式，后一个可以采用嵌入式类。</p>
-<p>当我们用对象方式和SQL分别实现给定Car的VIN查找它所有者的行为时，它们的方法如下所示：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">objCar=Open Car(vin);</span><br><span class="line">owner_count=objCar.Owners.Count();</span><br><span class="line"><span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;owner_count; i++) &#123;</span><br><span class="line">      owner_name=objCar.Owners.Get(i).Name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">Select</span> Car.VIN,Person.Name</span><br><span class="line"><span class="keyword">From</span> Car, CarOwners, Owner, Person</span><br><span class="line"><span class="keyword">Where</span> CarOwners.Fkey_Car<span class="operator">=</span>Car.CarID</span><br><span class="line"><span class="keyword">And</span> CarOwners.Fkey_Owner<span class="operator">=</span>Owner.OwnerID</span><br><span class="line"><span class="keyword">And</span> Owner.Fkey_Person<span class="operator">=</span>Person.PersonID</span><br><span class="line"><span class="keyword">And</span> Car.VIN<span class="operator">=</span>:vin</span><br></pre></td></tr></table></figure>
-
-<p>在混合使用面向对象应用和关系型数据库时，还需要考虑到以下的几个问题。</p>
-<ul>
-<li><p>需要将类转换为一个或多个底层的表</p>
-<p>  这个任务是将类中的每一个属性对应成为表格中的列。如果类和表格能够一一对应的话，这种转换就十分简单，但是大多数的对象模型都需要把多个表格进行分解，并从中抽取一部分作为类的属性。</p>
-</li>
-<li><p>注意模式的演变</p>
-<p>  因为使用到了对象－关系映射，所以必须注意对象模式和关系模式在演变的同时能否保持映射的同步.</p>
-</li>
-<li><p>…</p>
-</li>
-</ul>
-<h2 id="多对一和多对多的关系"><a href="#多对一和多对多的关系" class="headerlink" title="多对一和多对多的关系"></a>多对一和多对多的关系</h2><p>以个人简历为例，一个人可能有他的位置和行业信息，这两个字段可以用ID来表示，也可以直接使用字符串来表示，例如Bob在China，所在行业为Teacher。</p>
-<p>如果用户界面用一个自由文本字段来输入区域和行业，那么将他们存储为纯文本字符串是合理的。另一方式是给出地理区域和行业的标准化的列表，并让用户从下拉列表或自动填充器中进行选择，其优势如下：</p>
-<ul>
-<li>各个简介之间样式和拼写统一</li>
-<li>避免歧义（例如，如果有几个同名的城市）</li>
-<li>易于更新——名称只存储在一个地方，如果需要更改（例如，由于政治事件而改变城市名称），很容易进行全面更新。</li>
-<li>本地化支持——当网站翻译成其他语言时，标准化的列表可以被本地化，使得地区和行业可以使用用户的语言来显示</li>
-</ul>
-<p>存储ID还是文本字符串，这是个 副本（duplication） 问题。当使用ID时，对人类有意义的信息（比如单词：Philanthropy）只存储在一处，所有引用它的地方使用ID（ID只在数据库中有意义）。当直接存储文本时，对人类有意义的信息会复制在每处使用记录中。</p>
-<p>使用ID的好处是，ID对人类没有任何意义，因而永远不需要改变：ID可以保持不变，即使它标识的信息发生变化。但是，这会导致写入和查询开销，也存在不一致的风险（一些副本被更新了，还有些副本没有被更新）</p>
-<h2 id="关系型数据库与文档数据库的对比"><a href="#关系型数据库与文档数据库的对比" class="headerlink" title="关系型数据库与文档数据库的对比"></a>关系型数据库与文档数据库的对比</h2><h3 id="哪个数据模型写代码更方便"><a href="#哪个数据模型写代码更方便" class="headerlink" title="哪个数据模型写代码更方便"></a>哪个数据模型写代码更方便</h3><p>如果应用程序中的数据具有类似文档的结构（即，一对多关系树，通常一次性加载整个树），那么使用文档模型可能是一个好主意。</p>
-<p>但是，如果你的应用程序确实使用多对多关系，那么文档模型就没有那么吸引人了。通过向数据库发出多个请求，可以在应用程序代码中模拟连接，但是这也将复杂性转移到应用程序中，并且通常比由数据库内的专用代码执行的连接慢。在这种情况下，使用文档模型会导致更复杂的应用程序代码和更差的性能.</p>
-<h3 id="文档模型中的架构灵活性"><a href="#文档模型中的架构灵活性" class="headerlink" title="文档模型中的架构灵活性"></a>文档模型中的架构灵活性</h3><p>大多数文档数据库以及关系数据库中的JSON支持都不会强制文档中的数据采用何种模式。没有模式意味着可以将任意的键和值添加到文档中，并且当读取时，客户端无法保证文档可能包含的字段。</p>
-<p>文档数据库有时称为读时模式（schema-on-read）（数据的结构是隐含的，只有在数据被读取时才被解释），相应的是写时模式（schema-on-write）（传统的关系数据库方法中，模式明确，且数据库确保所有的数据都符合其模式）。读时模式类似于编程语言中的动态（运行时）类型检查，而写时模式类似于静态（编译时）类型检查。</p>
-<h3 id="查询的数据局部性"><a href="#查询的数据局部性" class="headerlink" title="查询的数据局部性"></a>查询的数据局部性</h3><p>文档通常以单个连续字符串形式进行存储，编码为JSON，XML或其二进制变体（如MongoDB的BSON）。如果应用程序经常需要访问整个文档（例如，将其渲染至网页），那么存储局部性会带来性能优势。如果将数据分割到多个表中（如图2-1所示），则需要进行多次索引查找才能将其全部检索出来，这可能需要更多的磁盘查找并花费更多的时间。</p>
-]]></content>
-      <categories>
-        <category>DDIA</category>
-      </categories>
-      <tags>
-        <tag>DDIA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java的一些用法</title>
-    <url>/2022/08/24/Java/</url>
-    <content><![CDATA[<h2 id="Java8-Stream的用法"><a href="#Java8-Stream的用法" class="headerlink" title="Java8 Stream的用法"></a><a href="https://www.runoob.com/java/java8-streams.html">Java8 Stream的用法</a></h2><h3 id="为什么引入Stream"><a href="#为什么引入Stream" class="headerlink" title="为什么引入Stream"></a>为什么引入Stream</h3><p>Stream 与 java.io 包里的 InputStream 和 OutputStream 是完全不同的概念。它专注于对集合对象进行各种非常便利、高效的聚合操作（aggregate operation），或者大批量数据操作 (bulk data operation)。</p>
-<p>例如下面这么一个简单的小需求：求一个集合中字符串长度小于5的数量。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">lenIter</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;String&gt; list = Arrays.asList(<span class="string">&quot;java&quot;</span>, <span class="string">&quot;scala&quot;</span>, <span class="string">&quot;python&quot;</span>, <span class="string">&quot;shell&quot;</span>, <span class="string">&quot;ruby&quot;</span>);</span><br><span class="line">    <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(String lan: list) &#123;</span><br><span class="line">        <span class="keyword">if</span>(lan.length() &lt; <span class="number">5</span>) &#123;</span><br><span class="line">            num++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(num);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果使用Stream，只需要短短几行即可完成该操作，代码量明显减少而且逻辑清楚。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">lenStream</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;String&gt; list = Arrays.asList(<span class="string">&quot;java&quot;</span>, <span class="string">&quot;scala&quot;</span>, <span class="string">&quot;python&quot;</span>, <span class="string">&quot;shell&quot;</span>, <span class="string">&quot;ruby&quot;</span>);</span><br><span class="line">    <span class="type">long</span> <span class="variable">num</span> <span class="operator">=</span> list.parallelStream().filter(x -&gt; x.length() &lt; <span class="number">5</span>).count();</span><br><span class="line">    System.out.println(num);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="如何生成Stream"><a href="#如何生成Stream" class="headerlink" title="如何生成Stream"></a>如何生成Stream</h3><p>在 Java 8 中, 集合接口有两个方法来生成流：</p>
-<ul>
-<li><p>stream() − 为集合创建串行流</p>
-</li>
-<li><p>parallelStream() − 为集合创建并行流</p>
-</li>
-</ul>
-<p>举例如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Employee&gt; <span class="title function_">getEmployeeDataList</span><span class="params">()</span>&#123;</span><br><span class="line">    List&lt;Employee&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="number">1</span>,<span class="string">&quot;张三&quot;</span>,<span class="number">20</span>,<span class="number">8500D</span>,<span class="number">1</span>));</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="number">2</span>,<span class="string">&quot;李四&quot;</span>,<span class="number">18</span>,<span class="number">600D</span>,<span class="number">1</span>));</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="number">3</span>,<span class="string">&quot;王五&quot;</span>,<span class="number">21</span>,<span class="number">5500D</span>,<span class="number">3</span>));</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="number">4</span>,<span class="string">&quot;小白&quot;</span>,<span class="number">30</span>,<span class="number">8500D</span>,<span class="number">2</span>));</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    List&lt;Employee&gt; employees = getEmployeeDataList();</span><br><span class="line">    <span class="comment">// 返回一个顺序流 （按照集合顺序获取）</span></span><br><span class="line">    Stream&lt;Employee&gt; stream = employees.stream();</span><br><span class="line">    <span class="comment">// 返回一个并行流 （类似于线程去获取数据，无序）</span></span><br><span class="line">    Stream&lt;Employee&gt; parallelStream = employees.parallelStream();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>除此之外，也可以使用无限流方式来生成流，举例如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">// 生成偶数</span></span><br><span class="line">    Stream.iterate(<span class="number">0</span>,t-&gt;t+<span class="number">2</span>).limit(<span class="number">10</span>).forEach(System.out::println);</span><br><span class="line">    <span class="comment">// 10个随机数</span></span><br><span class="line">    Stream.generate(Math::random).limit(<span class="number">10</span>).forEach(System.out::println);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Stream的转换"><a href="#Stream的转换" class="headerlink" title="Stream的转换"></a>Stream的转换</h3><p>Stream最大的用途就是各种转换了，即从一个Stream经过一些操作之后转化为另一个Stream</p>
-<h4 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h4><p>filter 方法用于通过设置的条件过滤出元素。以下代码片段使用 filter 方法过滤出空字符串：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt;strings = Arrays.asList(<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;bc&quot;</span>, <span class="string">&quot;efg&quot;</span>, <span class="string">&quot;abcd&quot;</span>,<span class="string">&quot;&quot;</span>, <span class="string">&quot;jkl&quot;</span>);</span><br><span class="line"><span class="comment">// 获取空字符串的数量</span></span><br><span class="line"><span class="type">long</span> <span class="variable">count</span> <span class="operator">=</span> strings.stream().filter(string -&gt; string.isEmpty()).count();</span><br></pre></td></tr></table></figure>
-
-<h4 id="sorted"><a href="#sorted" class="headerlink" title="sorted"></a>sorted</h4><p>sorted 方法用于对流进行排序。以下代码片段使用 sorted 方法对输出的 10 个随机数进行排序：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line">random.ints().limit(<span class="number">10</span>).sorted().forEach(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<h4 id="map"><a href="#map" class="headerlink" title="map"></a>map</h4><p>map 方法用于映射每个元素到对应的结果，以下代码片段使用 map 输出了元素对应的平方数：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;Integer&gt; numbers = Arrays.asList(<span class="number">3</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">5</span>);</span><br><span class="line"><span class="comment">// 获取对应的平方数</span></span><br><span class="line">List&lt;Integer&gt; squaresList = numbers.stream().map( i -&gt; i*i).distinct().collect(Collectors.toList());</span><br></pre></td></tr></table></figure>
-
-<h4 id="distinct"><a href="#distinct" class="headerlink" title="distinct"></a>distinct</h4><p>用于去重</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">distinctStream</span><span class="params">()</span> &#123;</span><br><span class="line">    Stream&lt;String&gt; distinctStream = Stream.of(<span class="string">&quot;bj&quot;</span>,<span class="string">&quot;shanghai&quot;</span>,<span class="string">&quot;tianjin&quot;</span>,<span class="string">&quot;bj&quot;</span>,<span class="string">&quot;shanghai&quot;</span>).distinct();</span><br><span class="line">    Stream&lt;String&gt; sortedStream = distinctStream.sorted(Comparator.comparing(String::length));</span><br><span class="line">    sortedStream.forEach(x -&gt; System.out.print(x + <span class="string">&quot; &quot;</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出：bj tianjin shanghai </span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Stream的Reduction操作"><a href="#Stream的Reduction操作" class="headerlink" title="Stream的Reduction操作"></a>Stream的Reduction操作</h3><p>reduction就是从stream中取出结果，是terminal operation，因此经过reduction后的stream不能再使用了。</p>
-<h4 id="forEach"><a href="#forEach" class="headerlink" title="forEach"></a>forEach</h4><p>Stream 提供了新的方法 ‘forEach’ 来迭代流中的每个数据。以下代码片段使用 forEach 输出了10个随机数：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line">random.ints().limit(<span class="number">10</span>).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>map和forEach的区别：<br>map 是将 stream 中的每个元素进行取值之后进行操作，再将操作过后的每个结果返回到 stream 中去，而 forEach 是一种遍历循环，通过遍历循环执行必要的操作，并不会把值直接返回到 stream</p>
-</blockquote>
-<h4 id="Collectors"><a href="#Collectors" class="headerlink" title="Collectors"></a>Collectors</h4><p>Collectors 类实现了很多归约操作，例如将流转换成集合和聚合元素。Collectors 可用于返回列表或字符串：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt;strings = Arrays.asList(<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;bc&quot;</span>, <span class="string">&quot;efg&quot;</span>, <span class="string">&quot;abcd&quot;</span>,<span class="string">&quot;&quot;</span>, <span class="string">&quot;jkl&quot;</span>);</span><br><span class="line">List&lt;String&gt; filtered = strings.stream().filter(string -&gt; !string.isEmpty()).collect(Collectors.toList());</span><br><span class="line"> </span><br><span class="line">System.out.println(<span class="string">&quot;筛选列表: &quot;</span> + filtered);</span><br><span class="line"><span class="type">String</span> <span class="variable">mergedString</span> <span class="operator">=</span> strings.stream().filter(string -&gt; !string.isEmpty()).collect(Collectors.joining(<span class="string">&quot;, &quot;</span>));</span><br><span class="line">System.out.println(<span class="string">&quot;合并字符串: &quot;</span> + mergedString);</span><br></pre></td></tr></table></figure>
-
-<h4 id="max、min、count、findFirst、findAny、allMatch、anyMatch、noneMatch等"><a href="#max、min、count、findFirst、findAny、allMatch、anyMatch、noneMatch等" class="headerlink" title="max、min、count、findFirst、findAny、allMatch、anyMatch、noneMatch等"></a>max、min、count、findFirst、findAny、allMatch、anyMatch、noneMatch等</h4><p>略</p>
-<h2 id="Java8-中optional的用法"><a href="#Java8-中optional的用法" class="headerlink" title="Java8 中optional的用法"></a>Java8 中optional的用法</h2><h3 id="引入optional的目的"><a href="#引入optional的目的" class="headerlink" title="引入optional的目的"></a>引入optional的目的</h3><p>Optional用于缓解Java臭名昭著的空指针异常问题。它的设计意图为：</p>
-<ul>
-<li>Optional 是用来作为方法返回值的</li>
-<li>Optional 是为了清晰地表达返回值中没有结果的可能性</li>
-<li>且如果直接返回 null 很可能导致调用端产生错误（尤其是NullPointerException)</li>
-</ul>
-<h3 id="一些常用的api"><a href="#一些常用的api" class="headerlink" title="一些常用的api"></a>一些常用的api</h3><h4 id="创建optional类"><a href="#创建optional类" class="headerlink" title="创建optional类"></a>创建optional类</h4><ul>
-<li>Optional.of()：of不允许参数是null</li>
-<li>Optional.ofNullable()：参数无限制</li>
-<li>Optional.empty()：所有null包装成的Optional对象</li>
-</ul>
-<h4 id="判断值是否存在"><a href="#判断值是否存在" class="headerlink" title="判断值是否存在"></a>判断值是否存在</h4><ul>
-<li><p>isPresent()</p>
-</li>
-<li><p>isEmpty()</p>
-</li>
-<li><p>ifPresent()</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//ifpresent</span></span><br><span class="line">Optional&lt;String&gt; optional = Optional.of(<span class="string">&quot;java&quot;</span>);</span><br><span class="line">optional.ifPresent(s -&gt; System.out.println(s.length()));</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="获取optional的值"><a href="#获取optional的值" class="headerlink" title="获取optional的值"></a>获取optional的值</h4><ul>
-<li><p>orElse()：如果optional对象保存的值不是null，则返回原来的值，否则返回value</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//orElse</span></span><br><span class="line"><span class="type">String</span> <span class="variable">nullName</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Optional.ofNullable(nullName).orElse(<span class="string">&quot;default_name&quot;</span>);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>orElseGet()：类似于 orElse()，如果没有Optional值，采用供应商功能接口，该接口将被调用并返回调用的值。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//orElseGet</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Optional.ofNullable(nullName).orElseGet(() -&gt; <span class="string">&quot;john&quot;</span>);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>orElseThrow(): 值不存在则抛出异常</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">optional.orElseThrow(()-&gt;&#123;<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>();&#125;);</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><p>略</p>
-<h2 id="Java泛型"><a href="#Java泛型" class="headerlink" title="Java泛型"></a>Java泛型</h2>]]></content>
-      <tags>
-        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -919,6 +837,88 @@
       </tags>
   </entry>
   <entry>
+    <title>Java的一些用法</title>
+    <url>/2022/08/24/Java/</url>
+    <content><![CDATA[<h2 id="Java8-Stream的用法"><a href="#Java8-Stream的用法" class="headerlink" title="Java8 Stream的用法"></a><a href="https://www.runoob.com/java/java8-streams.html">Java8 Stream的用法</a></h2><h3 id="为什么引入Stream"><a href="#为什么引入Stream" class="headerlink" title="为什么引入Stream"></a>为什么引入Stream</h3><p>Stream 与 java.io 包里的 InputStream 和 OutputStream 是完全不同的概念。它专注于对集合对象进行各种非常便利、高效的聚合操作（aggregate operation），或者大批量数据操作 (bulk data operation)。</p>
+<p>例如下面这么一个简单的小需求：求一个集合中字符串长度小于5的数量。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">lenIter</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;String&gt; list = Arrays.asList(<span class="string">&quot;java&quot;</span>, <span class="string">&quot;scala&quot;</span>, <span class="string">&quot;python&quot;</span>, <span class="string">&quot;shell&quot;</span>, <span class="string">&quot;ruby&quot;</span>);</span><br><span class="line">    <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(String lan: list) &#123;</span><br><span class="line">        <span class="keyword">if</span>(lan.length() &lt; <span class="number">5</span>) &#123;</span><br><span class="line">            num++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(num);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果使用Stream，只需要短短几行即可完成该操作，代码量明显减少而且逻辑清楚。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">lenStream</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;String&gt; list = Arrays.asList(<span class="string">&quot;java&quot;</span>, <span class="string">&quot;scala&quot;</span>, <span class="string">&quot;python&quot;</span>, <span class="string">&quot;shell&quot;</span>, <span class="string">&quot;ruby&quot;</span>);</span><br><span class="line">    <span class="type">long</span> <span class="variable">num</span> <span class="operator">=</span> list.parallelStream().filter(x -&gt; x.length() &lt; <span class="number">5</span>).count();</span><br><span class="line">    System.out.println(num);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="如何生成Stream"><a href="#如何生成Stream" class="headerlink" title="如何生成Stream"></a>如何生成Stream</h3><p>在 Java 8 中, 集合接口有两个方法来生成流：</p>
+<ul>
+<li><p>stream() − 为集合创建串行流</p>
+</li>
+<li><p>parallelStream() − 为集合创建并行流</p>
+</li>
+</ul>
+<p>举例如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Employee&gt; <span class="title function_">getEmployeeDataList</span><span class="params">()</span>&#123;</span><br><span class="line">    List&lt;Employee&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="number">1</span>,<span class="string">&quot;张三&quot;</span>,<span class="number">20</span>,<span class="number">8500D</span>,<span class="number">1</span>));</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="number">2</span>,<span class="string">&quot;李四&quot;</span>,<span class="number">18</span>,<span class="number">600D</span>,<span class="number">1</span>));</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="number">3</span>,<span class="string">&quot;王五&quot;</span>,<span class="number">21</span>,<span class="number">5500D</span>,<span class="number">3</span>));</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="number">4</span>,<span class="string">&quot;小白&quot;</span>,<span class="number">30</span>,<span class="number">8500D</span>,<span class="number">2</span>));</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    List&lt;Employee&gt; employees = getEmployeeDataList();</span><br><span class="line">    <span class="comment">// 返回一个顺序流 （按照集合顺序获取）</span></span><br><span class="line">    Stream&lt;Employee&gt; stream = employees.stream();</span><br><span class="line">    <span class="comment">// 返回一个并行流 （类似于线程去获取数据，无序）</span></span><br><span class="line">    Stream&lt;Employee&gt; parallelStream = employees.parallelStream();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>除此之外，也可以使用无限流方式来生成流，举例如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">// 生成偶数</span></span><br><span class="line">    Stream.iterate(<span class="number">0</span>,t-&gt;t+<span class="number">2</span>).limit(<span class="number">10</span>).forEach(System.out::println);</span><br><span class="line">    <span class="comment">// 10个随机数</span></span><br><span class="line">    Stream.generate(Math::random).limit(<span class="number">10</span>).forEach(System.out::println);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Stream的转换"><a href="#Stream的转换" class="headerlink" title="Stream的转换"></a>Stream的转换</h3><p>Stream最大的用途就是各种转换了，即从一个Stream经过一些操作之后转化为另一个Stream</p>
+<h4 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h4><p>filter 方法用于通过设置的条件过滤出元素。以下代码片段使用 filter 方法过滤出空字符串：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt;strings = Arrays.asList(<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;bc&quot;</span>, <span class="string">&quot;efg&quot;</span>, <span class="string">&quot;abcd&quot;</span>,<span class="string">&quot;&quot;</span>, <span class="string">&quot;jkl&quot;</span>);</span><br><span class="line"><span class="comment">// 获取空字符串的数量</span></span><br><span class="line"><span class="type">long</span> <span class="variable">count</span> <span class="operator">=</span> strings.stream().filter(string -&gt; string.isEmpty()).count();</span><br></pre></td></tr></table></figure>
+
+<h4 id="sorted"><a href="#sorted" class="headerlink" title="sorted"></a>sorted</h4><p>sorted 方法用于对流进行排序。以下代码片段使用 sorted 方法对输出的 10 个随机数进行排序：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line">random.ints().limit(<span class="number">10</span>).sorted().forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h4 id="map"><a href="#map" class="headerlink" title="map"></a>map</h4><p>map 方法用于映射每个元素到对应的结果，以下代码片段使用 map 输出了元素对应的平方数：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;Integer&gt; numbers = Arrays.asList(<span class="number">3</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">5</span>);</span><br><span class="line"><span class="comment">// 获取对应的平方数</span></span><br><span class="line">List&lt;Integer&gt; squaresList = numbers.stream().map( i -&gt; i*i).distinct().collect(Collectors.toList());</span><br></pre></td></tr></table></figure>
+
+<h4 id="distinct"><a href="#distinct" class="headerlink" title="distinct"></a>distinct</h4><p>用于去重</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">distinctStream</span><span class="params">()</span> &#123;</span><br><span class="line">    Stream&lt;String&gt; distinctStream = Stream.of(<span class="string">&quot;bj&quot;</span>,<span class="string">&quot;shanghai&quot;</span>,<span class="string">&quot;tianjin&quot;</span>,<span class="string">&quot;bj&quot;</span>,<span class="string">&quot;shanghai&quot;</span>).distinct();</span><br><span class="line">    Stream&lt;String&gt; sortedStream = distinctStream.sorted(Comparator.comparing(String::length));</span><br><span class="line">    sortedStream.forEach(x -&gt; System.out.print(x + <span class="string">&quot; &quot;</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出：bj tianjin shanghai </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Stream的Reduction操作"><a href="#Stream的Reduction操作" class="headerlink" title="Stream的Reduction操作"></a>Stream的Reduction操作</h3><p>reduction就是从stream中取出结果，是terminal operation，因此经过reduction后的stream不能再使用了。</p>
+<h4 id="forEach"><a href="#forEach" class="headerlink" title="forEach"></a>forEach</h4><p>Stream 提供了新的方法 ‘forEach’ 来迭代流中的每个数据。以下代码片段使用 forEach 输出了10个随机数：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line">random.ints().limit(<span class="number">10</span>).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>map和forEach的区别：<br>map 是将 stream 中的每个元素进行取值之后进行操作，再将操作过后的每个结果返回到 stream 中去，而 forEach 是一种遍历循环，通过遍历循环执行必要的操作，并不会把值直接返回到 stream</p>
+</blockquote>
+<h4 id="Collectors"><a href="#Collectors" class="headerlink" title="Collectors"></a>Collectors</h4><p>Collectors 类实现了很多归约操作，例如将流转换成集合和聚合元素。Collectors 可用于返回列表或字符串：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt;strings = Arrays.asList(<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;bc&quot;</span>, <span class="string">&quot;efg&quot;</span>, <span class="string">&quot;abcd&quot;</span>,<span class="string">&quot;&quot;</span>, <span class="string">&quot;jkl&quot;</span>);</span><br><span class="line">List&lt;String&gt; filtered = strings.stream().filter(string -&gt; !string.isEmpty()).collect(Collectors.toList());</span><br><span class="line"> </span><br><span class="line">System.out.println(<span class="string">&quot;筛选列表: &quot;</span> + filtered);</span><br><span class="line"><span class="type">String</span> <span class="variable">mergedString</span> <span class="operator">=</span> strings.stream().filter(string -&gt; !string.isEmpty()).collect(Collectors.joining(<span class="string">&quot;, &quot;</span>));</span><br><span class="line">System.out.println(<span class="string">&quot;合并字符串: &quot;</span> + mergedString);</span><br></pre></td></tr></table></figure>
+
+<h4 id="max、min、count、findFirst、findAny、allMatch、anyMatch、noneMatch等"><a href="#max、min、count、findFirst、findAny、allMatch、anyMatch、noneMatch等" class="headerlink" title="max、min、count、findFirst、findAny、allMatch、anyMatch、noneMatch等"></a>max、min、count、findFirst、findAny、allMatch、anyMatch、noneMatch等</h4><p>略</p>
+<h2 id="Java8-中optional的用法"><a href="#Java8-中optional的用法" class="headerlink" title="Java8 中optional的用法"></a>Java8 中optional的用法</h2><h3 id="引入optional的目的"><a href="#引入optional的目的" class="headerlink" title="引入optional的目的"></a>引入optional的目的</h3><p>Optional用于缓解Java臭名昭著的空指针异常问题。它的设计意图为：</p>
+<ul>
+<li>Optional 是用来作为方法返回值的</li>
+<li>Optional 是为了清晰地表达返回值中没有结果的可能性</li>
+<li>且如果直接返回 null 很可能导致调用端产生错误（尤其是NullPointerException)</li>
+</ul>
+<h3 id="一些常用的api"><a href="#一些常用的api" class="headerlink" title="一些常用的api"></a>一些常用的api</h3><h4 id="创建optional类"><a href="#创建optional类" class="headerlink" title="创建optional类"></a>创建optional类</h4><ul>
+<li>Optional.of()：of不允许参数是null</li>
+<li>Optional.ofNullable()：参数无限制</li>
+<li>Optional.empty()：所有null包装成的Optional对象</li>
+</ul>
+<h4 id="判断值是否存在"><a href="#判断值是否存在" class="headerlink" title="判断值是否存在"></a>判断值是否存在</h4><ul>
+<li><p>isPresent()</p>
+</li>
+<li><p>isEmpty()</p>
+</li>
+<li><p>ifPresent()</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//ifpresent</span></span><br><span class="line">Optional&lt;String&gt; optional = Optional.of(<span class="string">&quot;java&quot;</span>);</span><br><span class="line">optional.ifPresent(s -&gt; System.out.println(s.length()));</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="获取optional的值"><a href="#获取optional的值" class="headerlink" title="获取optional的值"></a>获取optional的值</h4><ul>
+<li><p>orElse()：如果optional对象保存的值不是null，则返回原来的值，否则返回value</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//orElse</span></span><br><span class="line"><span class="type">String</span> <span class="variable">nullName</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Optional.ofNullable(nullName).orElse(<span class="string">&quot;default_name&quot;</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>orElseGet()：类似于 orElse()，如果没有Optional值，采用供应商功能接口，该接口将被调用并返回调用的值。</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//orElseGet</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Optional.ofNullable(nullName).orElseGet(() -&gt; <span class="string">&quot;john&quot;</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>orElseThrow(): 值不存在则抛出异常</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">optional.orElseThrow(()-&gt;&#123;<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>();&#125;);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><p>略</p>
+<h2 id="Java泛型"><a href="#Java泛型" class="headerlink" title="Java泛型"></a>Java泛型</h2>]]></content>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>interview-Golang</title>
     <url>/2022/03/28/interview-Golang/</url>
     <content><![CDATA[<h2 id="简述-slice-的底层原理，slice-和数组的区别是什么"><a href="#简述-slice-的底层原理，slice-和数组的区别是什么" class="headerlink" title="简述 slice 的底层原理，slice 和数组的区别是什么"></a>简述 slice 的底层原理，slice 和数组的区别是什么</h2><ul>
@@ -1186,6 +1186,310 @@
       <tags>
         <tag>Golang</tag>
         <tag>Interview</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview-OperatorSystem</title>
+    <url>/2022/03/18/interview-OperatorSystem/</url>
+    <content><![CDATA[<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="线程间同步方式"><a href="#线程间同步方式" class="headerlink" title="线程间同步方式"></a>线程间同步方式</h3><p>  互斥量、信号量、条件变量</p>
+<h3 id="进程与线程的本质区别、以及各自的使用场景"><a href="#进程与线程的本质区别、以及各自的使用场景" class="headerlink" title="进程与线程的本质区别、以及各自的使用场景"></a>进程与线程的本质区别、以及各自的使用场景</h3><ul>
+<li>需要频繁创建销毁的优先用线程（进程的创建和销毁开销过大） 这种原则最常见的应用就是Web服务器了，来一个连接建立一个线程，断了就销毁线程，要是用进程，创建和销毁的代价是很难承受的。</li>
+<li>需要稳定性，则考虑进程。比如可能存在一些网页不符合编程规范，容易崩溃，采用多进程一个网页崩溃不会影响其他网页；而采用多线程会。</li>
+</ul>
+<h3 id="进程调度算法的特点以及使用场景"><a href="#进程调度算法的特点以及使用场景" class="headerlink" title="进程调度算法的特点以及使用场景"></a>进程调度算法的特点以及使用场景</h3><ul>
+<li><p>批处理系统</p>
+<p>  先来先服务：利于长作业</p>
+<p>  短作业优先：长作业可能饿死</p>
+<p>  最短剩余时间优先：可抢占、每个进程包含优先级和要求运行时间。</p>
+<p>  高响应比优先调度算法：R&#x3D;（等待时间+需要时间）&#x2F;需要时间</p>
+</li>
+<li><p>交互式系统</p>
+<p>  时间片轮转：时间片小，进程切换消耗大；时间片大，实时性无法保证。</p>
+<p>  优先级调度：防止低优先级饿死，随时间增加等待进程的优先级。</p>
+<p>  多级反馈队列：不同队列优先级不同、时间片大小不同。</p>
+</li>
+<li><p>实时系统</p>
+<p>  软实时：请求允许一定超时</p>
+<p>  硬实时：请求必须满足绝对的截止时间</p>
+</li>
+</ul>
+<h3 id="操作系统页面置换算法"><a href="#操作系统页面置换算法" class="headerlink" title="操作系统页面置换算法"></a>操作系统页面置换算法</h3><ul>
+<li><p>最佳置换算法</p>
+<p>  要换出的页面为最长时间不再被访问的页面，可保证最低缺页率。</p>
+</li>
+<li><p>最近最久未使用（LRU）</p>
+<p>  要在内存中维护一个所有页面的链表。当一个页面被访问时，将这个页面移到链表表头。这样就能保证链表表尾的页面是最近最久未访问的。</p>
+</li>
+<li><p>最近未使用（NRU）或时钟算法</p>
+<p>  每个页面都有两个状态位：R与M，当页面被访问时设置页面的R＝1，当页面被修改时设置M＝1。其中R位会定时被清零。可以将页面分成以下四类：</p>
+<p>  R&#x3D;0,M&#x3D;0</p>
+<p>  R&#x3D;0,M&#x3D;1</p>
+<p>  R&#x3D;1,M&#x3D;0</p>
+<p>  R&#x3D;1,M&#x3D;1</p>
+<p>  当发生缺页中断时，NRU算法随机地从类编号最小的非空类中挑选一个页面将它换出。</p>
+<p>  NRU优先换出已经被修改的脏页面（R＝0，M＝1），而不是被频繁使用的干净页面（R＝1，M＝0）。</p>
+</li>
+<li><p>先进先出FIFO</p>
+</li>
+</ul>
+<h3 id="进程间有哪些通信方式？"><a href="#进程间有哪些通信方式？" class="headerlink" title="进程间有哪些通信方式？"></a>进程间有哪些通信方式？</h3><ul>
+<li><p>管道</p>
+<p>  管道的实质是一个内核缓冲区，进程以先进先出的方式从缓冲区存取数据，管道一端的进程顺序地将数据写入缓冲区，另一端的进程则顺序地读出数据。</p>
+<p>  管道的用法：</p>
+<ol>
+<li><p>父进程创建管道，得到两个文件描述符指向管道的两端。使用函数 <code>int pipe(int fd[2])</code></p>
+</li>
+<li><p>利用fork函数创建出子进程，则子进程也得到两个文件描述符指向同一管道</p>
+</li>
+<li><p>父进程关闭读端<code>pipe[0]</code>,子进程关闭写端<code>pipe[1]</code>，则此时父进程可以往管道中进行写操作，子进程可以从管道中读，从而实现了通过管道的进程间通信。</p>
+</li>
+</ol>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/pipe.png" alt="image"></p>
+</li>
+<li><p>FIFO命名管道</p>
+<p>  命名管道以文件的形式存在，由于有一个路径名，使用没有亲缘关系的进程间也可以使用命名管道。去除了只能在父子进程中使用的限制</p>
+</li>
+<li><p>消息队列</p>
+<p>  消息队列可以独立于读写进程存在，从而避免了FIFO 中同步管道的打开和关闭时可能产生的困难；避免了FIFO 的同步阻塞问题，不需要进程自己提供同步方法；读进程可以根据消息类型有选择地接收消息，而不像 FIFO 那样只能默认地接收。</p>
+</li>
+<li><p>信号量</p>
+</li>
+<li><p>共享内存</p>
+<p>  允许多个进程共享一个给定的存储区。因为数据不需要在进程之间复制，所以这是最快的一种 IPC。需要使用信号量用来同步对共享存储的访问。</p>
+</li>
+<li><p>套接字</p>
+<p>  它可用于不同机器间的进程通信</p>
+</li>
+</ul>
+<h3 id="死锁必要条件、解决死锁策略"><a href="#死锁必要条件、解决死锁策略" class="headerlink" title="死锁必要条件、解决死锁策略"></a>死锁必要条件、解决死锁策略</h3><p>  死锁必要条件：互斥、占用并保持、不可剥夺、环路等待。</p>
+<p>  处理方法：</p>
+<ul>
+<li><p>鸵鸟策略</p>
+<p>  Linux、Windows都是选择忽略死锁。</p>
+</li>
+<li><p>死锁检测和死锁恢复</p>
+<p>  每种类型一个资源的死锁检测：在资源分配图中检测有向图是否存在环。</p>
+<p>  每种类型多个资源的死锁检测：类似死锁避免。</p>
+</li>
+<li><p>死锁预防——破坏死锁的必要条件</p>
+<p>  破坏互斥条件：例如SPOOLing技术将独占设备改为共享设备</p>
+<p>  破坏占用并保持：规定所有进程在开始执行前请求所需要的全部资源</p>
+<p>  破坏不可抢占</p>
+<p>  破坏环路等待：给资源统一编号，进程只能按编号顺序来请求资源</p>
+</li>
+<li><p>死锁避免</p>
+<p>  银行家算法</p>
+</li>
+</ul>
+<h3 id="简述操作系统中-malloc-的实现原理"><a href="#简述操作系统中-malloc-的实现原理" class="headerlink" title="简述操作系统中 malloc 的实现原理"></a>简述操作系统中 malloc 的实现原理</h3><ul>
+<li><p>当开辟的空间小于 128K 时，调用 <code>brk()</code>函数，malloc 的底层实现是系统调用函数<code>brk()</code>，其主要移动指针 <code>_enddata</code>(此时的 <code>_enddata</code> 指的是 Linux 地址空间中堆段的末尾地址，不是数据段的末尾地址)</p>
+</li>
+<li><p>当开辟的空间大于 128K 时，<code>mmap()</code>系统调用函数来在虚拟地址空间中（堆和栈中间，称为“文件映射区域”的地方）找一块空间来开辟。</p>
+<p>  这两种方式分配的都是虚拟内存，没有分配物理内存。在第一次访问已分配的虚拟地址空间的时候，发生缺页中断，操作系统负责分配物理内存，然后建立虚拟内存和物理内存之间的映射关系，之后再重新执行发生中断时的指令。</p>
+</li>
+<li><p>具体分配过程：</p>
+<ul>
+<li><p>情况一：malloc 小于 128K 的内存，使用 brk 分配</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/brk.png" alt="image"></p>
+<p>  malloc函数会调用brk系统调用，将_edata指针往高地址推30K，就完成虚拟内存分配。事实是：_edata+30K只是完成虚拟地址的分配，A这块内存现在还是没有物理页与之对应的，等到进程第一次读写A这块内存的时候，发生缺页中断，这个时候，内核才分配A这块内存对应的物理页。也就是说，如果用malloc分配了A这块内容，然后从来不访问它，那么，A对应的物理页是不会被分配的。</p>
+<p>  由于<code>brk/sbrk/mmap</code>属于系统调用，如果每次申请内存，都调用这三个函数中的一个，那么每次都要产生系统调用开销（即cpu从用户态切换到内核态的上下文切换，这里要保存用户态数据，等会还要切换回用户态），这是非常影响性能的；其次，这样申请的内存容易产生碎片，因为堆是从低地址到高地址，如果低地址的内存没有被释放，高地址的内存就不能被回收。</p>
+<p>  鉴于此，malloc采用的是内存池的实现方式，malloc内存池实现方式更类似于STL分配器和memcached的内存池，先申请一大块内存，然后将内存分成不同大小的内存块，然后用户申请内存时，直接从内存池中选择一块相近的内存块即可。</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/malloc.png" alt="image"></p>
+</li>
+<li><p>情况二：malloc 大于 128K 的内存，使用 mmap 分配</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/mmap.png" alt="image"></p>
+<p>  brk分配的内存需要等到高地址内存释放以后才能释放，而mmap分配的内存可以单独释放。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="线程有多少种状态，状态之间如何转换"><a href="#线程有多少种状态，状态之间如何转换" class="headerlink" title="线程有多少种状态，状态之间如何转换"></a>线程有多少种状态，状态之间如何转换</h3><p>Java中线程的状态分为6种。</p>
+<ol>
+<li><p>初始(NEW)：新创建了一个线程对象，但还没有调用start()方法</p>
+</li>
+<li><p>运行(RUNNABLE)：Java线程中将就绪（ready）和运行中（running）两种状态笼统的称为“运行”。线程对象创建后，其他线程(比如main线程）调用了该对象的start()方法。该状态的线程位于可运行线程池中，等待被线程调度选中，获取CPU的使用权，此时处于就绪状态（ready）。就绪状态的线程在获得CPU时间片后变为运行中状态（running）。</p>
+</li>
+<li><p>阻塞(BLOCKED)：表示线程阻塞于锁。</p>
+</li>
+<li><p>等待(WAITING)：进入该状态的线程需要等待其他线程做出一些特定动作（通知或中断）。</p>
+</li>
+<li><p>超时等待(TIMED_WAITING)：该状态不同于WAITING，它可以在指定的时间后自行返回。</p>
+</li>
+<li><p>终止(TERMINATED)：表示该线程已经执行完毕。</p>
+</li>
+</ol>
+<p>状态详细说明：</p>
+<ol>
+<li><p>初始状态(NEW)</p>
+<p> 实现Runnable接口和继承Thread可以得到一个线程类，new一个实例出来，线程就进入了初始状态。</p>
+</li>
+<li><p>就绪状态(RUNNABLE之READY)</p>
+<ul>
+<li><p>就绪状态只是说你资格运行，调度程序(Cpu)没有挑选到你，你就永远是就绪状态。</p>
+</li>
+<li><p>调用线程的start()方法，此线程进入就绪状态。</p>
+</li>
+<li><p>当前线程sleep()方法结束、其他线程join()结束、等待用户输入完毕、某个线程拿到对象锁时，将进入就绪状态。</p>
+</li>
+<li><p>当前线程时间片用完了、调用当前线程的yield()方法，当前线程进入就绪状态。</p>
+</li>
+<li><p>锁池里的线程拿到对象锁后，进入就绪状态。</p>
+</li>
+</ul>
+</li>
+<li><p>运行中状态(RUNNABLE之RUNNING)</p>
+<p> 线程调度程序从可运行池中选择一个线程作为当前线程时线程所处的状态。这也是线程进入运行状态的唯一的一种方式。</p>
+</li>
+<li><p>阻塞状态(BLOCKED)</p>
+<p> 阻塞状态是线程阻塞在进入synchronized关键字修饰的方法或代码块(获取锁)时的状态。</p>
+</li>
+<li><p>等待(WAITING)</p>
+<p> 处于这种状态的线程不会被分配CPU执行时间，它们要等待被显式地唤醒，否则会处于无限期等待的状态。</p>
+</li>
+<li><p>终止状态(TERMINATED)</p>
+<p> 当线程的run()方法完成时，或者主线程的main()方法完成时，我们就认为它终止了。这个线程对象也许是活的，但是它已经不是一个单独执行的线程。线程一旦终止了，就不能复生。</p>
+<p> 在一个终止的线程上调用start()方法，会抛出java.lang.IllegalThreadStateException异常。</p>
+</li>
+</ol>
+<h3 id="简述创建进程的流程"><a href="#简述创建进程的流程" class="headerlink" title="简述创建进程的流程"></a>简述创建进程的流程</h3><ul>
+<li><p>fork()</p>
+<p>  在系统中表示一个进程的实体是进程控制块，创建新进程的主要工作就是要创建一个新控制块，而创建一个新控制块最简单的方法就是复制。</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/fork.png" alt="image"></p>
+<p>  父进程和子进程运行的是同一个程序，也正是这个理由，系统并未在内存中给子进程配置独立的程序运行空间，而只是简单地将程序指针指向父进程的代码；</p>
+<p>  两个进程具有各自的数据区和用户堆栈，在函数fork()生成子进程时，将父进程数据区和用户堆栈的内容分别复制给了子进程。</p>
+</li>
+<li><p>exec()</p>
+<p>  如果一个进程调用了execv()，那么该函数便会把函数参数path所指定的可执行文件加载到进程的用户内存空间，并覆盖掉原文件，然后便运行这个新加载的可执行文件。通常调用execv()的都是子进程。调用execv()后，父进程与子进程存储结构的示意图如下：</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/exec.png" alt="image"></p>
+</li>
+<li><p>wait()</p>
+<p>  由于子进程毕竟由父进程所创建，父进程需要在子进程结束之后释放子进程所占用的系统资源。那么为了保证完成为子进程释放资源的任务，父进程应该调用系统调用wait()。</p>
+<p>  如果父进程先于子进程结束进程，则子进程会因为失去父进程而成为“孤儿进程”。如果子进程退出，而父进程并没有调用wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。这种进程称之为僵尸进程</p>
+</li>
+</ul>
+<h3 id="如何设计一个线程池？"><a href="#如何设计一个线程池？" class="headerlink" title="如何设计一个线程池？"></a>如何设计一个线程池？</h3><ul>
+<li><p>是什么</p>
+<p>  线程池使用了池化技术，将线程存储起来放在一个 池子 （容器）里面，来了任务可以用已有的空闲的线程进行处理， 处理完成之后，归还到容器，可以复用。如果线程不够，还可以根据规则动态增加，线程多余的时候，亦可以让多余的线程死亡。</p>
+</li>
+<li><p>为什么</p>
+<ul>
+<li>降低资源消耗：池化技术可以重复利用已经创建的线程，降低线程创建和销毁的损耗。</li>
+<li>提高响应速度：利用已经存在的线程进行处理，少去了创建线程的时间</li>
+<li>管理线程可控：线程是稀缺资源，不能无限创建，线程池可以做到统一分配和监控</li>
+<li>拓展其他功能：比如定时线程池，可以定时执行任务</li>
+</ul>
+</li>
+<li><p>设计以及需要考虑的点</p>
+<ul>
+<li>线程池状态：<ul>
+<li>有哪些状态？如何维护状态？</li>
+</ul>
+</li>
+<li>线程<ul>
+<li>线程怎么封装？线程放在哪个池子里？</li>
+<li>线程怎么取得任务？</li>
+<li>线程有哪些状态？</li>
+<li>线程的数量怎么限制？动态变化？自动伸缩？</li>
+<li>线程怎么消亡？如何重复利用？</li>
+</ul>
+</li>
+<li>任务<ul>
+<li>任务少可以直接处理，多的时候，放在哪里？</li>
+<li>任务队列满了，怎么办？</li>
+<li>用什么队列？</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>如何做</p>
+</li>
+</ul>
+<h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><ul>
+<li><p>awk</p>
+</li>
+<li><p>sed</p>
+</li>
+<li><p>grep</p>
+</li>
+<li><p>head</p>
+<p>用法：<code>head [-n lines | -c bytes] [file ...]</code></p>
+<p>例子：<br>显示文件的前n行  <code>head -n 10 file.txt</code></p>
+</li>
+<li><p>wc</p>
+<p>用途：可以计算文件的Byte数、行数、或是列数(单词数)</p>
+<p>用法：<code>wc [-clw][文件...]</code></p>
+</li>
+<li><p>tr</p>
+<p>用途：用于转换或删除文件中的字符。</p>
+<p>用法：<code>tr [-cdst][第一字符集][第二字符集]</code></p>
+<p>例子：输入字符小写转大写 <code>echo HELLO WORLD | tr &#39;A-Z&#39; &#39;a-z&#39;</code></p>
+</li>
+<li><p>sort</p>
+<p>用途：将文本文件内容加以排序。</p>
+</li>
+<li><p>uniq</p>
+<p>用途：用于检查及删除文本文件中重复出现的行列</p>
+</li>
+<li><p>top</p>
+<p>实时显示系统中各个进程的资源占用状况</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/top.png" alt="image"></p>
+</li>
+<li><p>lsof</p>
+<p>(list open file)</p>
+<p><code>lsof -i:端口号</code> 用于查看当前端口号被占用情况</p>
+</li>
+<li><p>tail</p>
+<p><code>tail -f 文件名</code> 用于实时显示xxx文件更新的内容</p>
+</li>
+</ul>
+<h3 id="开发工具gdb"><a href="#开发工具gdb" class="headerlink" title="开发工具gdb"></a>开发工具gdb</h3><ul>
+<li><p>准备</p>
+<p>gdb调试时，首先要在编译时将调试信息加到可执行文件中。</p>
+<p>使用编译器（cc&#x2F;gcc&#x2F;g++）的 -g 参数可以做到这一点。如：<code>gcc -g hello.c -o hello</code></p>
+</li>
+<li><p>启动</p>
+<ul>
+<li>gdb program<br>直接加可执行程序即可</li>
+<li>gdb program core</li>
+<li>gdb program pid_num<br>如果你的程序是一个服务程序，那么你可以指定这个服务程序运行时的进程ID。gdb会自动attach上去，并调试他</li>
+</ul>
+</li>
+<li><p>运行</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_run.png" alt="image"></p>
+</li>
+<li><p>断点</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_bp.png" alt="image"></p>
+</li>
+<li><p>查看源代码</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_list.png" alt="image"></p>
+</li>
+<li><p>打印表达式</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_print.png" alt="image"></p>
+</li>
+<li><p>查询运行信息</p>
+<p><img src="/2022/03/18/interview-OperatorSystem/gdb_runing.png" alt="image"></p>
+</li>
+</ul>
+<h3 id="开发工具makefile"><a href="#开发工具makefile" class="headerlink" title="开发工具makefile"></a>开发工具makefile</h3><p>  待补充</p>
+<h3 id="开发工具cmake"><a href="#开发工具cmake" class="headerlink" title="开发工具cmake"></a>开发工具cmake</h3><p>  待补充</p>
+<h3 id="开发工具gcc"><a href="#开发工具gcc" class="headerlink" title="开发工具gcc"></a>开发工具gcc</h3><p>  待补充</p>
+<h3 id="简述-Linux-零拷贝的原理"><a href="#简述-Linux-零拷贝的原理" class="headerlink" title="简述 Linux 零拷贝的原理"></a>简述 Linux 零拷贝的原理</h3><p>  所谓的零拷贝（Zero-Copy）是指将数据直接从磁盘文件复制到网卡设备中，而不需要经由应用程序之手 。零拷贝大大提高了应用程序的性能，减少了内核和用户模式之间的上下文切换。</p>
+<p>  考虑这样一种常用的情形：你需要将静态内容(类似图片、文件)展示给用户。这个情形就意味着需要先将静态内容从磁盘中复制出来放到一个内存 buf 中，然后将这个 buf 通过套接字（Socket）传输给用户，进而用户获得静态内容。流程图如下：</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy1.png" alt="image"></p>
+<p>  如果采用了零拷贝技术，那么应用程序可以直接请求内核把磁盘中的数据传输给 Socket, 如下图所示。</p>
+<p>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy2.png" alt="image"></p>
+<p>  改进的地方：我们将上下文切换的次数从四次减少到了两次，将数据复制的次数从四次减少到了三次。但是这种方案尚未达到我们的零拷贝要求。真正的零拷贝如下：</p>
+<ul>
+<li><code>transferTo()</code> 方法引发 DMA 引擎将文件内容拷贝到内核缓冲区。</li>
+<li>数据未被拷贝到套接字缓冲区。取而代之的是，只有包含关于数据的位置和长度的信息的描述符被追加到了套接字缓冲区。DMA 引擎直接把数据从内核缓冲区传输到协议引擎，从而消除了剩下的最后一次 CPU 拷贝。<br><img src="/2022/03/18/interview-OperatorSystem/zero_copy3.png" alt="image"></li>
+</ul>
+<h2 id="Shell"><a href="#Shell" class="headerlink" title="Shell"></a><a href="https://leetcode-cn.com/problemset/shell/">Shell</a></h2>]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Operator System</tag>
       </tags>
   </entry>
   <entry>
@@ -2052,307 +2356,321 @@
       </tags>
   </entry>
   <entry>
-    <title>interview-OperatorSystem</title>
-    <url>/2022/03/18/interview-OperatorSystem/</url>
-    <content><![CDATA[<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="线程间同步方式"><a href="#线程间同步方式" class="headerlink" title="线程间同步方式"></a>线程间同步方式</h3><p>  互斥量、信号量、条件变量</p>
-<h3 id="进程与线程的本质区别、以及各自的使用场景"><a href="#进程与线程的本质区别、以及各自的使用场景" class="headerlink" title="进程与线程的本质区别、以及各自的使用场景"></a>进程与线程的本质区别、以及各自的使用场景</h3><ul>
-<li>需要频繁创建销毁的优先用线程（进程的创建和销毁开销过大） 这种原则最常见的应用就是Web服务器了，来一个连接建立一个线程，断了就销毁线程，要是用进程，创建和销毁的代价是很难承受的。</li>
-<li>需要稳定性，则考虑进程。比如可能存在一些网页不符合编程规范，容易崩溃，采用多进程一个网页崩溃不会影响其他网页；而采用多线程会。</li>
-</ul>
-<h3 id="进程调度算法的特点以及使用场景"><a href="#进程调度算法的特点以及使用场景" class="headerlink" title="进程调度算法的特点以及使用场景"></a>进程调度算法的特点以及使用场景</h3><ul>
-<li><p>批处理系统</p>
-<p>  先来先服务：利于长作业</p>
-<p>  短作业优先：长作业可能饿死</p>
-<p>  最短剩余时间优先：可抢占、每个进程包含优先级和要求运行时间。</p>
-<p>  高响应比优先调度算法：R&#x3D;（等待时间+需要时间）&#x2F;需要时间</p>
+    <title>interview_algorithm</title>
+    <url>/2022/03/18/interview-algorithm/</url>
+    <content><![CDATA[<h3 id="C-优先队列写法"><a href="#C-优先队列写法" class="headerlink" title="C++优先队列写法"></a>C++优先队列写法</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//升序队列 小根堆</span></span><br><span class="line">priority_queue &lt;<span class="type">int</span>,vector&lt;<span class="type">int</span>&gt;,greater&lt;<span class="type">int</span>&gt; &gt; q;</span><br><span class="line"><span class="comment">//降序队列 大跟堆</span></span><br><span class="line">priority_queue &lt;<span class="type">int</span>,vector&lt;<span class="type">int</span>&gt;,less&lt;<span class="type">int</span>&gt; &gt;q;</span><br></pre></td></tr></table></figure>
+
+<p>对于基础类型，默认是<code>大顶堆</code>。</p>
+<p>对于自定义类型，需要如下的写法：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">cmp</span> <span class="comment">//重写仿函数</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">operator</span><span class="params">()</span> <span class="params">(tmp a, tmp b)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> a.x &lt; b.x; <span class="comment">//大顶堆</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">priority_queue&lt;tmp, vector&lt;tmp&gt;, cmp&gt; f;</span><br><span class="line"></span><br><span class="line">例如TopK频率问题中，pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;类型根据频率进行排序，构造小根堆。</span><br></pre></td></tr></table></figure>
+
+<h3 id="随机快速排序"><a href="#随机快速排序" class="headerlink" title="随机快速排序"></a>随机快速排序</h3><p>注意，获取阀分元素的索引时，使用下面的方式可能会遇到阀分元素和其它元素一样的情况，导致错误。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">quickSortCore</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> value, <span class="type">int</span> left, <span class="type">int</span> right)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(left&lt;right)&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums[left]&lt;value)&#123;</span><br><span class="line">            left++;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(nums[right]&gt;value)&#123;</span><br><span class="line">            right--;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(nums[left] == nums[right])&#123;</span><br><span class="line">            <span class="keyword">return</span> left</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">swap</span>(nums[left],nums[right]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正确的写法</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//快速排序</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="type">static</span> <span class="type">void</span> <span class="title">QuickSort</span><span class="params">(<span class="type">int</span>[] a, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="type">int</span> p = <span class="built_in">partition</span>(a, left, right);</span><br><span class="line">        <span class="built_in">QuickSort</span>(a, left, p - <span class="number">1</span>);</span><br><span class="line">        <span class="built_in">QuickSort</span>(a, p + <span class="number">1</span>, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//快速排序数组划分</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="type">static</span> <span class="type">int</span> <span class="title">partition</span><span class="params">(<span class="type">int</span>[] a, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> x = a[right];</span><br><span class="line">    <span class="type">int</span> p = left - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = left; i &lt; right; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (a[i] &lt;= x) &#123;</span><br><span class="line">            p++;</span><br><span class="line">            <span class="built_in">swap</span>(a, p, i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">swap</span>(a, p+<span class="number">1</span>, right);</span><br><span class="line">    <span class="keyword">return</span> p+<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="俄罗斯套娃信封问题"><a href="#俄罗斯套娃信封问题" class="headerlink" title="俄罗斯套娃信封问题"></a><a href="https://leetcode-cn.com/problems/russian-doll-envelopes/">俄罗斯套娃信封问题</a></h3><p>思路：第一维升序排序，第二维求最长严格递增子序列</p>
+<h3 id="单调栈和单调队列的应用"><a href="#单调栈和单调队列的应用" class="headerlink" title="单调栈和单调队列的应用"></a>单调栈和单调队列的应用</h3><ul>
+<li><p>单调栈</p>
+<p>  以O(n)时间复杂度求出某个数的左边或右边第一个比它大或小的元素。</p>
 </li>
-<li><p>交互式系统</p>
-<p>  时间片轮转：时间片小，进程切换消耗大；时间片大，实时性无法保证。</p>
-<p>  优先级调度：防止低优先级饿死，随时间增加等待进程的优先级。</p>
-<p>  多级反馈队列：不同队列优先级不同、时间片大小不同。</p>
-</li>
-<li><p>实时系统</p>
-<p>  软实时：请求允许一定超时</p>
-<p>  硬实时：请求必须满足绝对的截止时间</p>
-</li>
-</ul>
-<h3 id="操作系统页面置换算法"><a href="#操作系统页面置换算法" class="headerlink" title="操作系统页面置换算法"></a>操作系统页面置换算法</h3><ul>
-<li><p>最佳置换算法</p>
-<p>  要换出的页面为最长时间不再被访问的页面，可保证最低缺页率。</p>
-</li>
-<li><p>最近最久未使用（LRU）</p>
-<p>  要在内存中维护一个所有页面的链表。当一个页面被访问时，将这个页面移到链表表头。这样就能保证链表表尾的页面是最近最久未访问的。</p>
-</li>
-<li><p>最近未使用（NRU）或时钟算法</p>
-<p>  每个页面都有两个状态位：R与M，当页面被访问时设置页面的R＝1，当页面被修改时设置M＝1。其中R位会定时被清零。可以将页面分成以下四类：</p>
-<p>  R&#x3D;0,M&#x3D;0</p>
-<p>  R&#x3D;0,M&#x3D;1</p>
-<p>  R&#x3D;1,M&#x3D;0</p>
-<p>  R&#x3D;1,M&#x3D;1</p>
-<p>  当发生缺页中断时，NRU算法随机地从类编号最小的非空类中挑选一个页面将它换出。</p>
-<p>  NRU优先换出已经被修改的脏页面（R＝0，M＝1），而不是被频繁使用的干净页面（R＝1，M＝0）。</p>
-</li>
-<li><p>先进先出FIFO</p>
+<li><p>单调队列</p>
+<p>  区间最小（最大）值问题</p>
 </li>
 </ul>
-<h3 id="进程间有哪些通信方式？"><a href="#进程间有哪些通信方式？" class="headerlink" title="进程间有哪些通信方式？"></a>进程间有哪些通信方式？</h3><ul>
-<li><p>管道</p>
-<p>  管道的实质是一个内核缓冲区，进程以先进先出的方式从缓冲区存取数据，管道一端的进程顺序地将数据写入缓冲区，另一端的进程则顺序地读出数据。</p>
-<p>  管道的用法：</p>
-<ol>
-<li><p>父进程创建管道，得到两个文件描述符指向管道的两端。使用函数 <code>int pipe(int fd[2])</code></p>
-</li>
-<li><p>利用fork函数创建出子进程，则子进程也得到两个文件描述符指向同一管道</p>
-</li>
-<li><p>父进程关闭读端<code>pipe[0]</code>,子进程关闭写端<code>pipe[1]</code>，则此时父进程可以往管道中进行写操作，子进程可以从管道中读，从而实现了通过管道的进程间通信。</p>
-</li>
-</ol>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/pipe.png" alt="image"></p>
-</li>
-<li><p>FIFO命名管道</p>
-<p>  命名管道以文件的形式存在，由于有一个路径名，使用没有亲缘关系的进程间也可以使用命名管道。去除了只能在父子进程中使用的限制</p>
-</li>
-<li><p>消息队列</p>
-<p>  消息队列可以独立于读写进程存在，从而避免了FIFO 中同步管道的打开和关闭时可能产生的困难；避免了FIFO 的同步阻塞问题，不需要进程自己提供同步方法；读进程可以根据消息类型有选择地接收消息，而不像 FIFO 那样只能默认地接收。</p>
-</li>
-<li><p>信号量</p>
-</li>
-<li><p>共享内存</p>
-<p>  允许多个进程共享一个给定的存储区。因为数据不需要在进程之间复制，所以这是最快的一种 IPC。需要使用信号量用来同步对共享存储的访问。</p>
-</li>
-<li><p>套接字</p>
-<p>  它可用于不同机器间的进程通信</p>
-</li>
-</ul>
-<h3 id="死锁必要条件、解决死锁策略"><a href="#死锁必要条件、解决死锁策略" class="headerlink" title="死锁必要条件、解决死锁策略"></a>死锁必要条件、解决死锁策略</h3><p>  死锁必要条件：互斥、占用并保持、不可剥夺、环路等待。</p>
-<p>  处理方法：</p>
+<h3 id="求滑动窗口的最大值"><a href="#求滑动窗口的最大值" class="headerlink" title="求滑动窗口的最大值"></a><a href="https://leetcode-cn.com/problems/sliding-window-maximum/">求滑动窗口的最大值</a></h3><h3 id="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"><a href="#10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？" class="headerlink" title="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"></a>10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？</h3><p>高效指的是：最小的时间复杂度和最小的空间复杂度</p>
+<p>首先10亿个数如果全部保存在内存中，需要的空间大小为10^9*4B ≈ 4GB，内存中是无法完全存放的，所以这些数据首先应该都在外存上，我们分批次读进内存，得到每个批次的最大值，之后再比较所有批次的最大值即可。可以将1000份，每份的大小约为4MB。</p>
+<p>如果是TopK，则在内存中维护一个小根堆，分批次读进内存之后，依次遍历与小根堆的顶元素进行比较即可。<br>如果是TopK词频问题，有如下的思路：</p>
 <ul>
-<li><p>鸵鸟策略</p>
-<p>  Linux、Windows都是选择忽略死锁。</p>
-</li>
-<li><p>死锁检测和死锁恢复</p>
-<p>  每种类型一个资源的死锁检测：在资源分配图中检测有向图是否存在环。</p>
-<p>  每种类型多个资源的死锁检测：类似死锁避免。</p>
-</li>
-<li><p>死锁预防——破坏死锁的必要条件</p>
-<p>  破坏互斥条件：例如SPOOLing技术将独占设备改为共享设备</p>
-<p>  破坏占用并保持：规定所有进程在开始执行前请求所需要的全部资源</p>
-<p>  破坏不可抢占</p>
-<p>  破坏环路等待：给资源统一编号，进程只能按编号顺序来请求资源</p>
-</li>
-<li><p>死锁避免</p>
-<p>  银行家算法</p>
-</li>
+<li>先将数据集按照Hash方法分解成多个小数据集（保证两个数据集不会出现相同的单词）</li>
+<li>然后使用Trie树或者Hash统计每个小数据集中的query词频</li>
+<li>之后用小顶堆求出每个数据集中出频率最高的前K个数</li>
+<li>最后在所有top K中求出最终的top K。</li>
 </ul>
-<h3 id="简述操作系统中-malloc-的实现原理"><a href="#简述操作系统中-malloc-的实现原理" class="headerlink" title="简述操作系统中 malloc 的实现原理"></a>简述操作系统中 malloc 的实现原理</h3><ul>
-<li><p>当开辟的空间小于 128K 时，调用 <code>brk()</code>函数，malloc 的底层实现是系统调用函数<code>brk()</code>，其主要移动指针 <code>_enddata</code>(此时的 <code>_enddata</code> 指的是 Linux 地址空间中堆段的末尾地址，不是数据段的末尾地址)</p>
-</li>
-<li><p>当开辟的空间大于 128K 时，<code>mmap()</code>系统调用函数来在虚拟地址空间中（堆和栈中间，称为“文件映射区域”的地方）找一块空间来开辟。</p>
-<p>  这两种方式分配的都是虚拟内存，没有分配物理内存。在第一次访问已分配的虚拟地址空间的时候，发生缺页中断，操作系统负责分配物理内存，然后建立虚拟内存和物理内存之间的映射关系，之后再重新执行发生中断时的指令。</p>
-</li>
-<li><p>具体分配过程：</p>
-<ul>
-<li><p>情况一：malloc 小于 128K 的内存，使用 brk 分配</p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/brk.png" alt="image"></p>
-<p>  malloc函数会调用brk系统调用，将_edata指针往高地址推30K，就完成虚拟内存分配。事实是：_edata+30K只是完成虚拟地址的分配，A这块内存现在还是没有物理页与之对应的，等到进程第一次读写A这块内存的时候，发生缺页中断，这个时候，内核才分配A这块内存对应的物理页。也就是说，如果用malloc分配了A这块内容，然后从来不访问它，那么，A对应的物理页是不会被分配的。</p>
-<p>  由于<code>brk/sbrk/mmap</code>属于系统调用，如果每次申请内存，都调用这三个函数中的一个，那么每次都要产生系统调用开销（即cpu从用户态切换到内核态的上下文切换，这里要保存用户态数据，等会还要切换回用户态），这是非常影响性能的；其次，这样申请的内存容易产生碎片，因为堆是从低地址到高地址，如果低地址的内存没有被释放，高地址的内存就不能被回收。</p>
-<p>  鉴于此，malloc采用的是内存池的实现方式，malloc内存池实现方式更类似于STL分配器和memcached的内存池，先申请一大块内存，然后将内存分成不同大小的内存块，然后用户申请内存时，直接从内存池中选择一块相近的内存块即可。</p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/malloc.png" alt="image"></p>
-</li>
-<li><p>情况二：malloc 大于 128K 的内存，使用 mmap 分配</p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/mmap.png" alt="image"></p>
-<p>  brk分配的内存需要等到高地址内存释放以后才能释放，而mmap分配的内存可以单独释放。</p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="线程有多少种状态，状态之间如何转换"><a href="#线程有多少种状态，状态之间如何转换" class="headerlink" title="线程有多少种状态，状态之间如何转换"></a>线程有多少种状态，状态之间如何转换</h3><p>Java中线程的状态分为6种。</p>
-<ol>
-<li><p>初始(NEW)：新创建了一个线程对象，但还没有调用start()方法</p>
-</li>
-<li><p>运行(RUNNABLE)：Java线程中将就绪（ready）和运行中（running）两种状态笼统的称为“运行”。线程对象创建后，其他线程(比如main线程）调用了该对象的start()方法。该状态的线程位于可运行线程池中，等待被线程调度选中，获取CPU的使用权，此时处于就绪状态（ready）。就绪状态的线程在获得CPU时间片后变为运行中状态（running）。</p>
-</li>
-<li><p>阻塞(BLOCKED)：表示线程阻塞于锁。</p>
-</li>
-<li><p>等待(WAITING)：进入该状态的线程需要等待其他线程做出一些特定动作（通知或中断）。</p>
-</li>
-<li><p>超时等待(TIMED_WAITING)：该状态不同于WAITING，它可以在指定的时间后自行返回。</p>
-</li>
-<li><p>终止(TERMINATED)：表示该线程已经执行完毕。</p>
-</li>
-</ol>
-<p>状态详细说明：</p>
-<ol>
-<li><p>初始状态(NEW)</p>
-<p> 实现Runnable接口和继承Thread可以得到一个线程类，new一个实例出来，线程就进入了初始状态。</p>
-</li>
-<li><p>就绪状态(RUNNABLE之READY)</p>
-<ul>
-<li><p>就绪状态只是说你资格运行，调度程序(Cpu)没有挑选到你，你就永远是就绪状态。</p>
-</li>
-<li><p>调用线程的start()方法，此线程进入就绪状态。</p>
-</li>
-<li><p>当前线程sleep()方法结束、其他线程join()结束、等待用户输入完毕、某个线程拿到对象锁时，将进入就绪状态。</p>
-</li>
-<li><p>当前线程时间片用完了、调用当前线程的yield()方法，当前线程进入就绪状态。</p>
-</li>
-<li><p>锁池里的线程拿到对象锁后，进入就绪状态。</p>
-</li>
-</ul>
-</li>
-<li><p>运行中状态(RUNNABLE之RUNNING)</p>
-<p> 线程调度程序从可运行池中选择一个线程作为当前线程时线程所处的状态。这也是线程进入运行状态的唯一的一种方式。</p>
-</li>
-<li><p>阻塞状态(BLOCKED)</p>
-<p> 阻塞状态是线程阻塞在进入synchronized关键字修饰的方法或代码块(获取锁)时的状态。</p>
-</li>
-<li><p>等待(WAITING)</p>
-<p> 处于这种状态的线程不会被分配CPU执行时间，它们要等待被显式地唤醒，否则会处于无限期等待的状态。</p>
-</li>
-<li><p>终止状态(TERMINATED)</p>
-<p> 当线程的run()方法完成时，或者主线程的main()方法完成时，我们就认为它终止了。这个线程对象也许是活的，但是它已经不是一个单独执行的线程。线程一旦终止了，就不能复生。</p>
-<p> 在一个终止的线程上调用start()方法，会抛出java.lang.IllegalThreadStateException异常。</p>
-</li>
-</ol>
-<h3 id="简述创建进程的流程"><a href="#简述创建进程的流程" class="headerlink" title="简述创建进程的流程"></a>简述创建进程的流程</h3><ul>
-<li><p>fork()</p>
-<p>  在系统中表示一个进程的实体是进程控制块，创建新进程的主要工作就是要创建一个新控制块，而创建一个新控制块最简单的方法就是复制。</p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/fork.png" alt="image"></p>
-<p>  父进程和子进程运行的是同一个程序，也正是这个理由，系统并未在内存中给子进程配置独立的程序运行空间，而只是简单地将程序指针指向父进程的代码；</p>
-<p>  两个进程具有各自的数据区和用户堆栈，在函数fork()生成子进程时，将父进程数据区和用户堆栈的内容分别复制给了子进程。</p>
-</li>
-<li><p>exec()</p>
-<p>  如果一个进程调用了execv()，那么该函数便会把函数参数path所指定的可执行文件加载到进程的用户内存空间，并覆盖掉原文件，然后便运行这个新加载的可执行文件。通常调用execv()的都是子进程。调用execv()后，父进程与子进程存储结构的示意图如下：</p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/exec.png" alt="image"></p>
-</li>
-<li><p>wait()</p>
-<p>  由于子进程毕竟由父进程所创建，父进程需要在子进程结束之后释放子进程所占用的系统资源。那么为了保证完成为子进程释放资源的任务，父进程应该调用系统调用wait()。</p>
-<p>  如果父进程先于子进程结束进程，则子进程会因为失去父进程而成为“孤儿进程”。如果子进程退出，而父进程并没有调用wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。这种进程称之为僵尸进程</p>
-</li>
-</ul>
-<h3 id="如何设计一个线程池？"><a href="#如何设计一个线程池？" class="headerlink" title="如何设计一个线程池？"></a>如何设计一个线程池？</h3><ul>
-<li><p>是什么</p>
-<p>  线程池使用了池化技术，将线程存储起来放在一个 池子 （容器）里面，来了任务可以用已有的空闲的线程进行处理， 处理完成之后，归还到容器，可以复用。如果线程不够，还可以根据规则动态增加，线程多余的时候，亦可以让多余的线程死亡。</p>
-</li>
-<li><p>为什么</p>
-<ul>
-<li>降低资源消耗：池化技术可以重复利用已经创建的线程，降低线程创建和销毁的损耗。</li>
-<li>提高响应速度：利用已经存在的线程进行处理，少去了创建线程的时间</li>
-<li>管理线程可控：线程是稀缺资源，不能无限创建，线程池可以做到统一分配和监控</li>
-<li>拓展其他功能：比如定时线程池，可以定时执行任务</li>
-</ul>
-</li>
-<li><p>设计以及需要考虑的点</p>
-<ul>
-<li>线程池状态：<ul>
-<li>有哪些状态？如何维护状态？</li>
-</ul>
-</li>
-<li>线程<ul>
-<li>线程怎么封装？线程放在哪个池子里？</li>
-<li>线程怎么取得任务？</li>
-<li>线程有哪些状态？</li>
-<li>线程的数量怎么限制？动态变化？自动伸缩？</li>
-<li>线程怎么消亡？如何重复利用？</li>
-</ul>
-</li>
-<li>任务<ul>
-<li>任务少可以直接处理，多的时候，放在哪里？</li>
-<li>任务队列满了，怎么办？</li>
-<li>用什么队列？</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>如何做</p>
-</li>
-</ul>
-<h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><ul>
-<li><p>awk</p>
-</li>
-<li><p>sed</p>
-</li>
-<li><p>grep</p>
-</li>
-<li><p>head</p>
-<p>用法：<code>head [-n lines | -c bytes] [file ...]</code></p>
-<p>例子：<br>显示文件的前n行  <code>head -n 10 file.txt</code></p>
-</li>
-<li><p>wc</p>
-<p>用途：可以计算文件的Byte数、行数、或是列数(单词数)</p>
-<p>用法：<code>wc [-clw][文件...]</code></p>
-</li>
-<li><p>tr</p>
-<p>用途：用于转换或删除文件中的字符。</p>
-<p>用法：<code>tr [-cdst][第一字符集][第二字符集]</code></p>
-<p>例子：输入字符小写转大写 <code>echo HELLO WORLD | tr &#39;A-Z&#39; &#39;a-z&#39;</code></p>
-</li>
-<li><p>sort</p>
-<p>用途：将文本文件内容加以排序。</p>
-</li>
-<li><p>uniq</p>
-<p>用途：用于检查及删除文本文件中重复出现的行列</p>
-</li>
-<li><p>top</p>
-<p>实时显示系统中各个进程的资源占用状况</p>
-<p><img src="/2022/03/18/interview-OperatorSystem/top.png" alt="image"></p>
-</li>
-<li><p>lsof</p>
-<p>(list open file)</p>
-<p><code>lsof -i:端口号</code> 用于查看当前端口号被占用情况</p>
-</li>
-<li><p>tail</p>
-<p><code>tail -f 文件名</code> 用于实时显示xxx文件更新的内容</p>
-</li>
-</ul>
-<h3 id="开发工具gdb"><a href="#开发工具gdb" class="headerlink" title="开发工具gdb"></a>开发工具gdb</h3><ul>
-<li><p>准备</p>
-<p>gdb调试时，首先要在编译时将调试信息加到可执行文件中。</p>
-<p>使用编译器（cc&#x2F;gcc&#x2F;g++）的 -g 参数可以做到这一点。如：<code>gcc -g hello.c -o hello</code></p>
-</li>
-<li><p>启动</p>
-<ul>
-<li>gdb program<br>直接加可执行程序即可</li>
-<li>gdb program core</li>
-<li>gdb program pid_num<br>如果你的程序是一个服务程序，那么你可以指定这个服务程序运行时的进程ID。gdb会自动attach上去，并调试他</li>
-</ul>
-</li>
-<li><p>运行</p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_run.png" alt="image"></p>
-</li>
-<li><p>断点</p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_bp.png" alt="image"></p>
-</li>
-<li><p>查看源代码</p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_list.png" alt="image"></p>
-</li>
-<li><p>打印表达式</p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_print.png" alt="image"></p>
-</li>
-<li><p>查询运行信息</p>
-<p><img src="/2022/03/18/interview-OperatorSystem/gdb_runing.png" alt="image"></p>
-</li>
-</ul>
-<h3 id="开发工具makefile"><a href="#开发工具makefile" class="headerlink" title="开发工具makefile"></a>开发工具makefile</h3><p>  待补充</p>
-<h3 id="开发工具cmake"><a href="#开发工具cmake" class="headerlink" title="开发工具cmake"></a>开发工具cmake</h3><p>  待补充</p>
-<h3 id="开发工具gcc"><a href="#开发工具gcc" class="headerlink" title="开发工具gcc"></a>开发工具gcc</h3><p>  待补充</p>
-<h3 id="简述-Linux-零拷贝的原理"><a href="#简述-Linux-零拷贝的原理" class="headerlink" title="简述 Linux 零拷贝的原理"></a>简述 Linux 零拷贝的原理</h3><p>  所谓的零拷贝（Zero-Copy）是指将数据直接从磁盘文件复制到网卡设备中，而不需要经由应用程序之手 。零拷贝大大提高了应用程序的性能，减少了内核和用户模式之间的上下文切换。</p>
-<p>  考虑这样一种常用的情形：你需要将静态内容(类似图片、文件)展示给用户。这个情形就意味着需要先将静态内容从磁盘中复制出来放到一个内存 buf 中，然后将这个 buf 通过套接字（Socket）传输给用户，进而用户获得静态内容。流程图如下：</p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy1.png" alt="image"></p>
-<p>  如果采用了零拷贝技术，那么应用程序可以直接请求内核把磁盘中的数据传输给 Socket, 如下图所示。</p>
-<p>  <img src="/2022/03/18/interview-OperatorSystem/zero_copy2.png" alt="image"></p>
-<p>  改进的地方：我们将上下文切换的次数从四次减少到了两次，将数据复制的次数从四次减少到了三次。但是这种方案尚未达到我们的零拷贝要求。真正的零拷贝如下：</p>
-<ul>
-<li><code>transferTo()</code> 方法引发 DMA 引擎将文件内容拷贝到内核缓冲区。</li>
-<li>数据未被拷贝到套接字缓冲区。取而代之的是，只有包含关于数据的位置和长度的信息的描述符被追加到了套接字缓冲区。DMA 引擎直接把数据从内核缓冲区传输到协议引擎，从而消除了剩下的最后一次 CPU 拷贝。<br><img src="/2022/03/18/interview-OperatorSystem/zero_copy3.png" alt="image"></li>
-</ul>
-<h2 id="Shell"><a href="#Shell" class="headerlink" title="Shell"></a><a href="https://leetcode-cn.com/problemset/shell/">Shell</a></h2>]]></content>
+<h3 id="rand7-实现rand10"><a href="#rand7-实现rand10" class="headerlink" title="rand7()实现rand10()"></a>rand7()实现rand10()</h3><p>  使用拒绝采样。</p>
+<p>  我们可以调用两次 Rand7()，那么可以生成 [1,49] 之间的随机整数，我们只用到其中的前 40 个用来实现 Rand10()，而拒绝剩下的 9 个数</p>
+<h3 id="rand65535-实现30万人中抽奖1万人"><a href="#rand65535-实现30万人中抽奖1万人" class="headerlink" title="rand65535()实现30万人中抽奖1万人"></a>rand65535()实现30万人中抽奖1万人</h3><p>同上</p>
+<h3 id="10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"><a href="#10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图" class="headerlink" title="10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"></a>10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图</h3><p>  定义一个24<em>60</em>60的数组，来存放每一秒的上线人数 遍历数据，根据上线时间和下线时间，获取数组范围，并将数组中间所有元素+1 时间复杂度：O(MN)</p>
+<h3 id="给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序"><a href="#给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序" class="headerlink" title="给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序"></a>给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序</h3><p>  40亿 * 4B ≈ 16G，利用位图法。</p>
+<h3 id="海量数据面试题"><a href="#海量数据面试题" class="headerlink" title="海量数据面试题"></a>海量数据面试题</h3><p>  <a href="https://blog.csdn.net/v_JULY_v/article/details/6279498">https://blog.csdn.net/v_JULY_v/article/details/6279498</a></p>
+<h3 id="100亿个-URL-中，统计出访问频率最高的前100个，如何做"><a href="#100亿个-URL-中，统计出访问频率最高的前100个，如何做" class="headerlink" title="100亿个 URL 中，统计出访问频率最高的前100个，如何做"></a>100亿个 URL 中，统计出访问频率最高的前100个，如何做</h3><p>淘宝 web 服务器上有 1 个 access 日志文件，记录着用户访问的 url，url 总数 100 亿以上，每个 url 约占 64 字节，</p>
+<p>这些 url 可能存在重复，在一个内存只有 2G 的机器上，统计出访问频率最高的前 100 个 URL。</p>
+<p>100 亿 *64&#x2F;1024&#x2F;1024&#x2F;1024&#x3D;596G，可考虑分成 1000 个文件处理，每 个文件大约 600M。</p>
+<p>顺序读取文件，每行按照 hash(url)%1000 的结果将 url 写入到 1000 个文件中，这 个过程是 mapreduce 中的 map。</p>
+<p>针对每个小文件，使用 hashmap 统计每个 url 出现的次数，并使用堆排序得到访问 次数最高的前 100 个 url。</p>
+<p>将每个文件排序好的 100 个 url 及对应的 count 输出到 1000 个文件，最后将这个 1000 个文件（此时每个文件只有 100 行 ) 进行合并排序。</p>
+<h3 id="最长递增子序列（要求时间复杂度为O-nlgn"><a href="#最长递增子序列（要求时间复杂度为O-nlgn" class="headerlink" title="最长递增子序列（要求时间复杂度为O(nlgn)"></a>最长递增子序列（要求时间复杂度为O(nlgn)</h3><p>一个简单的贪心，如果我们要使上升子序列尽可能的长，则我们需要让序列上升得尽可能慢，因此我们希望每次在上升子序列最后加上的那个数尽可能的小。</p>
+<p>基于上面的贪心思路，我们维护一个数组 d[i] ，表示长度为 i 的最长上升子序列的末尾元素的最小值。我们依次遍历数组 nums 中的每个元素，并更新数组 d 和 len 的值。如果 nums[i] &gt; d[len] 则更新 len&#x3D;len+1，否则在 d[1…len]中找满足 d[i - 1] &lt; nums[j] &lt; d[i] 的下标 i，并更新d[i]&#x3D;nums[j]。<br>举例说明：</p>
+<p><img src="/2022/03/18/interview-algorithm/LIS-example.png" alt="image"></p>
+]]></content>
       <categories>
         <category>Interview Knowledge</category>
       </categories>
       <tags>
         <tag>Interview</tag>
-        <tag>Operator System</tag>
+        <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview-network</title>
+    <url>/2022/03/19/interview-network/</url>
+    <content><![CDATA[<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"><a href="#简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？" class="headerlink" title="简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"></a>简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？</h3><ul>
+<li><p>为什么需要三次握手：</p>
+<p>  <img src="/2022/03/19/interview-network/tcp3.png" alt="image"></p>
+<p>  客户端和服务端通信前要进行连接，“3次握手”的作用就是双方都能明确自己和对方的收、发能力是正常的。</p>
+</li>
+<li><p>四次挥手的原因</p>
+<p>  <img src="/2022/03/19/interview-network/tcp4.png" alt="image"></p>
+<p>  客户端发送了FIN 连接释放报文之后，服务器收到了这个报文，就进入了CLOSE—WAIT状态。这个状态是为了让服务器端发送还未传送完毕的数据，传送完毕之后，服务器会发送FIN连接释放报文。</p>
+</li>
+<li><p>TIME_WAIT的原因</p>
+<p>  客户端接收到服务器端的FIN报文后进入此状态，此时并不是直接进入CLOSED状态，还需要等待一个时间计时器设置的时间2MSL。这么做有两个理由：</p>
+<p>  确保最后一个确认报文能够到达。如果B没收到A发送来的确认报文，那么就会重新发送连接释放请求报文，A等待一段时间就是为了处理这种情况的发生。</p>
+<p>  等待一段时间是为了让本连接持续时间内所产生的所有报文都从网络中消失，使得下一个新的连接不会出现旧的连接请求报文。</p>
+</li>
+</ul>
+<h3 id="TCP-挥手时出现大量-CLOSE-WAIT-或-TIME-WAIT-怎么解决？"><a href="#TCP-挥手时出现大量-CLOSE-WAIT-或-TIME-WAIT-怎么解决？" class="headerlink" title="TCP 挥手时出现大量 CLOSE_WAIT 或 TIME_WAIT 怎么解决？"></a>TCP 挥手时出现大量 CLOSE_WAIT 或 TIME_WAIT 怎么解决？</h3><p>略</p>
+<h3 id="Syn-flood攻击及其防范"><a href="#Syn-flood攻击及其防范" class="headerlink" title="Syn flood攻击及其防范"></a>Syn flood攻击及其防范</h3><p>syn flood属于Dos攻击的一种。如果恶意地向某个服务器端口发送大量的SYN包，则可以使服务器打开大量的半开连接，分配TCB（Transmission Control Block）, 从而消耗大量的服务器资源，同时也使得正常的连接请求无法被响应。当开放了一个TCP端口后，该端口就处于Listening状态，不停地监视发到该端口的Syn报文，一旦接收到Client发来的Syn报文，就需要为该请求分配一个TCB，通常一个TCB至少需要280个字节，在某些操作系统中TCB甚至需要1300个字节，并返回一个SYN ACK命令，立即转为SYN-RECEIVED即半开连接状态。系统会为此耗尽资源。</p>
+<p>常见的防攻击方法有：</p>
+<p>监视系统的半开连接和不活动连接，当达到一定阈值时拆除这些连接，从而释放系统资源。这种方法对于所有的连接一视同仁，而且由于SYN Flood造成的半开连接数量很大，正常连接请求也被淹没在其中被这种方式误释放掉，因此这种方法属于入门级的SYN Flood方法。</p>
+<h3 id="TCP-中常见的拥塞控制算法有哪些？"><a href="#TCP-中常见的拥塞控制算法有哪些？" class="headerlink" title="TCP 中常见的拥塞控制算法有哪些？"></a>TCP 中常见的拥塞控制算法有哪些？</h3><p>TCP主要通过四个算法来进行拥塞控制：慢开始、拥塞避免、快重传、快恢复。</p>
+<p><img src="/2022/03/19/interview-network/congestion_control.png" alt="image"></p>
+<p>快重传算法规定，发送方只要一连收到三个重复确认就应当立即重传对方尚未收到的报文段 ，而不必继续等待设置的重传计时器到期。</p>
+<p>与快重传配合使用的还有快恢复算法，其过程有以下两个要点：</p>
+<ol>
+<li><p>当发送方连续收到三个重复确认时，就执行“乘法减小”算法，把慢开始门限ssthresh减半。这是为了预防网络发生拥塞。请注意，接下去不执行慢开始算法。</p>
+</li>
+<li><p>由于发送方现在认为网络很可能没有发生拥塞（如果网络发生了严重的拥塞，就不会一连有好几个报文段连续到达接收方，也就不会导致接收方连续发送重复确认），因此与慢开始不同之处是现在不执行慢开始算法（即拥塞窗口cwnd现在不设置为1），而是把cwnd值设置为慢开始门限 ssthresh 减半后的数值，然后开始执行拥塞避免算法（“加法增大”），使拥塞窗口缓慢地线性增大。</p>
+</li>
+</ol>
+<h3 id="DNS解析过程，以及DNS劫持"><a href="#DNS解析过程，以及DNS劫持" class="headerlink" title="DNS解析过程，以及DNS劫持"></a>DNS解析过程，以及DNS劫持</h3><p><img src="/2022/03/19/interview-network/DNS.png" alt="image"></p>
+<p>DNS劫持（DNS Hijacking）：又被称为域名劫持，DNS重定向（DNS direaction）,是一种DNS攻击方式。DNS查询没有得到正确的解析，以致引导user访问到恶意的网站，从而窃取用户隐私，或者进行某些恶意的操作。</p>
+<p>DNS劫持现象：你入一个google.com网址，出来的是百度的页面</p>
+<p>HTTP劫持现象：访问着github的页面，右下角出现了一个格格不入的广告弹窗</p>
+<ol>
+<li><p>本机DNS劫持</p>
+<p> 攻击者通过某些手段使用户的计算机感染上木马病毒，或者恶意软件之后，恶意修改本地DNS配置，比如修改本地hosts文件，缓存等</p>
+</li>
+<li><p>路由DNS劫持</p>
+<p> 很多用户默认路由器的默认密码，攻击者可以侵入到路由管理员账号中，修改路由器的默认配置。（路由器通常会提供 DNS 代理服务，接管整个网络的域名查询。）</p>
+</li>
+<li><p>攻击DNS服务器</p>
+<p> 直接攻击DNS服务器，例如对DNS服务器进行DDOS攻击，可以是DNS服务器宕机，出现异常请求，还可以利用某些手段感染dns服务器的缓存，使给用户返回来的是恶意的ip地址</p>
+</li>
+</ol>
+<h3 id="TCP如何保证可靠传输？"><a href="#TCP如何保证可靠传输？" class="headerlink" title="TCP如何保证可靠传输？"></a>TCP如何保证可靠传输？</h3><ul>
+<li><p>确认应答和序列号</p>
+<p>  TCP传输时将每个字节的数据都进行了编号，这就是序列号。tcp按序号发送报文，接收端收到报文后，会给发送端一个ACK确认报文，用来表示已经成功接收到报文，报文中还带有ack，表示下一次发送端应该从哪里开始发送报文。</p>
+</li>
+<li><p>校验和</p>
+<p>  这是一个端到端的检验和，目的是检测数据在传输过程中的任何变化。如果收到段的检验和有差错，TCP 将丢弃这个报文段</p>
+</li>
+<li><p>超时重传</p>
+<p>  如果发送端发送的数据没有收到ACK确认，可能是：（1）发送给接收端的报文丢失了（2）接收端发送的ACK确认报文丢失了。不管是哪种原因，超过一定时间后，没有收到ACK确认，TCP启动超时重传机制，发送端重新发数据，如果接收端已经有了该数据，只是由于ACK确认丢失导致超时重传，会将刚刚发送过来的数据包丢弃。</p>
+</li>
+<li><p>流量控制</p>
+<p>  发送端如果数据发送过快，导致接收端的缓冲区很快就满了，如果持续下去，数据溢出缓冲区，就会出现数据丢失。这时需要在发送端和接收端有一个窗口，窗口的作用为：在发送缓冲区，只有在窗口里面的数据，才能被发送，在接收缓冲区，只有在窗口里的数据才能被接收，接收端收到数据之后，会回复ack，发送端会根据ack的值来判断接收能力，从而动态调整窗口大小，实现流量控制。</p>
+</li>
+<li><p>拥塞控制</p>
+<p>  如果网络出现拥塞，TCP会根据不同情况，采用不同的算法：慢开始，拥塞避免，快重传，快恢复来对窗口大小cwnd和慢开始门限值ssthresh进行调整，从而降低网络拥塞的可能性。</p>
+</li>
+</ul>
+<h3 id="什么是-TCP-粘包和拆包？"><a href="#什么是-TCP-粘包和拆包？" class="headerlink" title="什么是 TCP 粘包和拆包？"></a>什么是 TCP 粘包和拆包？</h3><p>  在socket通讯过程中，如果通讯的一端一次性连续发送多条数据包，tcp协议会将多个数据包打包成一个tcp报文发送出去，这就是所谓的粘包。而如果通讯的一端发送的数据包超过一次tcp报文所能传输的最大值时，就会将一个数据包拆成多个最大tcp长度的tcp报文分开传输，这就叫做拆包。</p>
+<p>  <img src="/2022/03/19/interview-network/TCP_stick.png" alt="image"></p>
+<p>  因为TCP是面向流，没有边界，而操作系统在发送TCP数据时，会通过缓冲区来进行优化，例如缓冲区为1024个字节大小。</p>
+<p>  如果一次请求发送的数据量比较小，没达到缓冲区大小，TCP则会将多个请求合并为同一个请求进行发送，这就形成了粘包问题。</p>
+<p>  如果一次请求发送的数据量比较大，超过了缓冲区大小，TCP就会将其拆分为多次发送，这就是拆包。</p>
+<p>  通常会有以下一些常用的方法：</p>
+<ul>
+<li>发送端给每个数据包添加包首部，首部中应该至少包含数据包的长度，这样接收端在接收到数据后，通过读取包首部的长度字段，便知道每一个数据包的实际长度了。</li>
+<li>发送端将每个数据包封装为固定长度</li>
+<li>可以在数据包之间设置边界，如添加特殊符号</li>
+</ul>
+<h3 id="从系统层面上，UDP如何保证尽量可靠？"><a href="#从系统层面上，UDP如何保证尽量可靠？" class="headerlink" title="从系统层面上，UDP如何保证尽量可靠？"></a>从系统层面上，UDP如何保证尽量可靠？</h3><p>  传输层无法保证数据的可靠传输，只能通过应用层来实现了。实现的方式可以参照tcp可靠性传输的方式，只是实现不在传输层，实现转移到了应用层。</p>
+<ul>
+<li>添加seq&#x2F;ack机制，确保数据发送到对端</li>
+<li>添加发送和接收缓冲区，主要是用户超时重传。</li>
+<li>添加超时重传机制。</li>
+</ul>
+<h3 id="什么是-ARP-协议？简述其使用场景？什么是RARP协议？"><a href="#什么是-ARP-协议？简述其使用场景？什么是RARP协议？" class="headerlink" title="什么是 ARP 协议？简述其使用场景？什么是RARP协议？"></a>什么是 ARP 协议？简述其使用场景？什么是RARP协议？</h3><p>  ARP实现由 IP 地址得到 MAC 地址。如果主机 A 知道主机 B 的 IP 地址，但是ARP 高速缓存中没有该 IP 地址到 MAC 地址的映射，此时主机 A 通过广播的方式发送ARP 请求分组，主机 B 收到该请求后会发送ARP 响应分组给主机 A 告知其 MAC 地址，随后主机 A 向其高速缓存中写入主机B 的IP 地址到MAC 地址的映射。</p>
+<p>  ARP属于网络层协议</p>
+<p>  RARP（Reverse Address Resolution Protocol）是将 ARP 反过来，从 MAC 地址定位 IP 地址的一种协议。对于使用嵌入式设备时，会遇到没有任何输入接口或无法通过 DHCP 动态获取 IP 地址的情况。在类似情况下，就可以使用 RARP。例如，打印机服务器等小型嵌入式设备接入到网络时会用到。</p>
+<p>  为此，需要架设一台 RARP 服务器，从而在这个服务器上注册设备的 MAC 地址及其 IP 地址。</p>
+<h3 id="简述在四层和七层网络协议中负载均衡的原理"><a href="#简述在四层和七层网络协议中负载均衡的原理" class="headerlink" title="简述在四层和七层网络协议中负载均衡的原理"></a>简述在四层和七层网络协议中负载均衡的原理</h3><p>  所谓四层就是基于IP+端口的负载均衡；七层就是基于URL等应用层信息的负载均衡。</p>
+<p>  <img src="/2022/03/19/interview-network/network_protocol.png" alt="image"></p>
+<ul>
+<li><p>四层负载均衡：</p>
+<p>  以常见的TCP为例，负载均衡设备在接收到第一个来自客户端的SYN 请求时，即通过上述方式选择一个最佳的服务器，并对报文中目标IP地址进行修改(改为后端服务器IP），直接转发给该服务器。TCP的连接建立，即三次握手是客户端和服务器直接建立的，负载均衡设备只是起到一个类似路由器的转发动作。</p>
+</li>
+<li><p>七层负载均衡：</p>
+<p>  以常见的TCP为例，负载均衡设备如果要根据真正的应用层内容再选择服务器，只能先代理最终的服务器和客户端建立连接(三次握手)后，才可能接受到客户端发送的真正应用层内容的报文，然后再根据该报文中的特定字段，再加上负载均衡设备设置的服务器选择方式，决定最终选择的内部服务器。负载均衡设备在这种情况下，更类似于一个代理服务器。负载均衡和前端的客户端以及后端的服务器会分别建立TCP连接。</p>
+</li>
+</ul>
+<h2 id="Http"><a href="#Http" class="headerlink" title="Http"></a>Http</h2><h3 id="HTTP-中-GET-和-POST-区别？"><a href="#HTTP-中-GET-和-POST-区别？" class="headerlink" title="HTTP 中 GET 和 POST 区别？"></a>HTTP 中 GET 和 POST 区别？</h3><ul>
+<li>Get 是用来从服务器上获得数据，而 Post 是用来向服务器上传递数据。</li>
+<li>Get 将表单中数据的按照 variable&#x3D;value 的形式，添加到 action 所指向的 URL 后面，并且两者使用“?”连接，而各个变量之间使用“&amp;”连接；Post 是将表单中的数据放在 form 的数据体中，按照变量和值相对应的方式，传递到 action 所指向 URL。</li>
+<li>Get 是不安全的，因为在传输过程，数据被放在请求的 URL 中，而如今现有的很多服务器、代理服务器或者用户代理都会将请求URL记录到日志文件中，然后放在某个地方，这样就可能会有一些隐私的信息被第三方看到。另外，用户也可以在浏览器上直接看到提交的数据，一些系统内部消息将会一同显示在用户面前。Post 的所有操作对用户来说都是不可见的。</li>
+<li>Get 传输的数据量小，这主要是因为受 URL 长度限制；而 Post 可以传输大量的数据，所以在上传文件只能使用 Post。</li>
+</ul>
+<h3 id="Cookie-和-Session-的关系和区别是什么？"><a href="#Cookie-和-Session-的关系和区别是什么？" class="headerlink" title="Cookie 和 Session 的关系和区别是什么？"></a>Cookie 和 Session 的关系和区别是什么？</h3><p>Cookie保存在客户端，Session保存在服务端，二者都是用来保存用户状态的。</p>
+<h3 id="简述-HTTP-1-0，1-1，2-0-的主要区别-？"><a href="#简述-HTTP-1-0，1-1，2-0-的主要区别-？" class="headerlink" title="简述 HTTP 1.0，1.1，2.0 的主要区别 ？"></a>简述 HTTP 1.0，1.1，2.0 的主要区别 ？</h3><ul>
+<li><p>HTTP 1.0，1.1 的主要区别</p>
+<ul>
+<li><p>缓存处理</p>
+<p>  HTTP1.0中主要使用header里的If-Modified-Since,Expires来作为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略如Entity tag，If-Unmodified-Since等。</p>
+</li>
+<li><p>带宽优化及网络连接的使用</p>
+<p>  HTTP1.0中，存在一些浪费带宽的现象，例如客户端只是需要某个对象的一部分，而服务器却将整个对象送过来了，并且不支持断点续传功能。HTTP1.1则在请求头引入了range头域，它允许只请求资源的某个部分，即返回码是206（Partial Content）</p>
+</li>
+<li><p>长连接</p>
+<p>  HTTP 1.1支持长连接（PersistentConnection）和请求流水线（Pipelining）处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。</p>
+<p>  <img src="/2022/03/19/interview-network/PersistentConnection.png" alt="image"></p>
+<p>  <img src="/2022/03/19/interview-network/pipeline.png" alt="image"></p>
+</li>
+</ul>
+</li>
+<li><p>HTTP 1.x，2.0 的主要区别</p>
+<ul>
+<li><p>新的二进制格式</p>
+<p>  HTTP1.x的解析是基于文本。基于文本协议的格式解析存在天然缺陷，文本的表现形式有多样性，要做到健壮性考虑的场景必然很多，二进制则不同，只认0和1的组合。</p>
+</li>
+<li><p>多路复用</p>
+<p>  多路复用代替了 HTTP1.x 的序列和阻塞机制，所有的相同域名请求都通过同一个 TCP 连接并发完成。同一 Tcp 中可以发送多个请求，对端可以通过帧中的标识知道属于哪个请求。通过这个技术，可以避免 HTTP 旧版本中的队头阻塞问题，极大的提高传输性能。</p>
+<p>  <img src="/2022/03/19/interview-network/multx.png" alt="image"></p>
+</li>
+<li><p>header压缩</p>
+<p>  HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。</p>
+</li>
+<li><p>服务端推送（server push）</p>
+<p>  例如我的网页有一个sytle.css的请求，在客户端收到sytle.css数据的同时，服务端会将sytle.js的文件推送给客户端，当客户端再次尝试获取sytle.js时就可以直接从缓存中获取到，不用再发请求了</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="https的过程是什么样？"><a href="#https的过程是什么样？" class="headerlink" title="https的过程是什么样？"></a>https的过程是什么样？</h3><ul>
+<li><p>为什么需要https？</p>
+<p>  传统的http协议可能有以下的问题：</p>
+<ul>
+<li>通信使用明文（不加密），内容可能被窃听</li>
+<li>无法证明报文的完整性，所以可能遭篡改</li>
+<li>不验证通信方的身份，因此有可能遭遇伪装</li>
+</ul>
+<p><img src="/2022/03/19/interview-network/unsafe.png" alt="image"></p>
+</li>
+<li><p>https的工作流程</p>
+<p><img src="/2022/03/19/interview-network/safe.png" alt="image"></p>
+</li>
+<li><p>https的缺点</p>
+<ul>
+<li>需要权威CA颁发的SSL证书。从证书的选择、购买到部署，传统的模式下都会比较耗时耗力。</li>
+<li>HTTPS普遍认为性能消耗要大于HTTP，因为与纯文本通信相比，加密通信会消耗更多的CPU及内存资源。</li>
+</ul>
+</li>
+<li><p>http协议和https协议的区别</p>
+<ul>
+<li>https协议需要到CA申请证书，一般免费证书较少，因而需要一定费用。</li>
+<li>http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl&#x2F;tls加密传输协议。</li>
+<li>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</li>
+<li>HTTPS协议比http有以下优势：数据隐私性、数据完整性、身份认证。</li>
+</ul>
+</li>
+</ul>
+<h3 id="什么是跨域，什么情况下会发生跨域请求？"><a href="#什么是跨域，什么情况下会发生跨域请求？" class="headerlink" title="什么是跨域，什么情况下会发生跨域请求？"></a>什么是跨域，什么情况下会发生跨域请求？</h3><p>跨域”指的是不同源之间的资源访问。只要请求的 url 有以下不同，都属于“跨域”：</p>
+<ul>
+<li>协议: http, https, …</li>
+<li>域名</li>
+<li>端口</li>
+</ul>
+<p>这种“跨域”限制其实是 浏览器自带的安全机制，只有 在浏览器上 发生跨域请求操作时，才会自动禁止访问的错误。</p>
+<p>虽然浏览器出于安全考虑做了“跨域”访问的限制，但开发时不可避免会有这样不同源资源访问的需求，因此 W3C 就制定了 CORS(Cross-origin resource sharing 跨域资源共享) 的机制。CORS 是一种解决“跨域”的方案。</p>
+<p>然后就是后端服务器支持了，服务器需要在 Response Header 上添加 <code>Access-Control-xxx-yyy</code> 的字段，浏览器识别到了，才能放行该请求。比如，最常见的就是加 <code>Access-Control-Allow-Origin</code> 这个返回头，值设置为需要放行的域名。</p>
+<h3 id="http常见的状态码"><a href="#http常见的状态码" class="headerlink" title="http常见的状态码"></a>http常见的状态码</h3><ul>
+<li>100（continue）：客户端在发送POST数据给服务器前，征询服务器情况，看服务器是否处理POST的数据，如果不处理，客户端则不上传POST数据，如果处理，则POST上传数据。常用于POST大数据传输。</li>
+<li>200（OK）：成功。</li>
+<li>206（Partial Content）：一般用来做断点续传，或者是视频文件等大文件的加载。</li>
+<li>301（Move Permanently）：永久重定向会缓存。新域名替换旧域名，旧的域名不再使用时，用户访问旧域名时用301就重定向到新的域名</li>
+<li>302（Found）：临时重定向不会缓存，常用 于未登陆的用户访问用户中心重定向到登录页面</li>
+<li>304（Not Motified）：协商缓存，告诉客户端有缓存，直接使用缓存中的数据，返回页面的只有头部信息，是没有内容部分。</li>
+<li>400（Bad Request）：参数有误，请求无法被服务器识别</li>
+<li>403（Frobidden）：告诉客户端进制访问该站点或者资源，如在外网环境下，然后访问只有内网IP才能访问的时候则返回</li>
+<li>404（Not Found）：服务器找不到资源时，或者服务器拒绝请求又不想说明理由时</li>
+<li>503（Service Unavailable）：服务器停机维护时，主动用503响应请求或 nginx 设置限速，超过限速，会返回503</li>
+</ul>
+<h3 id="简述-HTTP-报文头部的组成结构"><a href="#简述-HTTP-报文头部的组成结构" class="headerlink" title="简述 HTTP 报文头部的组成结构"></a>简述 HTTP 报文头部的组成结构</h3><p>如下所示：</p>
+<p><img src="/httpReq.png" alt="image"></p>
+<p><img src="/httpReqMsg.png" alt="image"></p>
+<p><img src="/httpRespMsg.png" alt="image"></p>
+<h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><h3 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h3><h4 id="什么是IO多路复用？"><a href="#什么是IO多路复用？" class="headerlink" title="什么是IO多路复用？"></a>什么是IO多路复用？</h4><p>IO指的就是读入&#x2F;写出数据的过程，和等待读入&#x2F;写出数据的过程。一旦拿到数据后就变成了数据操作了，就不是IO了。</p>
+<p>多路是指网络连接，复用指的是同一个线程。IO 多路复用是一种同步IO模型，实现一个线程可以监视多个文件句柄；一旦某个文件句柄就绪，就能够通知应用程序进行相应的读写操作；没有文件句柄就绪就会阻塞应用程序，交出CPU。</p>
+<h4 id="为什么需要IO多路复用？"><a href="#为什么需要IO多路复用？" class="headerlink" title="为什么需要IO多路复用？"></a>为什么需要IO多路复用？</h4><p>在没有IO多路复用之前，对于网络请求，有BIO、NIO两种实现方式，但它们都有一些问题。</p>
+<p>1、同步阻塞（BIO）</p>
+<ul>
+<li><p>服务端采用单线程时，当 accept 一个请求后，在 recv 或 send 调用阻塞时，将无法 accept 其他请求（必须等上一个请求处理 recv 或 send 完 ）（无法处理并发）</p>
+<p><img src="/2022/03/19/interview-network/BIO.png" alt="image"></p>
+  <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 伪代码描述</span></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="comment">// accept阻塞</span></span><br><span class="line">    client_fd = accept(listen_fd);</span><br><span class="line">    fds.append(client_fd);</span><br><span class="line">    <span class="keyword">for</span> (fd in fds) &#123;</span><br><span class="line">            <span class="comment">// recv阻塞（会影响上面的accept）</span></span><br><span class="line">        <span class="keyword">if</span> (recv(fd)) &#123;</span><br><span class="line">                <span class="comment">// logic</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>服务端采用多线程时，当 accept 一个请求后，开启线程进行 recv，可以完成并发处理，但随着请求数增加需要增加系统线程，大量的线程占用很大的内存空间，并且线程切换会带来很大的开销。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 伪代码描述</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="comment">// accept阻塞</span></span><br><span class="line">    client_fd = <span class="built_in">accept</span>(listen_fd)</span><br><span class="line">    <span class="comment">// 开启线程read数据（fd增多导致线程数增多）</span></span><br><span class="line">    <span class="keyword">new</span> Thread <span class="built_in">func</span>() &#123;</span><br><span class="line">        <span class="comment">// recv阻塞（多线程不影响上面的accept）</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">recv</span>(fd)) &#123;</span><br><span class="line">            <span class="comment">// logic</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>2、同步非阻塞（NIO）</p>
+<ul>
+<li><p>服务器端当 accept 一个请求后，加入 fds 集合，每次轮询一遍 fds 集合 recv (非阻塞)数据，没有数据则立即返回错误，每次轮询所有 fd （包括没有发生读写实际的 fd）会很浪费 CPU。</p>
+<p><img src="/2022/03/19/interview-network/NIO.png" alt="image"></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 伪代码描述</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="comment">// accept非阻塞（cpu一直忙轮询）</span></span><br><span class="line">    client_fd = accept(listen_fd)</span><br><span class="line">    <span class="keyword">if</span> (client_fd != null) &#123;</span><br><span class="line">        <span class="comment">// 有人连接</span></span><br><span class="line">        fds.append(client_fd)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 无人连接</span></span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">for</span> (fd in fds) &#123;</span><br><span class="line">        <span class="comment">// recv非阻塞</span></span><br><span class="line">        setNonblocking(client_fd)</span><br><span class="line">        <span class="comment">// recv 为非阻塞命令</span></span><br><span class="line">        <span class="keyword">if</span> (len = recv(fd) &amp;&amp; len &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 有读写数据</span></span><br><span class="line">            <span class="comment">// logic</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 无读写数据</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="IO多路复用如何工作？"><a href="#IO多路复用如何工作？" class="headerlink" title="IO多路复用如何工作？"></a>IO多路复用如何工作？</h4><ul>
+<li><p>select 函数：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">select</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="type">int</span> max_fd, </span></span><br><span class="line"><span class="params">    fd_set *readset, </span></span><br><span class="line"><span class="params">    fd_set *writeset, </span></span><br><span class="line"><span class="params">    fd_set *exceptset, </span></span><br><span class="line"><span class="params">    <span class="keyword">struct</span> timeval *timeout</span></span><br><span class="line"><span class="params">)</span>    </span><br></pre></td></tr></table></figure>
+
+<p>select 函数监视的文件描述符分3类，分别是writefds、readfds、和exceptfds。调用后select函数会阻塞，直到有描述符就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。当select函数返回后，可以通过遍历fdset，来找到就绪的描述符。</p>
+<p>缺点：</p>
+<ol>
+<li><p>单个进程所打开的FD是有限制的，通过 FD_SETSIZE 设置，默认1024 ;</p>
+</li>
+<li><p>每次调用 select，都需要把 fd 集合从用户态拷贝到内核态，这个开销在 fd 很多时会很大；</p>
+</li>
+<li><p>对 socket 扫描时是线性扫描，采用轮询的方法，效率较低（高并发）</p>
+</li>
+</ol>
+<p>  例子：<a href="https://kongkongk.github.io/2020/07/02/select-function-application-example/">https://kongkongk.github.io/2020/07/02/select-function-application-example/</a></p>
+</li>
+<li><p>poll 函数</p>
+  <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">poll</span><span class="params">(<span class="keyword">struct</span> pollfd *fds, <span class="type">nfds_t</span> nfds, <span class="type">int</span> timeout)</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">    <span class="type">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">    <span class="type">short</span> events;     <span class="comment">/* requested events */</span></span><br><span class="line">    <span class="type">short</span> revents;    <span class="comment">/* returned events */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>  poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态， 但是它没有最大连接数的限制，原因是它是基于链表来存储的.<br>  例子：<a href="https://www.cnblogs.com/pang1567/p/4122729.html">https://www.cnblogs.com/pang1567/p/4122729.html</a></p>
+</li>
+<li><p>epoll 函数：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建用于epoll工作的FD</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">epoll_create</span><span class="params">(<span class="type">int</span> size)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对事件操作：增、删等</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">epoll_ctl</span><span class="params">(<span class="type">int</span> epfd, <span class="type">int</span> op, <span class="type">int</span> fd, <span class="keyword">struct</span> epoll_event *event)</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">// 等待事件</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">epoll_wait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *events, <span class="type">int</span> maxevents, <span class="type">int</span> timeout)</span>; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/19/interview-network/epoll.png" alt="image"></p>
+<p>  epoll 通过两个方面，很好解决了 select&#x2F;poll 的问题。</p>
+<p>  第一点，epoll 在内核里使用红黑树来跟踪进程所有待检测的文件描述字，把需要监控的 socket 通过 <code>epoll_ctl()</code> 函数加入内核中的红黑树里，红黑树是个高效的数据结构，增删查一般时间复杂度是 O(logn)，通过对这棵黑红树进行操作，这样就不需要像 select&#x2F;poll 每次操作时都传入整个 socket 集合，只需要传入一个待检测的 socket，减少了内核和用户空间大量的数据拷贝和内存分配。</p>
+<p>  第二点， epoll 使用事件驱动的机制，内核里维护了一个链表来记录就绪事件，当某个 socket 有事件发生时，通过回调函数内核会将其加入到这个就绪事件列表中，当用户调用 epoll_wait() 函数时，只会返回有事件发生的文件描述符的个数，不需要像 select&#x2F;poll 那样轮询扫描整个 socket 集合，大大提高了检测的效率。</p>
+<p>  epoll 支持两种事件触发模式，分别是边缘触发（edge-triggered，ET）和水平触发（level-triggered，LT）：</p>
+<ul>
+<li>使用边缘触发模式时，当被监控的 Socket 描述符上有可读事件发生时，服务器端只会从 epoll_wait 中苏醒一次，即使进程没有调用 read 函数从内核读取数据，也依然只苏醒一次，因此我们程序要保证一次性将内核缓冲区的数据读取完；</li>
+<li>使用水平触发模式时，当被监控的 Socket 上有可读事件发生时，服务器端不断地从 epoll_wait 中苏醒，直到内核缓冲区数据被 read 函数读完才结束，目的是告诉我们有数据需要读取；</li>
+<li>如何理解名字：边缘（电平发生变化：高电平到低电平,或者低电平到高电平），水平（只有高电平(1)或低电平(0)时才触发通知）</li>
+</ul>
+<p> 实例：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span>&#123;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* 在这里进行一些初始化的操作，</span></span><br><span class="line"><span class="comment">* 比如初始化数据和socket等。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 内核中创建ep对象</span></span><br><span class="line">    epfd=<span class="built_in">epoll_create</span>(<span class="number">256</span>);</span><br><span class="line">    <span class="comment">// 需要监听的socket放到ep中</span></span><br><span class="line">    <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_ADD,listenfd,&amp;ev);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 阻塞获取</span></span><br><span class="line">        nfds = <span class="built_in">epoll_wait</span>(epfd,events,<span class="number">20</span>,<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nfds;++i) &#123;</span><br><span class="line">            <span class="keyword">if</span>(events[i].data.fd==listenfd) &#123;</span><br><span class="line">                <span class="comment">// 这里处理accept事件</span></span><br><span class="line">                connfd = <span class="built_in">accept</span>(listenfd);</span><br><span class="line">                <span class="comment">// 接收新连接写到内核对象中</span></span><br><span class="line">                <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_ADD,connfd,&amp;ev);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (events[i].events&amp;EPOLLIN) &#123;</span><br><span class="line">                <span class="comment">// 这里处理read事件</span></span><br><span class="line">                <span class="built_in">read</span>(sockfd, BUF, MAXLINE);</span><br><span class="line">                <span class="comment">//读完后准备写</span></span><br><span class="line">                <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>(events[i].events&amp;EPOLLOUT) &#123;</span><br><span class="line">                <span class="comment">// 这里处理write事件</span></span><br><span class="line">                <span class="built_in">write</span>(sockfd, BUF, n);</span><br><span class="line">                <span class="comment">//写完后准备读</span></span><br><span class="line">                <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="select-、-poll、epoll的区别"><a href="#select-、-poll、epoll的区别" class="headerlink" title="select 、 poll、epoll的区别"></a>select 、 poll、epoll的区别</h4><p><img src="/2022/03/19/interview-network/IO.png" alt="image"></p>
+<p>使用场景：</p>
+<ul>
+<li>select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制。 select 可移植性更好，几乎被所有主流平台所支持。</li>
+<li>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。</li>
+<li>只需要运行在 Linux 平台上，有大量的描述符需要同时轮询，并且这些连接最好是长连接。</li>
+</ul>
+<h3 id="Redis为什么使用IO多路复用技术？"><a href="#Redis为什么使用IO多路复用技术？" class="headerlink" title="Redis为什么使用IO多路复用技术？"></a>Redis为什么使用IO多路复用技术？</h3><p>Redis 是跑在单线程中的，所有的操作都是按照顺序线性执行的，但是由于读写操作等待用户输入或输出都是阻塞的，所以 I&#x2F;O 操作在一般情况下往往不能直接返回，这会导致某一文件的 I&#x2F;O 阻塞导致整个进程无法对其它客户提供服务，而 I&#x2F;O 多路复用 就是为了解决这个问题而出现的。</p>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Network</tag>
       </tags>
   </entry>
   <entry>
@@ -3109,63 +3427,6 @@
       </tags>
   </entry>
   <entry>
-    <title>interview_algorithm</title>
-    <url>/2022/03/18/interview-algorithm/</url>
-    <content><![CDATA[<h3 id="C-优先队列写法"><a href="#C-优先队列写法" class="headerlink" title="C++优先队列写法"></a>C++优先队列写法</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//升序队列 小根堆</span></span><br><span class="line">priority_queue &lt;<span class="type">int</span>,vector&lt;<span class="type">int</span>&gt;,greater&lt;<span class="type">int</span>&gt; &gt; q;</span><br><span class="line"><span class="comment">//降序队列 大跟堆</span></span><br><span class="line">priority_queue &lt;<span class="type">int</span>,vector&lt;<span class="type">int</span>&gt;,less&lt;<span class="type">int</span>&gt; &gt;q;</span><br></pre></td></tr></table></figure>
-
-<p>对于基础类型，默认是<code>大顶堆</code>。</p>
-<p>对于自定义类型，需要如下的写法：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">cmp</span> <span class="comment">//重写仿函数</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">operator</span><span class="params">()</span> <span class="params">(tmp a, tmp b)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> a.x &lt; b.x; <span class="comment">//大顶堆</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">priority_queue&lt;tmp, vector&lt;tmp&gt;, cmp&gt; f;</span><br><span class="line"></span><br><span class="line">例如TopK频率问题中，pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;类型根据频率进行排序，构造小根堆。</span><br></pre></td></tr></table></figure>
-
-<h3 id="随机快速排序"><a href="#随机快速排序" class="headerlink" title="随机快速排序"></a>随机快速排序</h3><p>注意，获取阀分元素的索引时，使用下面的方式可能会遇到阀分元素和其它元素一样的情况，导致错误。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">quickSortCore</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> value, <span class="type">int</span> left, <span class="type">int</span> right)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(left&lt;right)&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums[left]&lt;value)&#123;</span><br><span class="line">            left++;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(nums[right]&gt;value)&#123;</span><br><span class="line">            right--;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(nums[left] == nums[right])&#123;</span><br><span class="line">            <span class="keyword">return</span> left</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">swap</span>(nums[left],nums[right]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>正确的写法</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//快速排序</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="type">static</span> <span class="type">void</span> <span class="title">QuickSort</span><span class="params">(<span class="type">int</span>[] a, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="type">int</span> p = <span class="built_in">partition</span>(a, left, right);</span><br><span class="line">        <span class="built_in">QuickSort</span>(a, left, p - <span class="number">1</span>);</span><br><span class="line">        <span class="built_in">QuickSort</span>(a, p + <span class="number">1</span>, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//快速排序数组划分</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="type">static</span> <span class="type">int</span> <span class="title">partition</span><span class="params">(<span class="type">int</span>[] a, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> x = a[right];</span><br><span class="line">    <span class="type">int</span> p = left - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = left; i &lt; right; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (a[i] &lt;= x) &#123;</span><br><span class="line">            p++;</span><br><span class="line">            <span class="built_in">swap</span>(a, p, i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">swap</span>(a, p+<span class="number">1</span>, right);</span><br><span class="line">    <span class="keyword">return</span> p+<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="俄罗斯套娃信封问题"><a href="#俄罗斯套娃信封问题" class="headerlink" title="俄罗斯套娃信封问题"></a><a href="https://leetcode-cn.com/problems/russian-doll-envelopes/">俄罗斯套娃信封问题</a></h3><p>思路：第一维升序排序，第二维求最长严格递增子序列</p>
-<h3 id="单调栈和单调队列的应用"><a href="#单调栈和单调队列的应用" class="headerlink" title="单调栈和单调队列的应用"></a>单调栈和单调队列的应用</h3><ul>
-<li><p>单调栈</p>
-<p>  以O(n)时间复杂度求出某个数的左边或右边第一个比它大或小的元素。</p>
-</li>
-<li><p>单调队列</p>
-<p>  区间最小（最大）值问题</p>
-</li>
-</ul>
-<h3 id="求滑动窗口的最大值"><a href="#求滑动窗口的最大值" class="headerlink" title="求滑动窗口的最大值"></a><a href="https://leetcode-cn.com/problems/sliding-window-maximum/">求滑动窗口的最大值</a></h3><h3 id="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"><a href="#10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？" class="headerlink" title="10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？"></a>10亿个数中如何高效地找到最大的一个数、最大的第K个数或者频率最大的第k个数？</h3><p>高效指的是：最小的时间复杂度和最小的空间复杂度</p>
-<p>首先10亿个数如果全部保存在内存中，需要的空间大小为10^9*4B ≈ 4GB，内存中是无法完全存放的，所以这些数据首先应该都在外存上，我们分批次读进内存，得到每个批次的最大值，之后再比较所有批次的最大值即可。可以将1000份，每份的大小约为4MB。</p>
-<p>如果是TopK，则在内存中维护一个小根堆，分批次读进内存之后，依次遍历与小根堆的顶元素进行比较即可。<br>如果是TopK词频问题，有如下的思路：</p>
-<ul>
-<li>先将数据集按照Hash方法分解成多个小数据集（保证两个数据集不会出现相同的单词）</li>
-<li>然后使用Trie树或者Hash统计每个小数据集中的query词频</li>
-<li>之后用小顶堆求出每个数据集中出频率最高的前K个数</li>
-<li>最后在所有top K中求出最终的top K。</li>
-</ul>
-<h3 id="rand7-实现rand10"><a href="#rand7-实现rand10" class="headerlink" title="rand7()实现rand10()"></a>rand7()实现rand10()</h3><p>  使用拒绝采样。</p>
-<p>  我们可以调用两次 Rand7()，那么可以生成 [1,49] 之间的随机整数，我们只用到其中的前 40 个用来实现 Rand10()，而拒绝剩下的 9 个数</p>
-<h3 id="rand65535-实现30万人中抽奖1万人"><a href="#rand65535-实现30万人中抽奖1万人" class="headerlink" title="rand65535()实现30万人中抽奖1万人"></a>rand65535()实现30万人中抽奖1万人</h3><p>同上</p>
-<h3 id="10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"><a href="#10亿条数据包括-id，上线时间，下线时间，请绘制每一秒在线人数的曲线图" class="headerlink" title="10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图"></a>10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图</h3><p>  定义一个24<em>60</em>60的数组，来存放每一秒的上线人数 遍历数据，根据上线时间和下线时间，获取数组范围，并将数组中间所有元素+1 时间复杂度：O(MN)</p>
-<h3 id="给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序"><a href="#给定一个包含-40-亿个无符号整数的大型文件，使用最多-1G-内存，对此文件进行去重排序" class="headerlink" title="给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序"></a>给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行去重排序</h3><p>  40亿 * 4B ≈ 16G，利用位图法。</p>
-<h3 id="海量数据面试题"><a href="#海量数据面试题" class="headerlink" title="海量数据面试题"></a>海量数据面试题</h3><p>  <a href="https://blog.csdn.net/v_JULY_v/article/details/6279498">https://blog.csdn.net/v_JULY_v/article/details/6279498</a></p>
-<h3 id="100亿个-URL-中，统计出访问频率最高的前100个，如何做"><a href="#100亿个-URL-中，统计出访问频率最高的前100个，如何做" class="headerlink" title="100亿个 URL 中，统计出访问频率最高的前100个，如何做"></a>100亿个 URL 中，统计出访问频率最高的前100个，如何做</h3><p>淘宝 web 服务器上有 1 个 access 日志文件，记录着用户访问的 url，url 总数 100 亿以上，每个 url 约占 64 字节，</p>
-<p>这些 url 可能存在重复，在一个内存只有 2G 的机器上，统计出访问频率最高的前 100 个 URL。</p>
-<p>100 亿 *64&#x2F;1024&#x2F;1024&#x2F;1024&#x3D;596G，可考虑分成 1000 个文件处理，每 个文件大约 600M。</p>
-<p>顺序读取文件，每行按照 hash(url)%1000 的结果将 url 写入到 1000 个文件中，这 个过程是 mapreduce 中的 map。</p>
-<p>针对每个小文件，使用 hashmap 统计每个 url 出现的次数，并使用堆排序得到访问 次数最高的前 100 个 url。</p>
-<p>将每个文件排序好的 100 个 url 及对应的 count 输出到 1000 个文件，最后将这个 1000 个文件（此时每个文件只有 100 行 ) 进行合并排序。</p>
-<h3 id="最长递增子序列（要求时间复杂度为O-nlgn"><a href="#最长递增子序列（要求时间复杂度为O-nlgn" class="headerlink" title="最长递增子序列（要求时间复杂度为O(nlgn)"></a>最长递增子序列（要求时间复杂度为O(nlgn)</h3><p>一个简单的贪心，如果我们要使上升子序列尽可能的长，则我们需要让序列上升得尽可能慢，因此我们希望每次在上升子序列最后加上的那个数尽可能的小。</p>
-<p>基于上面的贪心思路，我们维护一个数组 d[i] ，表示长度为 i 的最长上升子序列的末尾元素的最小值。我们依次遍历数组 nums 中的每个元素，并更新数组 d 和 len 的值。如果 nums[i] &gt; d[len] 则更新 len&#x3D;len+1，否则在 d[1…len]中找满足 d[i - 1] &lt; nums[j] &lt; d[i] 的下标 i，并更新d[i]&#x3D;nums[j]。<br>举例说明：</p>
-<p><img src="/2022/03/18/interview-algorithm/LIS-example.png" alt="image"></p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Algorithm</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>interview_intelligence</title>
     <url>/2022/03/18/interview-intelligence/</url>
     <content><![CDATA[<h3 id="不均匀的硬币产生等概率"><a href="#不均匀的硬币产生等概率" class="headerlink" title="不均匀的硬币产生等概率"></a>不均匀的硬币产生等概率</h3><p>问题描述：有一枚不均匀的硬币，已知抛出此硬币后，正面向上的概率为 p（0 &lt; p &lt; 1）。请利用这枚硬币产生出概率相等的两个事件。</p>
@@ -3183,455 +3444,6 @@
       <tags>
         <tag>Interview</tag>
         <tag>Intelligence</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>interview-network</title>
-    <url>/2022/03/19/interview-network/</url>
-    <content><![CDATA[<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"><a href="#简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？" class="headerlink" title="简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"></a>简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？</h3><ul>
-<li><p>为什么需要三次握手：</p>
-<p>  <img src="/2022/03/19/interview-network/tcp3.png" alt="image"></p>
-<p>  客户端和服务端通信前要进行连接，“3次握手”的作用就是双方都能明确自己和对方的收、发能力是正常的。</p>
-</li>
-<li><p>四次挥手的原因</p>
-<p>  <img src="/2022/03/19/interview-network/tcp4.png" alt="image"></p>
-<p>  客户端发送了FIN 连接释放报文之后，服务器收到了这个报文，就进入了CLOSE—WAIT状态。这个状态是为了让服务器端发送还未传送完毕的数据，传送完毕之后，服务器会发送FIN连接释放报文。</p>
-</li>
-<li><p>TIME_WAIT的原因</p>
-<p>  客户端接收到服务器端的FIN报文后进入此状态，此时并不是直接进入CLOSED状态，还需要等待一个时间计时器设置的时间2MSL。这么做有两个理由：</p>
-<p>  确保最后一个确认报文能够到达。如果B没收到A发送来的确认报文，那么就会重新发送连接释放请求报文，A等待一段时间就是为了处理这种情况的发生。</p>
-<p>  等待一段时间是为了让本连接持续时间内所产生的所有报文都从网络中消失，使得下一个新的连接不会出现旧的连接请求报文。</p>
-</li>
-</ul>
-<h3 id="TCP-挥手时出现大量-CLOSE-WAIT-或-TIME-WAIT-怎么解决？"><a href="#TCP-挥手时出现大量-CLOSE-WAIT-或-TIME-WAIT-怎么解决？" class="headerlink" title="TCP 挥手时出现大量 CLOSE_WAIT 或 TIME_WAIT 怎么解决？"></a>TCP 挥手时出现大量 CLOSE_WAIT 或 TIME_WAIT 怎么解决？</h3><p>略</p>
-<h3 id="Syn-flood攻击及其防范"><a href="#Syn-flood攻击及其防范" class="headerlink" title="Syn flood攻击及其防范"></a>Syn flood攻击及其防范</h3><p>syn flood属于Dos攻击的一种。如果恶意地向某个服务器端口发送大量的SYN包，则可以使服务器打开大量的半开连接，分配TCB（Transmission Control Block）, 从而消耗大量的服务器资源，同时也使得正常的连接请求无法被响应。当开放了一个TCP端口后，该端口就处于Listening状态，不停地监视发到该端口的Syn报文，一旦接收到Client发来的Syn报文，就需要为该请求分配一个TCB，通常一个TCB至少需要280个字节，在某些操作系统中TCB甚至需要1300个字节，并返回一个SYN ACK命令，立即转为SYN-RECEIVED即半开连接状态。系统会为此耗尽资源。</p>
-<p>常见的防攻击方法有：</p>
-<p>监视系统的半开连接和不活动连接，当达到一定阈值时拆除这些连接，从而释放系统资源。这种方法对于所有的连接一视同仁，而且由于SYN Flood造成的半开连接数量很大，正常连接请求也被淹没在其中被这种方式误释放掉，因此这种方法属于入门级的SYN Flood方法。</p>
-<h3 id="TCP-中常见的拥塞控制算法有哪些？"><a href="#TCP-中常见的拥塞控制算法有哪些？" class="headerlink" title="TCP 中常见的拥塞控制算法有哪些？"></a>TCP 中常见的拥塞控制算法有哪些？</h3><p>TCP主要通过四个算法来进行拥塞控制：慢开始、拥塞避免、快重传、快恢复。</p>
-<p><img src="/2022/03/19/interview-network/congestion_control.png" alt="image"></p>
-<p>快重传算法规定，发送方只要一连收到三个重复确认就应当立即重传对方尚未收到的报文段 ，而不必继续等待设置的重传计时器到期。</p>
-<p>与快重传配合使用的还有快恢复算法，其过程有以下两个要点：</p>
-<ol>
-<li><p>当发送方连续收到三个重复确认时，就执行“乘法减小”算法，把慢开始门限ssthresh减半。这是为了预防网络发生拥塞。请注意，接下去不执行慢开始算法。</p>
-</li>
-<li><p>由于发送方现在认为网络很可能没有发生拥塞（如果网络发生了严重的拥塞，就不会一连有好几个报文段连续到达接收方，也就不会导致接收方连续发送重复确认），因此与慢开始不同之处是现在不执行慢开始算法（即拥塞窗口cwnd现在不设置为1），而是把cwnd值设置为慢开始门限 ssthresh 减半后的数值，然后开始执行拥塞避免算法（“加法增大”），使拥塞窗口缓慢地线性增大。</p>
-</li>
-</ol>
-<h3 id="DNS解析过程，以及DNS劫持"><a href="#DNS解析过程，以及DNS劫持" class="headerlink" title="DNS解析过程，以及DNS劫持"></a>DNS解析过程，以及DNS劫持</h3><p><img src="/2022/03/19/interview-network/DNS.png" alt="image"></p>
-<p>DNS劫持（DNS Hijacking）：又被称为域名劫持，DNS重定向（DNS direaction）,是一种DNS攻击方式。DNS查询没有得到正确的解析，以致引导user访问到恶意的网站，从而窃取用户隐私，或者进行某些恶意的操作。</p>
-<p>DNS劫持现象：你入一个google.com网址，出来的是百度的页面</p>
-<p>HTTP劫持现象：访问着github的页面，右下角出现了一个格格不入的广告弹窗</p>
-<ol>
-<li><p>本机DNS劫持</p>
-<p> 攻击者通过某些手段使用户的计算机感染上木马病毒，或者恶意软件之后，恶意修改本地DNS配置，比如修改本地hosts文件，缓存等</p>
-</li>
-<li><p>路由DNS劫持</p>
-<p> 很多用户默认路由器的默认密码，攻击者可以侵入到路由管理员账号中，修改路由器的默认配置。（路由器通常会提供 DNS 代理服务，接管整个网络的域名查询。）</p>
-</li>
-<li><p>攻击DNS服务器</p>
-<p> 直接攻击DNS服务器，例如对DNS服务器进行DDOS攻击，可以是DNS服务器宕机，出现异常请求，还可以利用某些手段感染dns服务器的缓存，使给用户返回来的是恶意的ip地址</p>
-</li>
-</ol>
-<h3 id="TCP如何保证可靠传输？"><a href="#TCP如何保证可靠传输？" class="headerlink" title="TCP如何保证可靠传输？"></a>TCP如何保证可靠传输？</h3><ul>
-<li><p>确认应答和序列号</p>
-<p>  TCP传输时将每个字节的数据都进行了编号，这就是序列号。tcp按序号发送报文，接收端收到报文后，会给发送端一个ACK确认报文，用来表示已经成功接收到报文，报文中还带有ack，表示下一次发送端应该从哪里开始发送报文。</p>
-</li>
-<li><p>校验和</p>
-<p>  这是一个端到端的检验和，目的是检测数据在传输过程中的任何变化。如果收到段的检验和有差错，TCP 将丢弃这个报文段</p>
-</li>
-<li><p>超时重传</p>
-<p>  如果发送端发送的数据没有收到ACK确认，可能是：（1）发送给接收端的报文丢失了（2）接收端发送的ACK确认报文丢失了。不管是哪种原因，超过一定时间后，没有收到ACK确认，TCP启动超时重传机制，发送端重新发数据，如果接收端已经有了该数据，只是由于ACK确认丢失导致超时重传，会将刚刚发送过来的数据包丢弃。</p>
-</li>
-<li><p>流量控制</p>
-<p>  发送端如果数据发送过快，导致接收端的缓冲区很快就满了，如果持续下去，数据溢出缓冲区，就会出现数据丢失。这时需要在发送端和接收端有一个窗口，窗口的作用为：在发送缓冲区，只有在窗口里面的数据，才能被发送，在接收缓冲区，只有在窗口里的数据才能被接收，接收端收到数据之后，会回复ack，发送端会根据ack的值来判断接收能力，从而动态调整窗口大小，实现流量控制。</p>
-</li>
-<li><p>拥塞控制</p>
-<p>  如果网络出现拥塞，TCP会根据不同情况，采用不同的算法：慢开始，拥塞避免，快重传，快恢复来对窗口大小cwnd和慢开始门限值ssthresh进行调整，从而降低网络拥塞的可能性。</p>
-</li>
-</ul>
-<h3 id="什么是-TCP-粘包和拆包？"><a href="#什么是-TCP-粘包和拆包？" class="headerlink" title="什么是 TCP 粘包和拆包？"></a>什么是 TCP 粘包和拆包？</h3><p>  在socket通讯过程中，如果通讯的一端一次性连续发送多条数据包，tcp协议会将多个数据包打包成一个tcp报文发送出去，这就是所谓的粘包。而如果通讯的一端发送的数据包超过一次tcp报文所能传输的最大值时，就会将一个数据包拆成多个最大tcp长度的tcp报文分开传输，这就叫做拆包。</p>
-<p>  <img src="/2022/03/19/interview-network/TCP_stick.png" alt="image"></p>
-<p>  因为TCP是面向流，没有边界，而操作系统在发送TCP数据时，会通过缓冲区来进行优化，例如缓冲区为1024个字节大小。</p>
-<p>  如果一次请求发送的数据量比较小，没达到缓冲区大小，TCP则会将多个请求合并为同一个请求进行发送，这就形成了粘包问题。</p>
-<p>  如果一次请求发送的数据量比较大，超过了缓冲区大小，TCP就会将其拆分为多次发送，这就是拆包。</p>
-<p>  通常会有以下一些常用的方法：</p>
-<ul>
-<li>发送端给每个数据包添加包首部，首部中应该至少包含数据包的长度，这样接收端在接收到数据后，通过读取包首部的长度字段，便知道每一个数据包的实际长度了。</li>
-<li>发送端将每个数据包封装为固定长度</li>
-<li>可以在数据包之间设置边界，如添加特殊符号</li>
-</ul>
-<h3 id="从系统层面上，UDP如何保证尽量可靠？"><a href="#从系统层面上，UDP如何保证尽量可靠？" class="headerlink" title="从系统层面上，UDP如何保证尽量可靠？"></a>从系统层面上，UDP如何保证尽量可靠？</h3><p>  传输层无法保证数据的可靠传输，只能通过应用层来实现了。实现的方式可以参照tcp可靠性传输的方式，只是实现不在传输层，实现转移到了应用层。</p>
-<ul>
-<li>添加seq&#x2F;ack机制，确保数据发送到对端</li>
-<li>添加发送和接收缓冲区，主要是用户超时重传。</li>
-<li>添加超时重传机制。</li>
-</ul>
-<h3 id="什么是-ARP-协议？简述其使用场景？什么是RARP协议？"><a href="#什么是-ARP-协议？简述其使用场景？什么是RARP协议？" class="headerlink" title="什么是 ARP 协议？简述其使用场景？什么是RARP协议？"></a>什么是 ARP 协议？简述其使用场景？什么是RARP协议？</h3><p>  ARP实现由 IP 地址得到 MAC 地址。如果主机 A 知道主机 B 的 IP 地址，但是ARP 高速缓存中没有该 IP 地址到 MAC 地址的映射，此时主机 A 通过广播的方式发送ARP 请求分组，主机 B 收到该请求后会发送ARP 响应分组给主机 A 告知其 MAC 地址，随后主机 A 向其高速缓存中写入主机B 的IP 地址到MAC 地址的映射。</p>
-<p>  ARP属于网络层协议</p>
-<p>  RARP（Reverse Address Resolution Protocol）是将 ARP 反过来，从 MAC 地址定位 IP 地址的一种协议。对于使用嵌入式设备时，会遇到没有任何输入接口或无法通过 DHCP 动态获取 IP 地址的情况。在类似情况下，就可以使用 RARP。例如，打印机服务器等小型嵌入式设备接入到网络时会用到。</p>
-<p>  为此，需要架设一台 RARP 服务器，从而在这个服务器上注册设备的 MAC 地址及其 IP 地址。</p>
-<h3 id="简述在四层和七层网络协议中负载均衡的原理"><a href="#简述在四层和七层网络协议中负载均衡的原理" class="headerlink" title="简述在四层和七层网络协议中负载均衡的原理"></a>简述在四层和七层网络协议中负载均衡的原理</h3><p>  所谓四层就是基于IP+端口的负载均衡；七层就是基于URL等应用层信息的负载均衡。</p>
-<p>  <img src="/2022/03/19/interview-network/network_protocol.png" alt="image"></p>
-<ul>
-<li><p>四层负载均衡：</p>
-<p>  以常见的TCP为例，负载均衡设备在接收到第一个来自客户端的SYN 请求时，即通过上述方式选择一个最佳的服务器，并对报文中目标IP地址进行修改(改为后端服务器IP），直接转发给该服务器。TCP的连接建立，即三次握手是客户端和服务器直接建立的，负载均衡设备只是起到一个类似路由器的转发动作。</p>
-</li>
-<li><p>七层负载均衡：</p>
-<p>  以常见的TCP为例，负载均衡设备如果要根据真正的应用层内容再选择服务器，只能先代理最终的服务器和客户端建立连接(三次握手)后，才可能接受到客户端发送的真正应用层内容的报文，然后再根据该报文中的特定字段，再加上负载均衡设备设置的服务器选择方式，决定最终选择的内部服务器。负载均衡设备在这种情况下，更类似于一个代理服务器。负载均衡和前端的客户端以及后端的服务器会分别建立TCP连接。</p>
-</li>
-</ul>
-<h2 id="Http"><a href="#Http" class="headerlink" title="Http"></a>Http</h2><h3 id="HTTP-中-GET-和-POST-区别？"><a href="#HTTP-中-GET-和-POST-区别？" class="headerlink" title="HTTP 中 GET 和 POST 区别？"></a>HTTP 中 GET 和 POST 区别？</h3><ul>
-<li>Get 是用来从服务器上获得数据，而 Post 是用来向服务器上传递数据。</li>
-<li>Get 将表单中数据的按照 variable&#x3D;value 的形式，添加到 action 所指向的 URL 后面，并且两者使用“?”连接，而各个变量之间使用“&amp;”连接；Post 是将表单中的数据放在 form 的数据体中，按照变量和值相对应的方式，传递到 action 所指向 URL。</li>
-<li>Get 是不安全的，因为在传输过程，数据被放在请求的 URL 中，而如今现有的很多服务器、代理服务器或者用户代理都会将请求URL记录到日志文件中，然后放在某个地方，这样就可能会有一些隐私的信息被第三方看到。另外，用户也可以在浏览器上直接看到提交的数据，一些系统内部消息将会一同显示在用户面前。Post 的所有操作对用户来说都是不可见的。</li>
-<li>Get 传输的数据量小，这主要是因为受 URL 长度限制；而 Post 可以传输大量的数据，所以在上传文件只能使用 Post。</li>
-</ul>
-<h3 id="Cookie-和-Session-的关系和区别是什么？"><a href="#Cookie-和-Session-的关系和区别是什么？" class="headerlink" title="Cookie 和 Session 的关系和区别是什么？"></a>Cookie 和 Session 的关系和区别是什么？</h3><p>Cookie保存在客户端，Session保存在服务端，二者都是用来保存用户状态的。</p>
-<h3 id="简述-HTTP-1-0，1-1，2-0-的主要区别-？"><a href="#简述-HTTP-1-0，1-1，2-0-的主要区别-？" class="headerlink" title="简述 HTTP 1.0，1.1，2.0 的主要区别 ？"></a>简述 HTTP 1.0，1.1，2.0 的主要区别 ？</h3><ul>
-<li><p>HTTP 1.0，1.1 的主要区别</p>
-<ul>
-<li><p>缓存处理</p>
-<p>  HTTP1.0中主要使用header里的If-Modified-Since,Expires来作为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略如Entity tag，If-Unmodified-Since等。</p>
-</li>
-<li><p>带宽优化及网络连接的使用</p>
-<p>  HTTP1.0中，存在一些浪费带宽的现象，例如客户端只是需要某个对象的一部分，而服务器却将整个对象送过来了，并且不支持断点续传功能。HTTP1.1则在请求头引入了range头域，它允许只请求资源的某个部分，即返回码是206（Partial Content）</p>
-</li>
-<li><p>长连接</p>
-<p>  HTTP 1.1支持长连接（PersistentConnection）和请求流水线（Pipelining）处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。</p>
-<p>  <img src="/2022/03/19/interview-network/PersistentConnection.png" alt="image"></p>
-<p>  <img src="/2022/03/19/interview-network/pipeline.png" alt="image"></p>
-</li>
-</ul>
-</li>
-<li><p>HTTP 1.x，2.0 的主要区别</p>
-<ul>
-<li><p>新的二进制格式</p>
-<p>  HTTP1.x的解析是基于文本。基于文本协议的格式解析存在天然缺陷，文本的表现形式有多样性，要做到健壮性考虑的场景必然很多，二进制则不同，只认0和1的组合。</p>
-</li>
-<li><p>多路复用</p>
-<p>  多路复用代替了 HTTP1.x 的序列和阻塞机制，所有的相同域名请求都通过同一个 TCP 连接并发完成。同一 Tcp 中可以发送多个请求，对端可以通过帧中的标识知道属于哪个请求。通过这个技术，可以避免 HTTP 旧版本中的队头阻塞问题，极大的提高传输性能。</p>
-<p>  <img src="/2022/03/19/interview-network/multx.png" alt="image"></p>
-</li>
-<li><p>header压缩</p>
-<p>  HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。</p>
-</li>
-<li><p>服务端推送（server push）</p>
-<p>  例如我的网页有一个sytle.css的请求，在客户端收到sytle.css数据的同时，服务端会将sytle.js的文件推送给客户端，当客户端再次尝试获取sytle.js时就可以直接从缓存中获取到，不用再发请求了</p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="https的过程是什么样？"><a href="#https的过程是什么样？" class="headerlink" title="https的过程是什么样？"></a>https的过程是什么样？</h3><ul>
-<li><p>为什么需要https？</p>
-<p>  传统的http协议可能有以下的问题：</p>
-<ul>
-<li>通信使用明文（不加密），内容可能被窃听</li>
-<li>无法证明报文的完整性，所以可能遭篡改</li>
-<li>不验证通信方的身份，因此有可能遭遇伪装</li>
-</ul>
-<p><img src="/2022/03/19/interview-network/unsafe.png" alt="image"></p>
-</li>
-<li><p>https的工作流程</p>
-<p><img src="/2022/03/19/interview-network/safe.png" alt="image"></p>
-</li>
-<li><p>https的缺点</p>
-<ul>
-<li>需要权威CA颁发的SSL证书。从证书的选择、购买到部署，传统的模式下都会比较耗时耗力。</li>
-<li>HTTPS普遍认为性能消耗要大于HTTP，因为与纯文本通信相比，加密通信会消耗更多的CPU及内存资源。</li>
-</ul>
-</li>
-<li><p>http协议和https协议的区别</p>
-<ul>
-<li>https协议需要到CA申请证书，一般免费证书较少，因而需要一定费用。</li>
-<li>http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl&#x2F;tls加密传输协议。</li>
-<li>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</li>
-<li>HTTPS协议比http有以下优势：数据隐私性、数据完整性、身份认证。</li>
-</ul>
-</li>
-</ul>
-<h3 id="什么是跨域，什么情况下会发生跨域请求？"><a href="#什么是跨域，什么情况下会发生跨域请求？" class="headerlink" title="什么是跨域，什么情况下会发生跨域请求？"></a>什么是跨域，什么情况下会发生跨域请求？</h3><p>跨域”指的是不同源之间的资源访问。只要请求的 url 有以下不同，都属于“跨域”：</p>
-<ul>
-<li>协议: http, https, …</li>
-<li>域名</li>
-<li>端口</li>
-</ul>
-<p>这种“跨域”限制其实是 浏览器自带的安全机制，只有 在浏览器上 发生跨域请求操作时，才会自动禁止访问的错误。</p>
-<p>虽然浏览器出于安全考虑做了“跨域”访问的限制，但开发时不可避免会有这样不同源资源访问的需求，因此 W3C 就制定了 CORS(Cross-origin resource sharing 跨域资源共享) 的机制。CORS 是一种解决“跨域”的方案。</p>
-<p>然后就是后端服务器支持了，服务器需要在 Response Header 上添加 <code>Access-Control-xxx-yyy</code> 的字段，浏览器识别到了，才能放行该请求。比如，最常见的就是加 <code>Access-Control-Allow-Origin</code> 这个返回头，值设置为需要放行的域名。</p>
-<h3 id="http常见的状态码"><a href="#http常见的状态码" class="headerlink" title="http常见的状态码"></a>http常见的状态码</h3><ul>
-<li>100（continue）：客户端在发送POST数据给服务器前，征询服务器情况，看服务器是否处理POST的数据，如果不处理，客户端则不上传POST数据，如果处理，则POST上传数据。常用于POST大数据传输。</li>
-<li>200（OK）：成功。</li>
-<li>206（Partial Content）：一般用来做断点续传，或者是视频文件等大文件的加载。</li>
-<li>301（Move Permanently）：永久重定向会缓存。新域名替换旧域名，旧的域名不再使用时，用户访问旧域名时用301就重定向到新的域名</li>
-<li>302（Found）：临时重定向不会缓存，常用 于未登陆的用户访问用户中心重定向到登录页面</li>
-<li>304（Not Motified）：协商缓存，告诉客户端有缓存，直接使用缓存中的数据，返回页面的只有头部信息，是没有内容部分。</li>
-<li>400（Bad Request）：参数有误，请求无法被服务器识别</li>
-<li>403（Frobidden）：告诉客户端进制访问该站点或者资源，如在外网环境下，然后访问只有内网IP才能访问的时候则返回</li>
-<li>404（Not Found）：服务器找不到资源时，或者服务器拒绝请求又不想说明理由时</li>
-<li>503（Service Unavailable）：服务器停机维护时，主动用503响应请求或 nginx 设置限速，超过限速，会返回503</li>
-</ul>
-<h3 id="简述-HTTP-报文头部的组成结构"><a href="#简述-HTTP-报文头部的组成结构" class="headerlink" title="简述 HTTP 报文头部的组成结构"></a>简述 HTTP 报文头部的组成结构</h3><p>如下所示：</p>
-<p><img src="/httpReq.png" alt="image"></p>
-<p><img src="/httpReqMsg.png" alt="image"></p>
-<p><img src="/httpRespMsg.png" alt="image"></p>
-<h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><h3 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h3><h4 id="什么是IO多路复用？"><a href="#什么是IO多路复用？" class="headerlink" title="什么是IO多路复用？"></a>什么是IO多路复用？</h4><p>IO指的就是读入&#x2F;写出数据的过程，和等待读入&#x2F;写出数据的过程。一旦拿到数据后就变成了数据操作了，就不是IO了。</p>
-<p>多路是指网络连接，复用指的是同一个线程。IO 多路复用是一种同步IO模型，实现一个线程可以监视多个文件句柄；一旦某个文件句柄就绪，就能够通知应用程序进行相应的读写操作；没有文件句柄就绪就会阻塞应用程序，交出CPU。</p>
-<h4 id="为什么需要IO多路复用？"><a href="#为什么需要IO多路复用？" class="headerlink" title="为什么需要IO多路复用？"></a>为什么需要IO多路复用？</h4><p>在没有IO多路复用之前，对于网络请求，有BIO、NIO两种实现方式，但它们都有一些问题。</p>
-<p>1、同步阻塞（BIO）</p>
-<ul>
-<li><p>服务端采用单线程时，当 accept 一个请求后，在 recv 或 send 调用阻塞时，将无法 accept 其他请求（必须等上一个请求处理 recv 或 send 完 ）（无法处理并发）</p>
-<p><img src="/2022/03/19/interview-network/BIO.png" alt="image"></p>
-  <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 伪代码描述</span></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="comment">// accept阻塞</span></span><br><span class="line">    client_fd = accept(listen_fd);</span><br><span class="line">    fds.append(client_fd);</span><br><span class="line">    <span class="keyword">for</span> (fd in fds) &#123;</span><br><span class="line">            <span class="comment">// recv阻塞（会影响上面的accept）</span></span><br><span class="line">        <span class="keyword">if</span> (recv(fd)) &#123;</span><br><span class="line">                <span class="comment">// logic</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>服务端采用多线程时，当 accept 一个请求后，开启线程进行 recv，可以完成并发处理，但随着请求数增加需要增加系统线程，大量的线程占用很大的内存空间，并且线程切换会带来很大的开销。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 伪代码描述</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="comment">// accept阻塞</span></span><br><span class="line">    client_fd = <span class="built_in">accept</span>(listen_fd)</span><br><span class="line">    <span class="comment">// 开启线程read数据（fd增多导致线程数增多）</span></span><br><span class="line">    <span class="keyword">new</span> Thread <span class="built_in">func</span>() &#123;</span><br><span class="line">        <span class="comment">// recv阻塞（多线程不影响上面的accept）</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">recv</span>(fd)) &#123;</span><br><span class="line">            <span class="comment">// logic</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>2、同步非阻塞（NIO）</p>
-<ul>
-<li><p>服务器端当 accept 一个请求后，加入 fds 集合，每次轮询一遍 fds 集合 recv (非阻塞)数据，没有数据则立即返回错误，每次轮询所有 fd （包括没有发生读写实际的 fd）会很浪费 CPU。</p>
-<p><img src="/2022/03/19/interview-network/NIO.png" alt="image"></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 伪代码描述</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="comment">// accept非阻塞（cpu一直忙轮询）</span></span><br><span class="line">    client_fd = accept(listen_fd)</span><br><span class="line">    <span class="keyword">if</span> (client_fd != null) &#123;</span><br><span class="line">        <span class="comment">// 有人连接</span></span><br><span class="line">        fds.append(client_fd)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 无人连接</span></span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">for</span> (fd in fds) &#123;</span><br><span class="line">        <span class="comment">// recv非阻塞</span></span><br><span class="line">        setNonblocking(client_fd)</span><br><span class="line">        <span class="comment">// recv 为非阻塞命令</span></span><br><span class="line">        <span class="keyword">if</span> (len = recv(fd) &amp;&amp; len &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 有读写数据</span></span><br><span class="line">            <span class="comment">// logic</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 无读写数据</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="IO多路复用如何工作？"><a href="#IO多路复用如何工作？" class="headerlink" title="IO多路复用如何工作？"></a>IO多路复用如何工作？</h4><ul>
-<li><p>select 函数：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">select</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="type">int</span> max_fd, </span></span><br><span class="line"><span class="params">    fd_set *readset, </span></span><br><span class="line"><span class="params">    fd_set *writeset, </span></span><br><span class="line"><span class="params">    fd_set *exceptset, </span></span><br><span class="line"><span class="params">    <span class="keyword">struct</span> timeval *timeout</span></span><br><span class="line"><span class="params">)</span>    </span><br></pre></td></tr></table></figure>
-
-<p>select 函数监视的文件描述符分3类，分别是writefds、readfds、和exceptfds。调用后select函数会阻塞，直到有描述符就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。当select函数返回后，可以通过遍历fdset，来找到就绪的描述符。</p>
-<p>缺点：</p>
-<ol>
-<li><p>单个进程所打开的FD是有限制的，通过 FD_SETSIZE 设置，默认1024 ;</p>
-</li>
-<li><p>每次调用 select，都需要把 fd 集合从用户态拷贝到内核态，这个开销在 fd 很多时会很大；</p>
-</li>
-<li><p>对 socket 扫描时是线性扫描，采用轮询的方法，效率较低（高并发）</p>
-</li>
-</ol>
-<p>  例子：<a href="https://kongkongk.github.io/2020/07/02/select-function-application-example/">https://kongkongk.github.io/2020/07/02/select-function-application-example/</a></p>
-</li>
-<li><p>poll 函数</p>
-  <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">poll</span><span class="params">(<span class="keyword">struct</span> pollfd *fds, <span class="type">nfds_t</span> nfds, <span class="type">int</span> timeout)</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">    <span class="type">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">    <span class="type">short</span> events;     <span class="comment">/* requested events */</span></span><br><span class="line">    <span class="type">short</span> revents;    <span class="comment">/* returned events */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>  poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态， 但是它没有最大连接数的限制，原因是它是基于链表来存储的.<br>  例子：<a href="https://www.cnblogs.com/pang1567/p/4122729.html">https://www.cnblogs.com/pang1567/p/4122729.html</a></p>
-</li>
-<li><p>epoll 函数：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建用于epoll工作的FD</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">epoll_create</span><span class="params">(<span class="type">int</span> size)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对事件操作：增、删等</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">epoll_ctl</span><span class="params">(<span class="type">int</span> epfd, <span class="type">int</span> op, <span class="type">int</span> fd, <span class="keyword">struct</span> epoll_event *event)</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">// 等待事件</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">epoll_wait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *events, <span class="type">int</span> maxevents, <span class="type">int</span> timeout)</span>; </span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/03/19/interview-network/epoll.png" alt="image"></p>
-<p>  epoll 通过两个方面，很好解决了 select&#x2F;poll 的问题。</p>
-<p>  第一点，epoll 在内核里使用红黑树来跟踪进程所有待检测的文件描述字，把需要监控的 socket 通过 <code>epoll_ctl()</code> 函数加入内核中的红黑树里，红黑树是个高效的数据结构，增删查一般时间复杂度是 O(logn)，通过对这棵黑红树进行操作，这样就不需要像 select&#x2F;poll 每次操作时都传入整个 socket 集合，只需要传入一个待检测的 socket，减少了内核和用户空间大量的数据拷贝和内存分配。</p>
-<p>  第二点， epoll 使用事件驱动的机制，内核里维护了一个链表来记录就绪事件，当某个 socket 有事件发生时，通过回调函数内核会将其加入到这个就绪事件列表中，当用户调用 epoll_wait() 函数时，只会返回有事件发生的文件描述符的个数，不需要像 select&#x2F;poll 那样轮询扫描整个 socket 集合，大大提高了检测的效率。</p>
-<p>  epoll 支持两种事件触发模式，分别是边缘触发（edge-triggered，ET）和水平触发（level-triggered，LT）：</p>
-<ul>
-<li>使用边缘触发模式时，当被监控的 Socket 描述符上有可读事件发生时，服务器端只会从 epoll_wait 中苏醒一次，即使进程没有调用 read 函数从内核读取数据，也依然只苏醒一次，因此我们程序要保证一次性将内核缓冲区的数据读取完；</li>
-<li>使用水平触发模式时，当被监控的 Socket 上有可读事件发生时，服务器端不断地从 epoll_wait 中苏醒，直到内核缓冲区数据被 read 函数读完才结束，目的是告诉我们有数据需要读取；</li>
-<li>如何理解名字：边缘（电平发生变化：高电平到低电平,或者低电平到高电平），水平（只有高电平(1)或低电平(0)时才触发通知）</li>
-</ul>
-<p> 实例：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span>&#123;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* 在这里进行一些初始化的操作，</span></span><br><span class="line"><span class="comment">* 比如初始化数据和socket等。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 内核中创建ep对象</span></span><br><span class="line">    epfd=<span class="built_in">epoll_create</span>(<span class="number">256</span>);</span><br><span class="line">    <span class="comment">// 需要监听的socket放到ep中</span></span><br><span class="line">    <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_ADD,listenfd,&amp;ev);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 阻塞获取</span></span><br><span class="line">        nfds = <span class="built_in">epoll_wait</span>(epfd,events,<span class="number">20</span>,<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nfds;++i) &#123;</span><br><span class="line">            <span class="keyword">if</span>(events[i].data.fd==listenfd) &#123;</span><br><span class="line">                <span class="comment">// 这里处理accept事件</span></span><br><span class="line">                connfd = <span class="built_in">accept</span>(listenfd);</span><br><span class="line">                <span class="comment">// 接收新连接写到内核对象中</span></span><br><span class="line">                <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_ADD,connfd,&amp;ev);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (events[i].events&amp;EPOLLIN) &#123;</span><br><span class="line">                <span class="comment">// 这里处理read事件</span></span><br><span class="line">                <span class="built_in">read</span>(sockfd, BUF, MAXLINE);</span><br><span class="line">                <span class="comment">//读完后准备写</span></span><br><span class="line">                <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>(events[i].events&amp;EPOLLOUT) &#123;</span><br><span class="line">                <span class="comment">// 这里处理write事件</span></span><br><span class="line">                <span class="built_in">write</span>(sockfd, BUF, n);</span><br><span class="line">                <span class="comment">//写完后准备读</span></span><br><span class="line">                <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="select-、-poll、epoll的区别"><a href="#select-、-poll、epoll的区别" class="headerlink" title="select 、 poll、epoll的区别"></a>select 、 poll、epoll的区别</h4><p><img src="/2022/03/19/interview-network/IO.png" alt="image"></p>
-<p>使用场景：</p>
-<ul>
-<li>select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制。 select 可移植性更好，几乎被所有主流平台所支持。</li>
-<li>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。</li>
-<li>只需要运行在 Linux 平台上，有大量的描述符需要同时轮询，并且这些连接最好是长连接。</li>
-</ul>
-<h3 id="Redis为什么使用IO多路复用技术？"><a href="#Redis为什么使用IO多路复用技术？" class="headerlink" title="Redis为什么使用IO多路复用技术？"></a>Redis为什么使用IO多路复用技术？</h3><p>Redis 是跑在单线程中的，所有的操作都是按照顺序线性执行的，但是由于读写操作等待用户输入或输出都是阻塞的，所以 I&#x2F;O 操作在一般情况下往往不能直接返回，这会导致某一文件的 I&#x2F;O 阻塞导致整个进程无法对其它客户提供服务，而 I&#x2F;O 多路复用 就是为了解决这个问题而出现的。</p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Network</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>interview_security</title>
-    <url>/2022/03/18/interview-security/</url>
-    <content><![CDATA[<h3 id="AES和DES的区别？秘钥长度"><a href="#AES和DES的区别？秘钥长度" class="headerlink" title="AES和DES的区别？秘钥长度"></a>AES和DES的区别？秘钥长度</h3><ul>
-<li><p>DES</p>
-<p>  DES是对称性加密里常见的一种，是一种使用秘钥加密的块算法。秘钥长度是64位（bit）， 超过位数秘钥被忽略。对称性加密一般会按照固定长度，把待加密字符串分成块。不足一整块或者刚好最后有特殊填充字符。</p>
-<p>  <img src="/2022/03/18/interview-security/des.png" alt="image"></p>
-<p>  特点：分组比较短、秘钥太短、密码生命周期短、运算速度较慢。</p>
-</li>
-<li><p>AES</p>
-<p>  AES的区块长度固定为128 比特，密钥长度则可以是128，192或256比特；</p>
-<p>  特点：运算速度快，安全性高，资源消耗少</p>
-</li>
-<li><p>总结：AES是高级算法，它比DES更快，更安全。</p>
-</li>
-</ul>
-<h3 id="非对称加密和对称加密的区别？"><a href="#非对称加密和对称加密的区别？" class="headerlink" title="非对称加密和对称加密的区别？"></a>非对称加密和对称加密的区别？</h3><ul>
-<li><p>对称加密</p>
-<p>  指的就是加、解密使用的同是一串密钥，所以被称做对称加密。对称加密只有一个密钥作为私钥。常见的对称加密算法：DES，AES等。</p>
-</li>
-<li><p>非对称加密</p>
-<p>  指的是加、解密使用不同的密钥，一把作为公开的公钥，另一把作为私钥。公钥加密的信息，只有私钥才能解密。</p>
-</li>
-<li><p>总结</p>
-<p>  非对称加密更安全，但是效率比较慢，对称加密效率高，但是不安全。一般来说可以混合使用：将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通，例如https。</p>
-</li>
-</ul>
-<h3 id="RSA的原理"><a href="#RSA的原理" class="headerlink" title="RSA的原理"></a>RSA的原理</h3><p><a href="https://cjting.me/2020/03/13/rsa/">https://cjting.me/2020/03/13/rsa/</a></p>
-<p>密钥越长，它就越难破解。一般来说，1024位的RSA密钥基本安全，2048位的密钥极其安全。</p>
-]]></content>
-      <categories>
-        <category>Interview Knowledge</category>
-      </categories>
-      <tags>
-        <tag>Interview</tag>
-        <tag>Information Security</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>当你和mentor聊天的时候应该聊些什么</title>
-    <url>/2022/04/25/one-on-one/</url>
-    <content><![CDATA[<h2 id="故事导向"><a href="#故事导向" class="headerlink" title="故事导向"></a>故事导向</h2><ol>
-<li>让Mentor讲一讲部门的发展史，以及部门内部不同小组的工作。</li>
-<li>问一下Mentor自己过去的职业生涯和未来的规划</li>
-<li>Mentor对这个公司以及行业方向的前景如何看待？</li>
-<li>……</li>
-</ol>
-<h2 id="场景问题"><a href="#场景问题" class="headerlink" title="场景问题"></a>场景问题</h2><ol>
-<li>除了工作之外，有没有其它自我提升和学习的时间？一般是如何了解新技术和主动学习的？</li>
-<li>毕业论文能不能用在公司的项目？</li>
-<li>一般周末或者下班的时间会做什么？作为实习生如何通过空闲时间更好地提高自己？</li>
-<li>……</li>
-</ol>
-<h2 id="镜子问题"><a href="#镜子问题" class="headerlink" title="镜子问题"></a>镜子问题</h2><ol>
-<li>大家对我的看法，以及自己需要改进的地方</li>
-<li>Mentor对我正在做的项目的看法？进度快慢&#x2F;需要提高的地方等等</li>
-<li>……</li>
-</ol>
-<h2 id="技能发展"><a href="#技能发展" class="headerlink" title="技能发展"></a>技能发展</h2><ol>
-<li>实习期间的安排是什么样子的？</li>
-<li>介绍一下之后需要做的项目，挑战性，创新性，工程性如何？以及对转正答辩的帮助大不大？</li>
-<li>如何通过实习转正拿到更高的薪资？更长远地来说，如何在之后正式的工作中快速升职加薪？</li>
-<li>平时工作对英语要求如何？对学习英语听力和口语有什么经验吗？</li>
-<li>有没有比较好的书籍课程（技术类、软技能等），并且适合应届生新人去看的？</li>
-<li>……</li>
-</ol>
-]]></content>
-      <categories>
-        <category>职场发展</category>
-      </categories>
-      <tags>
-        <tag>misc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>四柱八字命理学</title>
-    <url>/2022/04/13/%E5%9B%9B%E6%9F%B1%E5%85%AB%E5%AD%97%E5%91%BD%E7%90%86%E5%AD%A6/</url>
-    <content><![CDATA[<h2 id="何为命运"><a href="#何为命运" class="headerlink" title="何为命运"></a>何为命运</h2><p>命，乃人先天之根基；运，乃人后天之起伏。命论终生，运在一时。</p>
-<h2 id="何为四柱八字"><a href="#何为四柱八字" class="headerlink" title="何为四柱八字"></a>何为四柱八字</h2><p>四柱八字，即生辰八字。</p>
-<p>四柱即人的出生年、月、日、时分别称之为年柱、月柱、日柱和时柱。</p>
-<p>以天干地支纪年法表示出来每柱两个字，共八个字也称生辰八字。</p>
-<h2 id="阴阳"><a href="#阴阳" class="headerlink" title="阴阳"></a>阴阳</h2><p>阴阳，指世界上一切事物中都具有的两种既互相对立又互相联系的力量；有下面四个内容：</p>
-<ul>
-<li><p>阴阳对应： 世间一切事物或现象都存在相互对立的两个面，如天与地、动与静、上与下、升与降等等，天为阳，地为阴；动为阳，静为阴；上属阳，下属阴；升属阳，降属阴。</p>
-</li>
-<li><p>阴阳互根： 事物或现象中对立的两个面，具有互相依存、互相为用的联系。阴与阳的每一个侧面都以另一个侧面作为自己存在的前提。如热为阳，冷为阴，无冷也就无热；上为阳，下为阴，无上也就无下。</p>
-</li>
-<li><p>阴阳消长： 阴阳之间的对立制约、互根互用始终处于一种消长变化的过程，阴阳在消长变化中达到动态平衡。消长变化是绝对的，动态平衡是相对的。从子夜到中午，阳气渐盛，人体的生理功能逐渐由抑制转向兴奋，即阴消阳长；从中午到子夜，阳气渐衰，则人体的生理功能由兴奋渐变为抑制。白天阳盛，人体的生理功能也以兴奋为主；夜间阴盛，人体的生理功能相应的以抑制为主。这就是阳消阴长。</p>
-</li>
-<li><p>阴阳转化： 阴阳消长是一个量变的过程，阴阳转化则是质变的过程；阴阳消长是阴阳转化的前提，阴阳转化则是阴阳消长发展的结果。在一定的条件下阴阳双方可互相转化，如人在持续高烧时，突然体温下降，就是由阳症转化为阴症的表现。</p>
-</li>
-</ul>
-<h2 id="五行"><a href="#五行" class="headerlink" title="五行"></a>五行</h2><p>五行即由“木、火、土、金、水”五种基本物质的运行和变化所构成，五种各具特性的物质不断运动和相互作用，便形成了宇宙间万物生长与消亡的规律和原因。</p>
-<p>事物之间存在着一定联系，促进事物的发展变化，体现在五行的相生和相克规律中。因五行生克规律，才使自然界能维持生态平衡。五行相生相克关系如下：</p>
-<p><img src="/2022/04/13/%E5%9B%9B%E6%9F%B1%E5%85%AB%E5%AD%97%E5%91%BD%E7%90%86%E5%AD%A6/%E4%BA%94%E8%A1%8C.jpeg" alt="image"></p>
-<h3 id="五行相生"><a href="#五行相生" class="headerlink" title="五行相生"></a>五行相生</h3><p>相生的含义是支持、合作、相容，指一事物对另一事物具有促进、助长和滋生的作用。</p>
-<p>五行相生的规律：木生火，火生土，土生金，金生水，水生木。</p>
-<ul>
-<li><p>木生火：火以木料作燃料，木烧尽，火会自动熄灭。</p>
-</li>
-<li><p>火生土：火燃烧物体后，化为灰烬，而灰烬便是土。</p>
-</li>
-<li><p>土生金：金藏于泥石之中，经冶炼后方可提取黄金。</p>
-</li>
-<li><p>金生水：金若被烈火燃烧，便溶为液体，液体属水；水要依靠铁器来开导疏通。</p>
-</li>
-<li><p>水生木：水灌溉树木，树木便能欣欣向荣。</p>
-</li>
-</ul>
-<h3 id="五行相克"><a href="#五行相克" class="headerlink" title="五行相克"></a>五行相克</h3><p>相克的含义是抑制、排斥、相对，指一事物对另一事物的生长及功能具有抑制和制约的作用。</p>
-<p>五行相克 的规律：木克土，土克水，水克火，火克金，金克木。</p>
-<ul>
-<li><p>木克土 ：树根苗的力量强大，能突破土的障碍。</p>
-</li>
-<li><p>土克水：土能防水。</p>
-</li>
-<li><p>水克火：火遇水便熄灭。</p>
-</li>
-<li><p>火克金：烈火能溶解金属。</p>
-</li>
-<li><p>金克木：金属铸造的割切工具可锯毁树木。</p>
-</li>
-</ul>
-<p>在五行相生中，都有生我和我生的关系；在五行相克中，都有克我和我克的关系，相生和相克和阴阳一样，不可分割，相反相成，相互为用，推动和维持事物正常生长、发展和变化。</p>
-<h2 id="天干"><a href="#天干" class="headerlink" title="天干"></a>天干</h2><p>天干：甲、乙、丙、丁、戊、己、庚、辛、壬、癸（guǐ）</p>
-<h3 id="天干阴阳"><a href="#天干阴阳" class="headerlink" title="天干阴阳"></a>天干阴阳</h3><table>
-<thead>
-<tr>
-<th align="center"></th>
-<th align="center">木</th>
-<th align="center">火</th>
-<th align="center">土</th>
-<th align="center">金</th>
-<th align="center">水</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">阳</td>
-<td align="center">甲</td>
-<td align="center">丙</td>
-<td align="center">戊</td>
-<td align="center">庚</td>
-<td align="center">壬</td>
-</tr>
-<tr>
-<td align="center">阴</td>
-<td align="center">乙</td>
-<td align="center">丁</td>
-<td align="center">己</td>
-<td align="center">辛</td>
-<td align="center">癸</td>
-</tr>
-</tbody></table>
-<h3 id="天干喻人"><a href="#天干喻人" class="headerlink" title="天干喻人"></a>天干喻人</h3><p>甲木属阳, 一般指森林大树, 性质强壮. 甲木有恻隐之心, 具上进心, 好华美的事物而有风雅的性格, 进退有情有义, 处事负责, 但缺乏应变能力, 又因常烦恼故做事多老苦.</p>
-<p>乙木属阴, 指小树花草之类, 性质柔软. 乙木富同情心, 性情和蔼, 外表谦虚, 但内心占有欲强, 虽有才能, 但常烦心.</p>
-<p>丙或属阳, 指太阳, 炎炎炳照之意. 丙火为火之兄, 含有朝气蓬勃, 热情开朗之意. 还含有适合各种社交活动, 但也易被误解为好大喜功.</p>
-<p>丁火属阴, 指灯火, 炉火等, 火势不稳定, 得时有力, 失时无力. 丁火为火之妹, 具有外静内进, 思想缜密的性格. 但是多疑与心机是其缺点.</p>
-<p>戊土属阳, 指大地的土, 广厚茂盛, 又指堤坝之土, 可有力地防止河川泛滥.戊土诚实, 厚重, 性情笃实沉稳, 为人憨直.</p>
-<p>己土属阴, 指田园之土, 不如戊土广厚但易栽植. 己土重视内涵, 多才多艺,行事依循规矩, 但度量欠广, 易生疑心.</p>
-<p>庚金属阳, 指铁, 刀剑, 矿石等, 性质坚硬. 庚金精神粗旷豪爽, 意气轻燥,性情刚烈而重义气, 个性好胜, 具有破坏性, 人缘佳, 容易相处.</p>
-<p>辛金属阴, 指珠玉, 宝石, 砂金. 辛金性较阴沉, 温润秀气, 重感情, 虚荣心强而爱好面子, 有强烈的自尊心. 但缺乏坚强的意志.</p>
-<p>壬水属阳, 指大海之水. 壬水为水之兄, 含有清浊并容, 宽宏大度之意, 能潜伏和包容, 富于勇气. 但也有依赖性强, 凡事漫不经心之意.</p>
-<p>癸水属阴, 指雨露之水, 也有闭藏和内在萌生之意. 癸水为水之妹, 其人平静, 柔和, 内向, 勤勉力行, 然而每爱好猜臆, 注重原则, 不务实际, 故内心常蓄不平, 并时有破坏性, 并且有重情调, 喜钻牛角尖的倾向.</p>
-<h3 id="天干相生"><a href="#天干相生" class="headerlink" title="天干相生"></a>天干相生</h3><p>甲乙木生丙丁火</p>
-<p>丙丁火生戊己土</p>
-<p>戊己土生庚辛金</p>
-<p>庚辛金生壬癸水</p>
-<p>壬癸水生甲乙木</p>
-<p>天干地支均同性相生力大，异性相生力小</p>
-<h3 id="天干相克"><a href="#天干相克" class="headerlink" title="天干相克"></a>天干相克</h3><p>甲乙木克戊己土</p>
-<p>丙丁火克庚辛金</p>
-<p>戊己土克壬癸水</p>
-<p>庚辛金克甲乙木</p>
-<p>壬癸水克丙丁火</p>
-<p>天干地支均同性相克力大，异性相克力小</p>
-<h3 id="天干相冲"><a href="#天干相冲" class="headerlink" title="天干相冲"></a>天干相冲</h3><p>甲庚相冲、乙辛相冲、壬丙相冲、癸丁相冲。戊己土居中央，故无冲。</p>
-<p>甲属阳木，为东方，庚属阳金，为西方，阳与阳同类相斥，金与木相克，而且二者方位相反，故曰相冲。其余之干相冲类推。</p>
-<h3 id="天干五合"><a href="#天干五合" class="headerlink" title="天干五合"></a>天干五合</h3><p>天干五合情况的出现，也会进一步影响或改变命局中的五行力量强弱关系。</p>
-<p>甲己相合为土，乙庚相合为金，丙辛相合为水，丁壬相合为木，戊癸相合为火。</p>
-<h2 id="地支"><a href="#地支" class="headerlink" title="地支"></a>地支</h2><p>地支：子、丑、寅、卯、辰、巳（sì）、午、未、申、酉、戌（xū）、亥</p>
-]]></content>
-      <categories>
-        <category>命理学</category>
-      </categories>
-      <tags>
-        <tag>四柱八字</tag>
       </tags>
   </entry>
   <entry>
@@ -4144,6 +3956,194 @@
       <tags>
         <tag>Interview</tag>
         <tag>System Design</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>四柱八字命理学</title>
+    <url>/2022/04/13/%E5%9B%9B%E6%9F%B1%E5%85%AB%E5%AD%97%E5%91%BD%E7%90%86%E5%AD%A6/</url>
+    <content><![CDATA[<h2 id="何为命运"><a href="#何为命运" class="headerlink" title="何为命运"></a>何为命运</h2><p>命，乃人先天之根基；运，乃人后天之起伏。命论终生，运在一时。</p>
+<h2 id="何为四柱八字"><a href="#何为四柱八字" class="headerlink" title="何为四柱八字"></a>何为四柱八字</h2><p>四柱八字，即生辰八字。</p>
+<p>四柱即人的出生年、月、日、时分别称之为年柱、月柱、日柱和时柱。</p>
+<p>以天干地支纪年法表示出来每柱两个字，共八个字也称生辰八字。</p>
+<h2 id="阴阳"><a href="#阴阳" class="headerlink" title="阴阳"></a>阴阳</h2><p>阴阳，指世界上一切事物中都具有的两种既互相对立又互相联系的力量；有下面四个内容：</p>
+<ul>
+<li><p>阴阳对应： 世间一切事物或现象都存在相互对立的两个面，如天与地、动与静、上与下、升与降等等，天为阳，地为阴；动为阳，静为阴；上属阳，下属阴；升属阳，降属阴。</p>
+</li>
+<li><p>阴阳互根： 事物或现象中对立的两个面，具有互相依存、互相为用的联系。阴与阳的每一个侧面都以另一个侧面作为自己存在的前提。如热为阳，冷为阴，无冷也就无热；上为阳，下为阴，无上也就无下。</p>
+</li>
+<li><p>阴阳消长： 阴阳之间的对立制约、互根互用始终处于一种消长变化的过程，阴阳在消长变化中达到动态平衡。消长变化是绝对的，动态平衡是相对的。从子夜到中午，阳气渐盛，人体的生理功能逐渐由抑制转向兴奋，即阴消阳长；从中午到子夜，阳气渐衰，则人体的生理功能由兴奋渐变为抑制。白天阳盛，人体的生理功能也以兴奋为主；夜间阴盛，人体的生理功能相应的以抑制为主。这就是阳消阴长。</p>
+</li>
+<li><p>阴阳转化： 阴阳消长是一个量变的过程，阴阳转化则是质变的过程；阴阳消长是阴阳转化的前提，阴阳转化则是阴阳消长发展的结果。在一定的条件下阴阳双方可互相转化，如人在持续高烧时，突然体温下降，就是由阳症转化为阴症的表现。</p>
+</li>
+</ul>
+<h2 id="五行"><a href="#五行" class="headerlink" title="五行"></a>五行</h2><p>五行即由“木、火、土、金、水”五种基本物质的运行和变化所构成，五种各具特性的物质不断运动和相互作用，便形成了宇宙间万物生长与消亡的规律和原因。</p>
+<p>事物之间存在着一定联系，促进事物的发展变化，体现在五行的相生和相克规律中。因五行生克规律，才使自然界能维持生态平衡。五行相生相克关系如下：</p>
+<p><img src="/2022/04/13/%E5%9B%9B%E6%9F%B1%E5%85%AB%E5%AD%97%E5%91%BD%E7%90%86%E5%AD%A6/%E4%BA%94%E8%A1%8C.jpeg" alt="image"></p>
+<h3 id="五行相生"><a href="#五行相生" class="headerlink" title="五行相生"></a>五行相生</h3><p>相生的含义是支持、合作、相容，指一事物对另一事物具有促进、助长和滋生的作用。</p>
+<p>五行相生的规律：木生火，火生土，土生金，金生水，水生木。</p>
+<ul>
+<li><p>木生火：火以木料作燃料，木烧尽，火会自动熄灭。</p>
+</li>
+<li><p>火生土：火燃烧物体后，化为灰烬，而灰烬便是土。</p>
+</li>
+<li><p>土生金：金藏于泥石之中，经冶炼后方可提取黄金。</p>
+</li>
+<li><p>金生水：金若被烈火燃烧，便溶为液体，液体属水；水要依靠铁器来开导疏通。</p>
+</li>
+<li><p>水生木：水灌溉树木，树木便能欣欣向荣。</p>
+</li>
+</ul>
+<h3 id="五行相克"><a href="#五行相克" class="headerlink" title="五行相克"></a>五行相克</h3><p>相克的含义是抑制、排斥、相对，指一事物对另一事物的生长及功能具有抑制和制约的作用。</p>
+<p>五行相克 的规律：木克土，土克水，水克火，火克金，金克木。</p>
+<ul>
+<li><p>木克土 ：树根苗的力量强大，能突破土的障碍。</p>
+</li>
+<li><p>土克水：土能防水。</p>
+</li>
+<li><p>水克火：火遇水便熄灭。</p>
+</li>
+<li><p>火克金：烈火能溶解金属。</p>
+</li>
+<li><p>金克木：金属铸造的割切工具可锯毁树木。</p>
+</li>
+</ul>
+<p>在五行相生中，都有生我和我生的关系；在五行相克中，都有克我和我克的关系，相生和相克和阴阳一样，不可分割，相反相成，相互为用，推动和维持事物正常生长、发展和变化。</p>
+<h2 id="天干"><a href="#天干" class="headerlink" title="天干"></a>天干</h2><p>天干：甲、乙、丙、丁、戊、己、庚、辛、壬、癸（guǐ）</p>
+<h3 id="天干阴阳"><a href="#天干阴阳" class="headerlink" title="天干阴阳"></a>天干阴阳</h3><table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">木</th>
+<th align="center">火</th>
+<th align="center">土</th>
+<th align="center">金</th>
+<th align="center">水</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">阳</td>
+<td align="center">甲</td>
+<td align="center">丙</td>
+<td align="center">戊</td>
+<td align="center">庚</td>
+<td align="center">壬</td>
+</tr>
+<tr>
+<td align="center">阴</td>
+<td align="center">乙</td>
+<td align="center">丁</td>
+<td align="center">己</td>
+<td align="center">辛</td>
+<td align="center">癸</td>
+</tr>
+</tbody></table>
+<h3 id="天干喻人"><a href="#天干喻人" class="headerlink" title="天干喻人"></a>天干喻人</h3><p>甲木属阳, 一般指森林大树, 性质强壮. 甲木有恻隐之心, 具上进心, 好华美的事物而有风雅的性格, 进退有情有义, 处事负责, 但缺乏应变能力, 又因常烦恼故做事多老苦.</p>
+<p>乙木属阴, 指小树花草之类, 性质柔软. 乙木富同情心, 性情和蔼, 外表谦虚, 但内心占有欲强, 虽有才能, 但常烦心.</p>
+<p>丙或属阳, 指太阳, 炎炎炳照之意. 丙火为火之兄, 含有朝气蓬勃, 热情开朗之意. 还含有适合各种社交活动, 但也易被误解为好大喜功.</p>
+<p>丁火属阴, 指灯火, 炉火等, 火势不稳定, 得时有力, 失时无力. 丁火为火之妹, 具有外静内进, 思想缜密的性格. 但是多疑与心机是其缺点.</p>
+<p>戊土属阳, 指大地的土, 广厚茂盛, 又指堤坝之土, 可有力地防止河川泛滥.戊土诚实, 厚重, 性情笃实沉稳, 为人憨直.</p>
+<p>己土属阴, 指田园之土, 不如戊土广厚但易栽植. 己土重视内涵, 多才多艺,行事依循规矩, 但度量欠广, 易生疑心.</p>
+<p>庚金属阳, 指铁, 刀剑, 矿石等, 性质坚硬. 庚金精神粗旷豪爽, 意气轻燥,性情刚烈而重义气, 个性好胜, 具有破坏性, 人缘佳, 容易相处.</p>
+<p>辛金属阴, 指珠玉, 宝石, 砂金. 辛金性较阴沉, 温润秀气, 重感情, 虚荣心强而爱好面子, 有强烈的自尊心. 但缺乏坚强的意志.</p>
+<p>壬水属阳, 指大海之水. 壬水为水之兄, 含有清浊并容, 宽宏大度之意, 能潜伏和包容, 富于勇气. 但也有依赖性强, 凡事漫不经心之意.</p>
+<p>癸水属阴, 指雨露之水, 也有闭藏和内在萌生之意. 癸水为水之妹, 其人平静, 柔和, 内向, 勤勉力行, 然而每爱好猜臆, 注重原则, 不务实际, 故内心常蓄不平, 并时有破坏性, 并且有重情调, 喜钻牛角尖的倾向.</p>
+<h3 id="天干相生"><a href="#天干相生" class="headerlink" title="天干相生"></a>天干相生</h3><p>甲乙木生丙丁火</p>
+<p>丙丁火生戊己土</p>
+<p>戊己土生庚辛金</p>
+<p>庚辛金生壬癸水</p>
+<p>壬癸水生甲乙木</p>
+<p>天干地支均同性相生力大，异性相生力小</p>
+<h3 id="天干相克"><a href="#天干相克" class="headerlink" title="天干相克"></a>天干相克</h3><p>甲乙木克戊己土</p>
+<p>丙丁火克庚辛金</p>
+<p>戊己土克壬癸水</p>
+<p>庚辛金克甲乙木</p>
+<p>壬癸水克丙丁火</p>
+<p>天干地支均同性相克力大，异性相克力小</p>
+<h3 id="天干相冲"><a href="#天干相冲" class="headerlink" title="天干相冲"></a>天干相冲</h3><p>甲庚相冲、乙辛相冲、壬丙相冲、癸丁相冲。戊己土居中央，故无冲。</p>
+<p>甲属阳木，为东方，庚属阳金，为西方，阳与阳同类相斥，金与木相克，而且二者方位相反，故曰相冲。其余之干相冲类推。</p>
+<h3 id="天干五合"><a href="#天干五合" class="headerlink" title="天干五合"></a>天干五合</h3><p>天干五合情况的出现，也会进一步影响或改变命局中的五行力量强弱关系。</p>
+<p>甲己相合为土，乙庚相合为金，丙辛相合为水，丁壬相合为木，戊癸相合为火。</p>
+<h2 id="地支"><a href="#地支" class="headerlink" title="地支"></a>地支</h2><p>地支：子、丑、寅、卯、辰、巳（sì）、午、未、申、酉、戌（xū）、亥</p>
+]]></content>
+      <categories>
+        <category>命理学</category>
+      </categories>
+      <tags>
+        <tag>四柱八字</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>interview_security</title>
+    <url>/2022/03/18/interview-security/</url>
+    <content><![CDATA[<h3 id="AES和DES的区别？秘钥长度"><a href="#AES和DES的区别？秘钥长度" class="headerlink" title="AES和DES的区别？秘钥长度"></a>AES和DES的区别？秘钥长度</h3><ul>
+<li><p>DES</p>
+<p>  DES是对称性加密里常见的一种，是一种使用秘钥加密的块算法。秘钥长度是64位（bit）， 超过位数秘钥被忽略。对称性加密一般会按照固定长度，把待加密字符串分成块。不足一整块或者刚好最后有特殊填充字符。</p>
+<p>  <img src="/2022/03/18/interview-security/des.png" alt="image"></p>
+<p>  特点：分组比较短、秘钥太短、密码生命周期短、运算速度较慢。</p>
+</li>
+<li><p>AES</p>
+<p>  AES的区块长度固定为128 比特，密钥长度则可以是128，192或256比特；</p>
+<p>  特点：运算速度快，安全性高，资源消耗少</p>
+</li>
+<li><p>总结：AES是高级算法，它比DES更快，更安全。</p>
+</li>
+</ul>
+<h3 id="非对称加密和对称加密的区别？"><a href="#非对称加密和对称加密的区别？" class="headerlink" title="非对称加密和对称加密的区别？"></a>非对称加密和对称加密的区别？</h3><ul>
+<li><p>对称加密</p>
+<p>  指的就是加、解密使用的同是一串密钥，所以被称做对称加密。对称加密只有一个密钥作为私钥。常见的对称加密算法：DES，AES等。</p>
+</li>
+<li><p>非对称加密</p>
+<p>  指的是加、解密使用不同的密钥，一把作为公开的公钥，另一把作为私钥。公钥加密的信息，只有私钥才能解密。</p>
+</li>
+<li><p>总结</p>
+<p>  非对称加密更安全，但是效率比较慢，对称加密效率高，但是不安全。一般来说可以混合使用：将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通，例如https。</p>
+</li>
+</ul>
+<h3 id="RSA的原理"><a href="#RSA的原理" class="headerlink" title="RSA的原理"></a>RSA的原理</h3><p><a href="https://cjting.me/2020/03/13/rsa/">https://cjting.me/2020/03/13/rsa/</a></p>
+<p>密钥越长，它就越难破解。一般来说，1024位的RSA密钥基本安全，2048位的密钥极其安全。</p>
+]]></content>
+      <categories>
+        <category>Interview Knowledge</category>
+      </categories>
+      <tags>
+        <tag>Interview</tag>
+        <tag>Information Security</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>当你和mentor聊天的时候应该聊些什么</title>
+    <url>/2022/04/25/one-on-one/</url>
+    <content><![CDATA[<h2 id="故事导向"><a href="#故事导向" class="headerlink" title="故事导向"></a>故事导向</h2><ol>
+<li>让Mentor讲一讲部门的发展史，以及部门内部不同小组的工作。</li>
+<li>问一下Mentor自己过去的职业生涯和未来的规划</li>
+<li>Mentor对这个公司以及行业方向的前景如何看待？</li>
+<li>……</li>
+</ol>
+<h2 id="场景问题"><a href="#场景问题" class="headerlink" title="场景问题"></a>场景问题</h2><ol>
+<li>除了工作之外，有没有其它自我提升和学习的时间？一般是如何了解新技术和主动学习的？</li>
+<li>毕业论文能不能用在公司的项目？</li>
+<li>一般周末或者下班的时间会做什么？作为实习生如何通过空闲时间更好地提高自己？</li>
+<li>……</li>
+</ol>
+<h2 id="镜子问题"><a href="#镜子问题" class="headerlink" title="镜子问题"></a>镜子问题</h2><ol>
+<li>大家对我的看法，以及自己需要改进的地方</li>
+<li>Mentor对我正在做的项目的看法？进度快慢&#x2F;需要提高的地方等等</li>
+<li>……</li>
+</ol>
+<h2 id="技能发展"><a href="#技能发展" class="headerlink" title="技能发展"></a>技能发展</h2><ol>
+<li>实习期间的安排是什么样子的？</li>
+<li>介绍一下之后需要做的项目，挑战性，创新性，工程性如何？以及对转正答辩的帮助大不大？</li>
+<li>如何通过实习转正拿到更高的薪资？更长远地来说，如何在之后正式的工作中快速升职加薪？</li>
+<li>平时工作对英语要求如何？对学习英语听力和口语有什么经验吗？</li>
+<li>有没有比较好的书籍课程（技术类、软技能等），并且适合应届生新人去看的？</li>
+<li>……</li>
+</ol>
+]]></content>
+      <categories>
+        <category>职场发展</category>
+      </categories>
+      <tags>
+        <tag>misc</tag>
       </tags>
   </entry>
 </search>
