@@ -4360,4 +4360,73 @@
         <tag>Maven</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Redis学习</title>
+    <url>/2023/08/20/Redis/</url>
+    <content><![CDATA[<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><ul>
+<li>Struct的内存对齐</li>
+</ul>
+<p>结构体的大小不是说结构体中的每个变量的数据类型之和就是结构体的大小，而是 <strong>按照内存对齐的方式</strong>来计算的。如果不内存对齐，想要去访问结构体的某个元素时，可能会需要多读一次内存。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">// 12字节</span><br><span class="line">struct _tag_str1&#123;</span><br><span class="line">    char a;</span><br><span class="line">    int b;</span><br><span class="line">    short c;</span><br><span class="line">&#125;str1;</span><br><span class="line"></span><br><span class="line">// 8字节</span><br><span class="line">struct _tag_str2&#123;</span><br><span class="line">    char a;</span><br><span class="line">    short c;</span><br><span class="line">    int b;</span><br><span class="line">&#125;str2;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    printf(&quot;sizeof str1 %d\n&quot;,sizeof(str1));</span><br><span class="line">    printf(&quot;sizeof str2 %d\n&quot;,sizeof(str2));</span><br><span class="line">    return 0;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Struct的柔性数组</li>
+</ul>
+<p>以Redis的SDS字符串结构体为例</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/*</span><br><span class="line"> * 保存字符串对象的结构</span><br><span class="line"> */</span><br><span class="line">struct sdshdr &#123;</span><br><span class="line">    // buf 中已占用空间的长度</span><br><span class="line">    int len;</span><br><span class="line">    // buf 中剩余可用空间的长度</span><br><span class="line">    int free;</span><br><span class="line">    // 数据空间</span><br><span class="line">    char buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>结构体中最后一个元素允许是未知大小的数组</strong>，这个数组就是 <strong>柔性数组（soft array）</strong>，也叫 <strong>伸缩性数组</strong>。但结构中的柔性数组前面必须 <strong>至少一个其他成员。sizeof 返回的这种结构大小不包括柔性数组的内存。例如上面的结构体sizeof(sdshdr)&#x3D;8</strong></p>
+<ul>
+<li>为什么要使用柔性数组</li>
+</ul>
+<p>如果在结构中有一个不确定长度的数组，我们可以在结构中存放一个指针，用于指向动态分配的内存。例如</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">struct point_buffer&#123;</span><br><span class="line">    int   len;</span><br><span class="line">    char  *data;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>数据结构大小 &gt;&#x3D; <code>sizeof(int)</code> + <code>sizeof(char *)</code>但在内存分配时，需要两步进行:</p>
+<ul>
+<li>需为结构体分配一块内存空间;</li>
+<li>为结构体中的成员变量分配内存空间;</li>
+</ul>
+<p>当内存释放时，需要这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">free(p_buffer-&gt;data);</span><br><span class="line"></span><br><span class="line">free(p_buffer);</span><br><span class="line"></span><br><span class="line">p_buffer = NULL;</span><br></pre></td></tr></table></figure>
+
+<p>虽然这样能够节约内存，但是两次分配的内存是不连续的, 需要分别对其进行管理，导致的问题就是需要对结构体和数据分别申请和释放内存。这样对于程序员来说无疑是一个灾难，因为这样很容易导致遗忘释放内存造成内存泄露。</p>
+<p>一种更好的方法就是使用柔性数组，它的定义如下：</p>
+<ul>
+<li>柔性数组成员必须定义在结构体里面且为最后元素；</li>
+<li>结构体中不能单独只有柔性数组成员；</li>
+<li>柔性数组不占内存。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//柔性数组</span><br><span class="line"></span><br><span class="line">struct soft_buffer&#123;</span><br><span class="line">    int   len;</span><br><span class="line">    char  data[0];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>申请内存时：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">if</span> ((softbuffer = (<span class="keyword">struct</span> <span class="title class_">soft_buffer</span> *)<span class="title function_ invoke__">malloc</span>(<span class="title function_ invoke__">sizeof</span>(<span class="keyword">struct</span> <span class="title class_">soft_buffer</span>) + <span class="title function_ invoke__">sizeof</span>(<span class="type">char</span>) * CUR_LENGTH)) != NULL)&#123;</span><br><span class="line">    softbuffer<span class="punctuation">-&gt;</span>len = CUR_LENGTH;</span><br><span class="line">    <span class="title function_ invoke__">memcpy</span>(softbuffer<span class="punctuation">-&gt;</span>data, <span class="string">&quot;softbuffer test&quot;</span>, CUR_LENGTH);</span><br><span class="line">    <span class="title function_ invoke__">printf</span>(<span class="string">&quot;%d, %s\n&quot;</span>, softbuffer<span class="punctuation">-&gt;</span>len, softbuffer<span class="punctuation">-&gt;</span>data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>释放内存时：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">free(softbuffer);</span><br><span class="line"></span><br><span class="line">softbuffer = NULL;</span><br></pre></td></tr></table></figure>
+
+<p>对比二者，会发现，使用柔性数组的优点是：</p>
+<ul>
+<li>由于结构体使用指针地址不连续（两次 malloc），柔性数组地址连续，只需要一次 malloc，同样释放前者需要两次，后者可以一起释放。</li>
+<li>在数据拷贝时，结构体使用指针时，必须拷贝它指向的内存，内存不连续会存在问题，柔性数组可以直接拷贝。</li>
+<li>减少内存碎片，由于结构体的柔性数组和结构体成员的地址是连续的，即可一同申请内存，因此更大程度地避免了内存碎片。另外由于该成员本身不占结构体空间，因此，整体而言，比普通的数组成员占用空间要会稍微小点。</li>
+</ul>
+<h2 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ypedef struct dictht &#123;</span><br><span class="line">    // 哈希表数组</span><br><span class="line">    dictEntry **table;</span><br><span class="line">    // 哈希表大小</span><br><span class="line">    unsigned long size;</span><br><span class="line">    // 哈希表大小掩码，用于计算索引值</span><br><span class="line">    // 总是等于 size - 1</span><br><span class="line">    unsigned long sizemask;</span><br><span class="line">    // 该哈希表已有节点的数量</span><br><span class="line">    unsigned long used;</span><br><span class="line">&#125; dictht;</span><br></pre></td></tr></table></figure>
+
+<p>当一个新的Key添加到字典中的时候，程序需要先根据key计算出相应的索引的值index。具体来说，先使用一个哈希函数得到一个哈希值hash，但是这个哈希值可能会超过哈希表size的大小，需要再对size取模，但是取模运算的效率比较低，Redis这里直接使用index &#x3D; hash &amp; sizemark来得到。不过sizemark必须全为1，否则&amp;运算会不均匀，所以哈希表的大小size必须为2的次方。</p>
+<h2 id="跳表"><a href="#跳表" class="headerlink" title="跳表"></a>跳表</h2><p><img src="/2023/08/20/Redis/skiplist1.jpg" alt="img"></p>
+<p><img src="/2023/08/20/Redis/skiplist2.jpg" alt="img"></p>
+<p>随机层数生成算法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int zslRandomLevel(void) &#123;</span><br><span class="line">    int level = 1;</span><br><span class="line">    while ((random()&amp;0xFFFF) &lt; (ZSKIPLIST_P * 0xFFFF))</span><br><span class="line">        level += 1;</span><br><span class="line">    return (level&lt;ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ZSKIPLIST_P是一个常数，当其为0.5时，level为n的概率为(1&#x2F;2)^n；</p>
+]]></content>
+      <categories>
+        <category>DataBase</category>
+      </categories>
+      <tags>
+        <tag>Redis</tag>
+        <tag>Nosql</tag>
+      </tags>
+  </entry>
 </search>
