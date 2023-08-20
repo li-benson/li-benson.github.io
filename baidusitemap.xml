@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://example.com/2022/08/24/Java/</loc>
-    <lastmod>2022-09-05</lastmod>
+    <loc>http://example.com/2022/03/25/git/</loc>
+    <lastmod>2023-08-20</lastmod>
   </url>
   <url>
     <loc>http://example.com/2022/03/18/interview-algorithm/</loc>
-    <lastmod>2022-08-07</lastmod>
+    <lastmod>2023-08-19</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2022/08/24/Java/</loc>
+    <lastmod>2022-09-05</lastmod>
   </url>
   <url>
     <loc>http://example.com/2022/03/28/interview-Golang/</loc>
@@ -27,10 +31,6 @@
   <url>
     <loc>http://example.com/2022/04/22/interview-Java/</loc>
     <lastmod>2022-07-12</lastmod>
-  </url>
-  <url>
-    <loc>http://example.com/2022/03/25/git/</loc>
-    <lastmod>2022-07-01</lastmod>
   </url>
   <url>
     <loc>http://example.com/2022/04/25/one-on-one/</loc>

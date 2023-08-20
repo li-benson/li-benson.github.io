@@ -548,12 +548,50 @@
  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pick 3ca6ec3   &#x27;注释**********&#x27;</span><br><span class="line"></span><br><span class="line">s 1b40566   &#x27;注释*********&#x27;</span><br><span class="line"></span><br><span class="line">s 53f244a   &#x27;注释**********&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>保存退出，解决冲突后进行提交。</p>
- <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add .  </span><br><span class="line"></span><br><span class="line">git rebase --continue  </span><br></pre></td></tr></table></figure></li>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add .  </span><br><span class="line"></span><br><span class="line">git rebase --continue  </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果远程分支也需要合并，在本地合并完之后，直接使用下面的命令强制更新即可</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git push --force origin feat_test</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h2 id="撤销修改"><a href="#撤销修改" class="headerlink" title="撤销修改"></a>撤销修改</h2><h3 id="撤销工作区的修改"><a href="#撤销工作区的修改" class="headerlink" title="撤销工作区的修改"></a>撤销工作区的修改</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git restore &lt;path&gt;</span><br><span class="line">等价于</span><br><span class="line">git checkout &lt;path&gt;</span><br></pre></td></tr></table></figure>
 
 <h3 id="撤销暂存区的修改，将文件恢复到工作区去"><a href="#撤销暂存区的修改，将文件恢复到工作区去" class="headerlink" title="撤销暂存区的修改，将文件恢复到工作区去"></a>撤销暂存区的修改，将文件恢复到工作区去</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git restore --staged &lt;path&gt;</span><br></pre></td></tr></table></figure>
 
+<h2 id="合并分支"><a href="#合并分支" class="headerlink" title="合并分支"></a>合并分支</h2><h3 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h3><p>例如一个main分支希望合并bugFix分支，首先需要切换到main分支上，然后执行<code>git merge bugFix</code>将会在main分支上产生一个合并后的新的commit。如下图所示。</p>
+<img src="/2022/03/25/git/image-20230820103316560.png" style="zoom:30%;">
+
+<h3 id="rebase"><a href="#rebase" class="headerlink" title="rebase"></a>rebase</h3><p>rebase指的是将分支的基础从一个提交改成另一个提交。</p>
+<img src="/2022/03/25/git/image-20230820104025321.png" alt="image-20230820104025321" style="zoom:33%;">
+
+<h2 id="删除本地更改"><a href="#删除本地更改" class="headerlink" title="删除本地更改"></a>删除本地更改</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git checkout . # 撤销本目录下所有的更改</span><br><span class="line"></span><br><span class="line">git checkout filePath #撤销某个文件的更改</span><br></pre></td></tr></table></figure>
+
+<p>前提是这些更改没有commit，它们位于工作区。</p>
+<h2 id="将当前分支的修改转移到其他分支"><a href="#将当前分支的修改转移到其他分支" class="headerlink" title="将当前分支的修改转移到其他分支"></a>将当前分支的修改转移到其他分支</h2><p>想要在B分支下修改代码，但是不小心在A分支上进行了修改，又不想在B分支上重新修改一遍。</p>
+<ol>
+<li>修改尚未commit时，首先使用git stash将代码暂时存储起来，其次切换分支之后，使用git stash pop将其弹出来即可。</li>
+<li>已经commit时，将commit回退到暂存区，使用</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git reset HEAD^</span><br></pre></td></tr></table></figure>
+
+<p>​    再之后使用stash命令即可。</p>
+<ol start="3">
+<li>也可以在分支B上执行下面的命令，将A分支上提交的修改转移到B分支上。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git cherry-pick commitID</span><br></pre></td></tr></table></figure>
+
+<h2 id="git-cherry-pick"><a href="#git-cherry-pick" class="headerlink" title="git cherry-pick"></a>git cherry-pick</h2><p><code>git cherry-pick</code>命令的作用，就是将指定的提交（commit）应用于其他分支。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ git cherry-pick &lt;commitHash&gt;</span><br></pre></td></tr></table></figure>
+
+<p>举例来说，代码仓库有<code>master</code>和<code>feature</code>两个分支。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">a - b - c - d   Master</span><br><span class="line">     \</span><br><span class="line">      e - f - g Feature</span><br></pre></td></tr></table></figure>
+
+<p>现在将提交<code>f</code>应用到<code>master</code>分支。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到 master 分支</span></span><br><span class="line">$ git checkout master</span><br><span class="line"></span><br><span class="line"><span class="comment"># Cherry pick 操作</span></span><br><span class="line">$ git cherry-pick f</span><br></pre></td></tr></table></figure>
+
+<p>上面的操作完成以后，代码库就变成了下面的样子。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">a - b - c - d - f   Master</span><br><span class="line">	    \</span><br><span class="line">      e - f - g Feature</span><br></pre></td></tr></table></figure>
+
+<p>从上面可以看到，<code>master</code>分支的末尾增加了一个提交<code>f</code></p>
 ]]></content>
       <categories>
         <category>Dev Tools</category>

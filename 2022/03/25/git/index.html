@@ -27,11 +27,14 @@
 <meta property="og:site_name" content="Benson&#39;s Blog">
 <meta property="og:description" content="本文记录了Git的一些用法">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/03/25/git/image-20230820103316560.png">
+<meta property="og:image" content="http://example.com/2022/03/25/git/image-20230820104025321.png">
 <meta property="article:published_time" content="2022-03-25T08:49:36.000Z">
-<meta property="article:modified_time" content="2022-07-01T05:53:32.251Z">
+<meta property="article:modified_time" content="2023-08-20T03:57:43.000Z">
 <meta property="article:author" content="Benson">
 <meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/03/25/git/image-20230820103316560.png">
 
 <link rel="canonical" href="http://example.com/2022/03/25/git/">
 
@@ -227,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-07-01 13:53:32" itemprop="dateModified" datetime="2022-07-01T13:53:32+08:00">2022-07-01</time>
+                <time title="修改时间：2023-08-20 11:57:43" itemprop="dateModified" datetime="2023-08-20T11:57:43+08:00">2023-08-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,7 +255,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
+              <span>3.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -403,12 +406,50 @@
  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pick 3ca6ec3   &#x27;注释**********&#x27;</span><br><span class="line"></span><br><span class="line">s 1b40566   &#x27;注释*********&#x27;</span><br><span class="line"></span><br><span class="line">s 53f244a   &#x27;注释**********&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>保存退出，解决冲突后进行提交。</p>
- <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .  </span><br><span class="line"></span><br><span class="line">git rebase --continue  </span><br></pre></td></tr></table></figure></li>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .  </span><br><span class="line"></span><br><span class="line">git rebase --continue  </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果远程分支也需要合并，在本地合并完之后，直接使用下面的命令强制更新即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push --force origin feat_test</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h2 id="撤销修改"><a href="#撤销修改" class="headerlink" title="撤销修改"></a>撤销修改</h2><h3 id="撤销工作区的修改"><a href="#撤销工作区的修改" class="headerlink" title="撤销工作区的修改"></a>撤销工作区的修改</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git restore &lt;path&gt;</span><br><span class="line">等价于</span><br><span class="line">git checkout &lt;path&gt;</span><br></pre></td></tr></table></figure>
 
 <h3 id="撤销暂存区的修改，将文件恢复到工作区去"><a href="#撤销暂存区的修改，将文件恢复到工作区去" class="headerlink" title="撤销暂存区的修改，将文件恢复到工作区去"></a>撤销暂存区的修改，将文件恢复到工作区去</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git restore --staged &lt;path&gt;</span><br></pre></td></tr></table></figure>
 
+<h2 id="合并分支"><a href="#合并分支" class="headerlink" title="合并分支"></a>合并分支</h2><h3 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h3><p>例如一个main分支希望合并bugFix分支，首先需要切换到main分支上，然后执行<code>git merge bugFix</code>将会在main分支上产生一个合并后的新的commit。如下图所示。</p>
+<img src="/2022/03/25/git/image-20230820103316560.png" style="zoom:30%;">
+
+<h3 id="rebase"><a href="#rebase" class="headerlink" title="rebase"></a>rebase</h3><p>rebase指的是将分支的基础从一个提交改成另一个提交。</p>
+<img src="/2022/03/25/git/image-20230820104025321.png" alt="image-20230820104025321" style="zoom:33%;">
+
+<h2 id="删除本地更改"><a href="#删除本地更改" class="headerlink" title="删除本地更改"></a>删除本地更改</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git checkout . # 撤销本目录下所有的更改</span><br><span class="line"></span><br><span class="line">git checkout filePath #撤销某个文件的更改</span><br></pre></td></tr></table></figure>
+
+<p>前提是这些更改没有commit，它们位于工作区。</p>
+<h2 id="将当前分支的修改转移到其他分支"><a href="#将当前分支的修改转移到其他分支" class="headerlink" title="将当前分支的修改转移到其他分支"></a>将当前分支的修改转移到其他分支</h2><p>想要在B分支下修改代码，但是不小心在A分支上进行了修改，又不想在B分支上重新修改一遍。</p>
+<ol>
+<li>修改尚未commit时，首先使用git stash将代码暂时存储起来，其次切换分支之后，使用git stash pop将其弹出来即可。</li>
+<li>已经commit时，将commit回退到暂存区，使用</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD^</span><br></pre></td></tr></table></figure>
+
+<p>​    再之后使用stash命令即可。</p>
+<ol start="3">
+<li>也可以在分支B上执行下面的命令，将A分支上提交的修改转移到B分支上。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick commitID</span><br></pre></td></tr></table></figure>
+
+<h2 id="git-cherry-pick"><a href="#git-cherry-pick" class="headerlink" title="git cherry-pick"></a>git cherry-pick</h2><p><code>git cherry-pick</code>命令的作用，就是将指定的提交（commit）应用于其他分支。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick &lt;commitHash&gt;</span><br></pre></td></tr></table></figure>
+
+<p>举例来说，代码仓库有<code>master</code>和<code>feature</code>两个分支。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a - b - c - d   Master</span><br><span class="line">     \</span><br><span class="line">      e - f - g Feature</span><br></pre></td></tr></table></figure>
+
+<p>现在将提交<code>f</code>应用到<code>master</code>分支。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到 master 分支</span></span><br><span class="line">$ git checkout master</span><br><span class="line"></span><br><span class="line"><span class="comment"># Cherry pick 操作</span></span><br><span class="line">$ git cherry-pick f</span><br></pre></td></tr></table></figure>
+
+<p>上面的操作完成以后，代码库就变成了下面的样子。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a - b - c - d - f   Master</span><br><span class="line">	    \</span><br><span class="line">      e - f - g Feature</span><br></pre></td></tr></table></figure>
+
+<p>从上面可以看到，<code>master</code>分支的末尾增加了一个提交<code>f</code></p>
 
     </div>
 
@@ -523,7 +564,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Git%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">Git的常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E8%B7%B3%E8%BF%87%E4%BD%BF%E7%94%A8%E6%9A%82%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%B9%B6%E6%8F%90%E4%BA%A4%E6%96%87%E4%BB%B6%E6%9B%B4%E6%94%B9"><span class="nav-number">1.1.</span> <span class="nav-text">Git跳过使用暂存区域并提交文件更改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%86%99%E6%9C%80%E8%BF%91%E7%9A%84%E6%8F%90%E4%BA%A4%E6%B6%88%E6%81%AF"><span class="nav-number">1.2.</span> <span class="nav-text">重写最近的提交消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E9%80%80%E4%B9%8B%E5%89%8D%E7%9A%84%E6%8F%90%E4%BA%A4"><span class="nav-number">1.3.</span> <span class="nav-text">回退之前的提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98stash%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">缓存stash的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#stash%E5%BD%93%E5%89%8D%E4%BF%AE%E6%94%B9"><span class="nav-number">1.4.1.</span> <span class="nav-text">stash当前修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E5%BA%94%E7%94%A8%E7%BC%93%E5%AD%98%E7%9A%84stash"><span class="nav-number">1.4.2.</span> <span class="nav-text">重新应用缓存的stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%8E%B0%E6%9C%89stash"><span class="nav-number">1.4.3.</span> <span class="nav-text">查看现有stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4stash"><span class="nav-number">1.4.4.</span> <span class="nav-text">移除stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Estash%E5%88%9B%E5%BB%BA%E5%88%86%E6%94%AF"><span class="nav-number">1.4.5.</span> <span class="nav-text">从stash创建分支</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.</span> <span class="nav-text">移除文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8E%86%E5%8F%B2%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">1.6.</span> <span class="nav-text">查看历史提交记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.</span> <span class="nav-text">打标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.1.</span> <span class="nav-text">列出标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.2.</span> <span class="nav-text">创建标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A0%87%E7%AD%BE%E6%8F%90%E4%BA%A4%E4%BF%A1%E6%81%AF"><span class="nav-number">1.7.3.</span> <span class="nav-text">查看标签提交信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.4.</span> <span class="nav-text">删除标签</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%A4%9A%E4%B8%AAcommit%E4%B8%BA%E4%B8%80%E4%B8%AAcommit"><span class="nav-number">1.8.</span> <span class="nav-text">合并多个commit为一个commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E4%BF%AE%E6%94%B9"><span class="nav-number">1.9.</span> <span class="nav-text">撤销修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E5%B7%A5%E4%BD%9C%E5%8C%BA%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="nav-number">1.9.1.</span> <span class="nav-text">撤销工作区的修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E6%9A%82%E5%AD%98%E5%8C%BA%E7%9A%84%E4%BF%AE%E6%94%B9%EF%BC%8C%E5%B0%86%E6%96%87%E4%BB%B6%E6%81%A2%E5%A4%8D%E5%88%B0%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%8E%BB"><span class="nav-number">1.9.2.</span> <span class="nav-text">撤销暂存区的修改，将文件恢复到工作区去</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Git%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">Git的常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E8%B7%B3%E8%BF%87%E4%BD%BF%E7%94%A8%E6%9A%82%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%B9%B6%E6%8F%90%E4%BA%A4%E6%96%87%E4%BB%B6%E6%9B%B4%E6%94%B9"><span class="nav-number">1.1.</span> <span class="nav-text">Git跳过使用暂存区域并提交文件更改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%86%99%E6%9C%80%E8%BF%91%E7%9A%84%E6%8F%90%E4%BA%A4%E6%B6%88%E6%81%AF"><span class="nav-number">1.2.</span> <span class="nav-text">重写最近的提交消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E9%80%80%E4%B9%8B%E5%89%8D%E7%9A%84%E6%8F%90%E4%BA%A4"><span class="nav-number">1.3.</span> <span class="nav-text">回退之前的提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98stash%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">缓存stash的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#stash%E5%BD%93%E5%89%8D%E4%BF%AE%E6%94%B9"><span class="nav-number">1.4.1.</span> <span class="nav-text">stash当前修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E5%BA%94%E7%94%A8%E7%BC%93%E5%AD%98%E7%9A%84stash"><span class="nav-number">1.4.2.</span> <span class="nav-text">重新应用缓存的stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%8E%B0%E6%9C%89stash"><span class="nav-number">1.4.3.</span> <span class="nav-text">查看现有stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4stash"><span class="nav-number">1.4.4.</span> <span class="nav-text">移除stash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Estash%E5%88%9B%E5%BB%BA%E5%88%86%E6%94%AF"><span class="nav-number">1.4.5.</span> <span class="nav-text">从stash创建分支</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.</span> <span class="nav-text">移除文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8E%86%E5%8F%B2%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">1.6.</span> <span class="nav-text">查看历史提交记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.</span> <span class="nav-text">打标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.1.</span> <span class="nav-text">列出标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.2.</span> <span class="nav-text">创建标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A0%87%E7%AD%BE%E6%8F%90%E4%BA%A4%E4%BF%A1%E6%81%AF"><span class="nav-number">1.7.3.</span> <span class="nav-text">查看标签提交信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%A0%87%E7%AD%BE"><span class="nav-number">1.7.4.</span> <span class="nav-text">删除标签</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%A4%9A%E4%B8%AAcommit%E4%B8%BA%E4%B8%80%E4%B8%AAcommit"><span class="nav-number">1.8.</span> <span class="nav-text">合并多个commit为一个commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E4%BF%AE%E6%94%B9"><span class="nav-number">1.9.</span> <span class="nav-text">撤销修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E5%B7%A5%E4%BD%9C%E5%8C%BA%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="nav-number">1.9.1.</span> <span class="nav-text">撤销工作区的修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E6%9A%82%E5%AD%98%E5%8C%BA%E7%9A%84%E4%BF%AE%E6%94%B9%EF%BC%8C%E5%B0%86%E6%96%87%E4%BB%B6%E6%81%A2%E5%A4%8D%E5%88%B0%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%8E%BB"><span class="nav-number">1.9.2.</span> <span class="nav-text">撤销暂存区的修改，将文件恢复到工作区去</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF"><span class="nav-number">1.10.</span> <span class="nav-text">合并分支</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#merge"><span class="nav-number">1.10.1.</span> <span class="nav-text">merge</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rebase"><span class="nav-number">1.10.2.</span> <span class="nav-text">rebase</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E6%9B%B4%E6%94%B9"><span class="nav-number">1.11.</span> <span class="nav-text">删除本地更改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E5%BD%93%E5%89%8D%E5%88%86%E6%94%AF%E7%9A%84%E4%BF%AE%E6%94%B9%E8%BD%AC%E7%A7%BB%E5%88%B0%E5%85%B6%E4%BB%96%E5%88%86%E6%94%AF"><span class="nav-number">1.12.</span> <span class="nav-text">将当前分支的修改转移到其他分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-cherry-pick"><span class="nav-number">1.13.</span> <span class="nav-text">git cherry-pick</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -591,7 +632,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -600,12 +641,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">168k</span>
+    <span title="站点总字数">169k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:33</span>
+    <span title="站点阅读时长">2:34</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
