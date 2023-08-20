@@ -4184,4 +4184,58 @@
         <tag>misc</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Memcached介绍</title>
+    <url>/2023/08/20/Memcached/</url>
+    <content><![CDATA[<h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>memcached是一个分布式，开源的数据存储引擎。</p>
+<ol>
+<li>协议简单。Memcached 的服务端客户端通信使用简单的文本协议，客户端使用telnet即可连接。</li>
+<li>基于 libevent 的事件处理。libevent 是个程序库，它将 Linux 的 epoll、BSD 类操作系统的 kqueue 等事件处理功能封装成统一的接口，效率较高。</li>
+<li>不互相通信的分布式。Memcached服务器端并没有“分布式”功能，其分布式是完全由客户端程序库实现的。</li>
+</ol>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><img src="/2023/08/20/Memcached/image-20230820131430656.png" alt="image-20230820131430656" style="zoom:30%;">
+
+<p>​        当数据到达客户端, 客户端实现的算法会根据”键”来决定保存的memcached服务器。服务器选定后, 命令它保存数据。取的时候也一样, 客户端根据”键”选择服务器, 使用保存时候的相同一致性哈希算法就能保存选中和存的时候相同的服务器。</p>
+<p>​        MemCached采用了C&#x2F;S架构，在Server端启动后，以守护程序的方式，监听客户端的请求。启动时可以指定监听的IP（服务器的内网ip&#x2F;外网ip）、端口号（所以做分布式测试时，一台服务器上可以启动多个不同端口号的MemCached进程）、使用的内存大小等关键参数。一旦启动，服务就会一直处于可用状态。</p>
+<p>​        为了提高性能，MemCached缓存的数据全部存储在MemCached管理的内存中，所以重启服务器之后缓存数据会清空，不支持持久化。</p>
+<h2 id="内存模型"><a href="#内存模型" class="headerlink" title="内存模型"></a>内存模型</h2><h3 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h3><img src="/2023/08/20/Memcached/memcached-memory-model.jpg" alt="memory-model" style="zoom: 67%;">
+
+<ol>
+<li>slabclass：是管理slab及chunk的数据结构，一个slabclass可分配多个slab，一个slab可分配多个chunk，同时一个slabclass中的chunk具有相同的大小；</li>
+<li>hashtable: 用于item寻址，对key计算hash值，定位到item所在数组下标，再从item链表中找到对应的item。</li>
+<li>item：存储key&#x2F;value的数据结构，同时维护了hashtable、LRU链表的指针的信息，是数据的载体；</li>
+<li>chunk：存放item，具有固定大小的内存块;</li>
+<li>slab：是Memcached一次申请内存的最小单位，默认为1M，然后切分为chunk大小的内存块，是chunk的容器；</li>
+<li>LRU list: 管理各个slabclass的最近访问过的item, 以便进行item的清理，list头部是最近访问过的item，每一个slabclass都有一个LRU list；</li>
+</ol>
+<p>​        MemCache中的value存放位置是由value的大小决定，value会被存放到与chunk大小最接近的一个slab中，比如slab[1]的chunk大小为88字节、slab[2]的chunk大小为112字节、slab[3]的chunk大小为144字节（默认相邻slab内的chunk基本以1.25为比例进行增长，MemCache启动时可以用-f指定这个比例），那么一个100字节的value，将被放到2号slab中。</p>
+<h3 id="内存回收"><a href="#内存回收" class="headerlink" title="内存回收"></a>内存回收</h3><ol>
+<li>当数据容量用完MemCached分配的内存后，就会基于LRU(Least Recently Used)算法清理失效的缓存数据（放入数据时可设置失效时间），或者清理最近最少使用的缓存数据，然后放入新的数据。</li>
+<li>在LRU中，MemCached使用的是一种Lazy Expiration策略，自己不会监控存入的key&#x2F;vlue对是否过期，而是在获取key值时查看记录的时间戳，检查key&#x2F;value对空间是否过期，这样可减轻服务器的负载。</li>
+<li>需要注意的是，如果如果MemCache启动没有追加-M，则表示禁止LRU，这种情况下内存不够会报Out Of Memory错误。</li>
+</ol>
+<p>注意：</p>
+<ol>
+<li>MemCache的内存分配chunk里面会有内存浪费，88字节的value分配在128字节（紧接着大的用）的chunk中，就损失了30字节，但是这也避免了管理内存碎片的问题</li>
+<li>MemCache的LRU算法不是针对全局的，是针对slab的</li>
+<li>应该可以理解为什么MemCache存放的value大小是限制的，因为一个新数据过来，slab会先以page为单位申请一块内存，申请的内存最多就只有1M，所以value大小自然不能大于1M了。</li>
+</ol>
+<h2 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h2><p>​        MemCache虽然被称为”分布式缓存”，但是MemCache本身完全不具备分布式的功能，MemCache集群之间不会相互通信（与之形成对比的，比如JBoss Cache，某台服务器有缓存数据更新时，会通知集群中其他机器更新缓存或清除缓存数据），所谓的”分布式”，完全依赖于客户端程序的实现。 </p>
+<h2 id="杂项"><a href="#杂项" class="headerlink" title="杂项"></a>杂项</h2><ol>
+<li>MemCache中可以保存的item数据量是没有限制的，只要内存足够</li>
+<li>MemCache单进程在32位机中最大使用内存为2G</li>
+<li>Key最大为250个字节，超过该长度无法存储</li>
+<li>单个item最大数据是1MB，超过1MB的数据不予存储</li>
+<li>MemCache服务端是不安全的，比如已知某个MemCache节点，可以直接telnet过去，并通过flush_all让已经存在的键值对立即失效，所以MemCache服务器最好配置到内网环境，通过防火墙制定可访问客户端</li>
+<li>不能够遍历MemCache中所有的item，因为这个操作的速度相对缓慢且会阻塞其他的操作</li>
+</ol>
+]]></content>
+      <categories>
+        <category>DataBase</category>
+      </categories>
+      <tags>
+        <tag>Memcached</tag>
+        <tag>NoSql</tag>
+      </tags>
+  </entry>
 </search>
